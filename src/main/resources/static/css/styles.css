@@ -1,0 +1,58 @@
+html, body {
+    height: 100%; /* Ensure the body and html elements cover the full viewport height */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+.body1 {
+    background-image: url('/images/homeScreenImage.jpg');
+    background-size: cover; /* Ensures the image covers the whole page */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents image from repeating */
+    background-attachment: fixed; /* Fixes the image relative to the viewport */
+    height: 100vh; /* Ensure the body covers the viewport height */
+    display: flex; /* Use flexbox to center the box */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+}
+
+.body2 {
+    background-image: url('/images/concertHands.jpg');
+    background-size: cover; /* Ensures the image covers the whole page */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents image from repeating */
+    background-attachment: fixed; /* Fixes the image relative to the viewport */
+    height: 100vh; /* Ensure the body covers the viewport height */
+    display: flex; /* Use flexbox to center the box */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+}
+
+.centered-box {
+    background-color: rgba(255, 255, 255, 0.7); /* Transparency effect */
+    padding: 20px; /* Add some padding inside the box */
+    text-align: center; /* Center text inside the box */
+    width: 100%;
+    /* Optional: Set a maximum width and height for better control */
+    max-height: 80%; /* Limit the box height */
+    box-sizing: border-box; /* Include padding and border in the element’s total width and height */
+}
+
+/* Text styling */
+.p1 {
+    color: #333; /* Text color */
+    font-family: "Lucida Console", "Courier New", monospace; /* Font family */
+    font-size: 30px; /* Font size */
+    line-height: 1.5; /* Line height */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+.p2 {
+    color: #333; /* Text color */
+    font-family: "Lucida Console", "Courier New", monospace; /* Font family */
+    font-size:  16px; /* Font size */
+    line-height: 1.5; /* Line height */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}

@@ -18,7 +18,7 @@ public class LoginController {
     @PostMapping("/login")
     public String loginPost(@ModelAttribute LoginForm loginForm) {
         System.out.println("User '" + loginForm.getUsername() + "' attempted login");
-        return "redirect:/loginSuccess";
+        return "loginSuccess";
     }
 
     @GetMapping("/loginSuccess")

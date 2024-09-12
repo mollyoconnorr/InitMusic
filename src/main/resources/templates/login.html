@@ -1,15 +1,23 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Login page</title>
-  </head>
-  <body>
-    <center><h1>Login</h1></center>
-    <form action="#" th:action="@{/login}" th:object="${loginForm}" method="post">
-      <input type="text" th:field="*{username}" placeholder="Username"/><br/>
-      <input type="password" th:field="*{password}" placeholder="Password"/><br/>
-      <button type="submit">Login</button>
-    </form>
-  </body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Login page</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="body2">
+<div class="centered-box">
+  <h2>Login</h2>
+  <form th:action="@{/login}" th:object="${loginForm}" method="post">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" th:field="*{username}" placeholder="Username" required><br><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" th:field="*{password}" placeholder="Password" required><br><br>
+
+    <button type="submit">Login</button>
+  </form>
+  <p>Don't have an account? <a href="/register">Register</a> to continue!</p>
+</div>
+</body>
 </html>
