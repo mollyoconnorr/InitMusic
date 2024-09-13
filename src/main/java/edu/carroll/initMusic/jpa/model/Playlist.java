@@ -29,7 +29,7 @@ public class Playlist {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer playlist_id;
+    private Integer playlistID;
 
     /**
      * ID of author who made playlist. A Many to one relationship.
@@ -41,8 +41,8 @@ public class Playlist {
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "playlist_song",
-            joinColumns = { @JoinColumn(name = "playlist_id") },
-            inverseJoinColumns = { @JoinColumn(name = "song_id")}
+            joinColumns = { @JoinColumn(name = "playlistID") },
+            inverseJoinColumns = { @JoinColumn(name = "songID")}
     )
     private final Set<Song> songs = new HashSet<>();
 
@@ -100,16 +100,16 @@ public class Playlist {
      * Gets the ID of the playlist
      * @return The playlist's ID
      */
-    public Integer getPlaylist_id() {
-        return playlist_id;
+    public Integer getplaylistID() {
+        return playlistID;
     }
 
     /**
      * Sets the ID of the playlist
-     * @param playlist_id The id to set
+     * @param playlistID The id to set
      */
-    public void setPlaylist_id(Integer playlist_id) {
-        this.playlist_id = playlist_id;
+    public void setplaylistID(Integer playlistID) {
+        this.playlistID = playlistID;
     }
 
     /**
@@ -205,7 +205,7 @@ public class Playlist {
         Playlist playlist = (Playlist) o;
         return numberOfSongs == playlist.numberOfSongs &&
                 totalSongLength == playlist.totalSongLength &&
-                Objects.equals(playlist_id, playlist.playlist_id) &&
+                Objects.equals(playlistID, playlist.playlistID) &&
                 Objects.equals(author, playlist.author) &&
                 Objects.equals(playlistName, playlist.playlistName) &&
                 Objects.equals(dateCreated, playlist.dateCreated);
@@ -217,7 +217,7 @@ public class Playlist {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(playlist_id, author, playlistName, dateCreated, numberOfSongs, totalSongLength);
+        return Objects.hash(playlistID, author, playlistName, dateCreated, numberOfSongs, totalSongLength);
     }
 
     /**
@@ -227,7 +227,7 @@ public class Playlist {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Playlist{");
-        sb.append("playlist_id=").append(playlist_id);
+        sb.append("playlistID=").append(playlistID);
         sb.append(", author=").append(author);
         sb.append(", playlistName='").append(playlistName).append('\'');
         sb.append(", dateCreated='").append(dateCreated).append('\'');

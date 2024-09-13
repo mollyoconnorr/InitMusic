@@ -34,14 +34,14 @@ public class Song {
      * Set that keeps track of what playlists this song is in.
      * Many-to-Many relationship with Playlist class
      */
-    @ManyToMany(mappedBy = "playlists")
+    @ManyToMany(mappedBy = "songs")
     private Set<Playlist> playlists = new HashSet<>();
 
     /**
      * Set that keeps track of what artists made this song.
      * Many-to-Many relationship with Artist class
      */
-    @ManyToMany(mappedBy = "artists")
+    @ManyToMany(mappedBy = "songs")
     private Set<Artist> artists = new HashSet<>();
 
     /**
@@ -49,7 +49,7 @@ public class Song {
      * Many-to-One relationship with Album class
      */
     @ManyToOne
-    @JoinColumn(name = "album_id")
+    @JoinColumn(name = "albumID")
     private Album album;
 
     /**

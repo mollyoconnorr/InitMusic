@@ -39,10 +39,10 @@ public class Artist {
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "artist_album",
-            joinColumns = { @JoinColumn(name = "artist_id") },
-            inverseJoinColumns = { @JoinColumn(name = "album_id")}
+            joinColumns = { @JoinColumn(name = "artistID") },
+            inverseJoinColumns = { @JoinColumn(name = "albumID")}
     )
-    private final Set<Song> albums = new HashSet<>();
+    private final Set<Album> albums = new HashSet<>();
 
     /**
      * Keeps track of artists songs.
@@ -53,8 +53,8 @@ public class Artist {
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "artist_song",
-            joinColumns = { @JoinColumn(name = "artist_id") },
-            inverseJoinColumns = { @JoinColumn(name = "song_id")}
+            joinColumns = { @JoinColumn(name = "artistID") },
+            inverseJoinColumns = { @JoinColumn(name = "songID")}
     )
     private final Set<Song> songs = new HashSet<>();
 

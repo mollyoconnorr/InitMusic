@@ -28,7 +28,15 @@ public class User {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer user_id;
+    private Integer userID;
+
+    /**
+     * User's playlists, has a one-to-many relationship
+     * with the playlist class.
+     */
+    @OneToMany(mappedBy = "author")
+    private final Set<Playlist> playlists = new HashSet<>();
+
 
     /**
      * User's username
@@ -74,13 +82,6 @@ public class User {
     private String accountCreationDate;
 
     /**
-     * User's playlists, has a one-to-many relationship
-     * with the playlist class.
-     */
-    @OneToMany(mappedBy = "user")
-    private final Set<Playlist> playlists = new HashSet<>();
-
-    /**
      * Gets all playlists the user has
      * @return Set of user's playlists
      */
@@ -122,16 +123,16 @@ public class User {
      * Gets the user's id
      * @return User's id
      */
-    public Integer getUser_id() {
-        return user_id;
+    public Integer getuserID() {
+        return userID;
     }
 
     /**
      * Sets the users id
-     * @param user_id ID to set
+     * @param userID ID to set
      */
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setuserID(Integer userID) {
+        this.userID = userID;
     }
 
     /**
@@ -256,7 +257,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(user_id, user.user_id) &&
+        return Objects.equals(userID, user.userID) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(hashedPassword, user.hashedPassword) &&
                 Objects.equals(firstName, user.firstName) &&
@@ -270,7 +271,7 @@ public class User {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(user_id, username, hashedPassword, firstName, lastName, email, country);
+        return Objects.hash(userID, username, hashedPassword, firstName, lastName, email, country);
     }
 
     /**
@@ -280,7 +281,7 @@ public class User {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Login @ User{");
-        sb.append("id=").append(user_id);
+        sb.append("id=").append(userID);
         sb.append(", username='").append(username).append('\'');
         sb.append(", hashedPassword='").append("*****").append('\'');
         sb.append(", firstName='").append(firstName).append('\'');

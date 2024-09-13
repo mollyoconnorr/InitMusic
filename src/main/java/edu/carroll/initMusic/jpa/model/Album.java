@@ -42,8 +42,8 @@ public class Album {
      * Set that keeps track of what artists this album belongs to.
      * Many-to-Many relationship with Artist class
      */
-    @ManyToMany(mappedBy = "artists")
-    private Set<Playlist> artists = new HashSet<>();
+    @ManyToMany(mappedBy = "albums")
+    private Set<Artist> artists = new HashSet<>();
 
 
     /**
