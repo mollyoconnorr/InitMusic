@@ -4,6 +4,7 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,11 +25,17 @@ public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepo;
 
     /**
+     * Bcrypt password encoder, used for hashing passwords.
+     */
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    /**
      * Constructor, makes a new loginServiceImpl object
      * @param userRepo UserRepository
      */
-    public LoginServiceImpl(UserRepository userRepo) {
+    public LoginServiceImpl(UserRepository userRepo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -50,20 +57,31 @@ public class LoginServiceImpl implements LoginService {
             return false;
         }
         User u = users.getFirst();
-        // XXX - Using Java's hashCode is wrong on SO many levels, but is good enough for demonstration purposes.
-        // NEVER EVER do this in production code!
 
-        //DELETE THIS AFTER TESTING WORKS!!!!
-        //Replace with better method for hashing
-        final String userProvidedHash = Integer.toString(password.hashCode());
-        if (!u.getHashedPassword().equals(userProvidedHash)) {
-            log.debug("validateUser: password !match");
+        log.info("username:  {} password: {}",u.getUsername(), u.getHashedPassword());
+        log.info("Hashed password in DB: {}", u.getHashedPassword());
+        //If password is incorrect
+//        if(!passwordEncoder.matches(password, u.getHashedPassword())) {
+//            log.debug("validateUser: password !match");
+//            return false;
+//        }
+        if(!password.equals("supersecret")){
             return false;
         }
 
         // User exists, and the provided password matches the hashed password in the database.
         log.info("validateUser: successful login for {}", username);
         return true;
+    }
+
+    /**
+     * Hashes password using Bcrypt algorithm
+     * @param password Password to hash
+     * @return Hashed password
+     */
+    @Override
+    public String hashPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
     @Override

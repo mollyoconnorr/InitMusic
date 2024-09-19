@@ -16,6 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginController {
+    /**
+     * Logger object used for logging
+     */
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
     private final LoginService loginService;
 
     public LoginController(LoginService loginService) {
@@ -23,22 +28,26 @@ public class LoginController {
     }
     @GetMapping("/login")
     public String loginGet(Model model) {
+        log.info("Get login page");
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
 
     @PostMapping("/login")
     public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs) {
-        System.out.println("User '" + loginForm.getUsername() + "' attempted login");
+        log.info("User '{}' attempted login",loginForm.getUsername());
 
         if (result.hasErrors()) {
+            log.info("Validation errors ,{}", result.getAllErrors());
             return "login";
         }
         if (!loginService.validateUser(loginForm.getUsername(),loginForm.getPassword())) {
+            log.info("Username and password don't match for user '{}'", loginForm.getUsername());
             result.addError(new ObjectError("globalError", "Username and password do not match known users"));
             return "login";
         }
         attrs.addAttribute("username", loginForm.getUsername());
+        log.info("User '{}' logged in, showing loginSuccess page", loginForm.getUsername());
         return "redirect:/loginSuccess";
     }
 

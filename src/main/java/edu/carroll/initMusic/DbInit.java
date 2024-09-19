@@ -5,6 +5,7 @@ import java.util.List;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 // This class optionally pre-populates the database with login data.  In
@@ -12,14 +13,19 @@ import org.springframework.stereotype.Component;
 // method.
 @Component
 public class DbInit {
+    /**
+     * Bcrypt password encoder, used for hashing passwords.
+     */
+    private final BCryptPasswordEncoder passwordEncoder;
     // XXX - This is wrong on so many levels....
     private static final String defaultUsername = "cs341user";
-    private static final String defaultPassHash = "-1164577301";
+    private static final String defaultPass = "supersecret";
 
     private final UserRepository loginRepo;
 
-    public DbInit(UserRepository loginRepo) {
+    public DbInit(UserRepository loginRepo, BCryptPasswordEncoder passwordEncoder) {
         this.loginRepo = loginRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // invoked during application startup
@@ -28,17 +34,11 @@ public class DbInit {
         // If the user doesn't exist in the database, populate it
         final List<User> defaultUsers = loginRepo.findByUsernameIgnoreCase(defaultUsername);
         if (defaultUsers.isEmpty()) {
-            User defaultUser = new User();
-            defaultUser.setUsername(defaultUsername);
-            defaultUser.setHashedPassword(defaultPassHash);
-            defaultUser.setAccountCreationDate("10/20/1002");
-            defaultUser.setCountry("America");
-            defaultUser.setEmail("cs341User@gmail.com");
-            defaultUser.setFirstName("cs341");
-            defaultUser.setLastName("User");
-            defaultUser.setUsername("cs341User");
+            User defaultUser = new User(defaultUsername,passwordEncoder.encode(defaultPass), "cs341","user","cs341User@gmail.com","America");
 
             loginRepo.save(defaultUser);
         }
     }
+
+
 }

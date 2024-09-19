@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
 /**
  * <p>
  * This class is used to represent User objects, and maps to our database table.
@@ -96,7 +97,7 @@ public class User {
      * JPA needs this constructor to instantiate entities when retrieving data from the database.
      * Its protected so it can't be used to create new Album objects by other classes.
      */
-    protected User(){
+    public User(){
         //Default Constructor
     }
 
@@ -197,7 +198,7 @@ public class User {
     }
 
     /**
-     * Sets the user's hashed password
+     * Sets the user's password to hashed version
      * @param hashedPassword Password to set
      */
     public void setHashedPassword(String hashedPassword) {
