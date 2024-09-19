@@ -72,6 +72,54 @@ public class Album {
     private int totalSongLength;
 
     /**
+     * JPA needs this constructor to instantiate entities when retrieving data from the database.
+     * Its protected so it can't be used to create new Album objects by other classes.
+     */
+    protected Album() {
+        //Default Constructor
+    }
+
+    /**
+     * Creates a new album object
+     * @param albumName Name of album
+     * @param genre Genre of album
+     * @param releaseDate Release date of album
+     * @param totalSongLength Total runtime of all songs
+     */
+    public Album(String albumName, String genre, String releaseDate, int totalSongLength) {
+        this.albumName = albumName;
+        this.genre = genre;
+        this.releaseDate = releaseDate;
+        this.totalSongLength = totalSongLength;
+    }
+
+    /**
+     * Adds artist to this album
+     * @param artist Artist to add
+     */
+    public void addArtist(Artist artist) {
+        this.artists.add(artist);
+        artist.getAlbums().add(this); // Keep the relationship bidirectional
+    }
+
+    /**
+     * Removes artist from album
+     * @param artist Artist to remove
+     */
+    public void removeArtist(Artist artist) {
+        this.artists.remove(artist);
+        artist.getAlbums().remove(this);
+    }
+
+    /**
+     * Gets artists of album
+     * @return Set of artists
+     */
+    public Set<Artist> getArtists() {
+        return this.artists;
+    }
+
+    /**
      * Gets ID of album
      * @return ID of album
      */

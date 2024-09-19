@@ -1,10 +1,12 @@
 package edu.carroll.initMusic.jpa.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
 
 /**
  * <p>
@@ -54,10 +56,10 @@ public class Playlist {
 
     /**
      * Date playlist was created.
-     * Has length of 10 for MM/DD/YYYY format
      */
-    @Column(name = "date_created", nullable = false, length = 10)
-    private String dateCreated;
+    @CreatedDate
+    @Column(name = "date_playlist_created", nullable = false)
+    private LocalDateTime dateCreated;
 
     /**
      * Number of songs in playlist
@@ -70,6 +72,25 @@ public class Playlist {
      */
     @Column(name = "total_song_length", nullable = false)
     private int totalSongLength;
+
+    /**
+    * JPA needs this constructor to instantiate entities when retrieving data from the database.
+    * Its protected so it can't be used to create new Album objects by other classes.
+    */
+    public Playlist() {
+        //Default Constructor
+    }
+
+    /**
+     * Creates a new Playlist instance
+     * Only parameter is playlistName, because when a new playlist is made,
+     * there will be no songs in it, so no song parameters are needed.
+     *
+     * @param playlistName Name of playlist
+     */
+    public Playlist(String playlistName) {
+        this.playlistName = playlistName;
+    }
 
     /**
      * Gets all songs in playlist
@@ -148,7 +169,7 @@ public class Playlist {
      * Gets the date the playlist was created
      * @return The creation Date
      */
-    public String getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
@@ -156,7 +177,7 @@ public class Playlist {
      * Sets the playlist's creation date
      * @param dateCreated Date to set
      */
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
     }
 

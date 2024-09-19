@@ -1,7 +1,8 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.web.form.LoginForm;
-
+/**
+ * Interface for LoginService, defines methods related to logging in and creating accounts.
+ */
 public interface LoginService {
     /**
      * Given a loginForm, determine if the information provided is valid, and the user exists in the system.

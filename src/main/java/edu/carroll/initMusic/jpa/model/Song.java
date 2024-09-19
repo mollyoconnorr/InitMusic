@@ -84,6 +84,30 @@ public class Song {
     private int numberOfStreams;
 
     /**
+    * JPA needs this constructor to instantiate entities when retrieving data from the database.
+    * Its protected so it can't be used to create new Album objects by other classes.
+    */
+    public Song() {
+        //Default Constructor
+    }
+
+    /**
+     * Creates a new song instance
+     * @param songName Name of song
+     * @param genre Genre of song
+     * @param releaseDate Release date of song
+     * @param length Length of song in seconds
+     * @param numberOfStreams Number of streams song has
+     */
+    public Song(String songName, String genre, String releaseDate, int length, int numberOfStreams) {
+        this.songName = songName;
+        this.genre = genre;
+        this.releaseDate = releaseDate;
+        this.length = length;
+        this.numberOfStreams = numberOfStreams;
+    }
+
+    /**
      * Gets the songs ID number
      * @return Song's ID number
      */

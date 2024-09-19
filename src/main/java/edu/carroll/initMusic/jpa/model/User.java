@@ -1,10 +1,21 @@
 package edu.carroll.initMusic.jpa.model;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * <p>
@@ -17,6 +28,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     /**
      * Serial version ID
@@ -36,7 +48,6 @@ public class User {
      */
     @OneToMany(mappedBy = "author")
     private final Set<Playlist> playlists = new HashSet<>();
-
 
     /**
      * User's username
@@ -76,10 +87,36 @@ public class User {
 
     /**
      * Date user account was created.
-     * Has length of 10 for MM/DD/YYYY format
      */
-    @Column(name = "account_creation_date", nullable = false, length = 10)
-    private String accountCreationDate;
+    @CreatedDate
+    @Column(name = "account_creation_date", nullable = false)
+    private LocalDateTime accountCreationDate;
+
+    /**
+     * JPA needs this constructor to instantiate entities when retrieving data from the database.
+     * Its protected so it can't be used to create new Album objects by other classes.
+     */
+    protected User(){
+        //Default Constructor
+    }
+
+    /**
+     * Creates a user user instance
+     * @param username User's username
+     * @param hashedPassword User's password, hashed
+     * @param firstName User's first name
+     * @param lastName User's last name
+     * @param email User's email
+     * @param country User's country
+     */
+    public User(String username, String hashedPassword, String firstName, String lastName, String email, String country) {
+        this.username = username;
+        this.hashedPassword = hashedPassword;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.country = country;
+    }
 
     /**
      * Gets all playlists the user has
@@ -235,7 +272,7 @@ public class User {
      * Gets the date the account was created
      * @return The date the user's account was created
      */
-    public String getAccountCreationDate() {
+    public LocalDateTime getAccountCreationDate() {
         return accountCreationDate;
     }
 
@@ -243,7 +280,7 @@ public class User {
      * Sets the user's account creation date
      * @param accountCreationDate Date to set
      */
-    public void setAccountCreationDate(String accountCreationDate) {
+    public void setAccountCreationDate(LocalDateTime accountCreationDate) {
         this.accountCreationDate = accountCreationDate;
     }
 

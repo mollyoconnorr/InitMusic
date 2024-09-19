@@ -79,6 +79,52 @@ public class Artist {
     private String country;
 
     /**
+     * JPA needs this constructor to instantiate entities when retrieving data from the database.
+     * Its protected so it can't be used to create new Artist objects by other classes.
+     */
+    protected Artist() {
+        //Default Constructor
+    }
+
+    /**
+     * Creates new artist with given params
+     * @param artistFirstName Artists first name
+     * @param artistLastName Artists last name
+     * @param country Country artist is based in
+     */
+    public Artist(String artistFirstName, String artistLastName, String country) {
+        this.artistFirstName = artistFirstName;
+        this.artistLastName = artistLastName;
+        this.country = country;
+    }
+
+    /**
+     * Adds album to artist
+     * @param album Album to add
+     */
+    public void addAlbum(Album album) {
+        this.albums.add(album);
+        album.getArtists().add(this); // Keep the relationship bidirectional
+    }
+
+    /**
+     * Removes album from artist
+     * @param album Album to remove
+     */
+    public void removeAlbum(Album album) {
+        this.albums.remove(album);
+        album.getArtists().remove(this);
+    }
+
+    /**
+     * Gets all albums owned by artist
+     * @return Set of albums
+     */
+    public Set<Album> getAlbums() {
+        return albums;
+    }
+
+    /**
      * Gets ID of artist
      * @return ID of artist
      */
