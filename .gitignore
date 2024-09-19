@@ -38,3 +38,6 @@ out/
 
 ### LOGGING ###
 logs/
+
+### RANDOM ###
+.DS_STORE

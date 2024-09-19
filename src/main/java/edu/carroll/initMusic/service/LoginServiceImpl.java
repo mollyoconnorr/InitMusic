@@ -61,11 +61,8 @@ public class LoginServiceImpl implements LoginService {
         log.info("username:  {} password: {}",u.getUsername(), u.getHashedPassword());
         log.info("Hashed password in DB: {}", u.getHashedPassword());
         //If password is incorrect
-//        if(!passwordEncoder.matches(password, u.getHashedPassword())) {
-//            log.debug("validateUser: password !match");
-//            return false;
-//        }
-        if(!password.equals("supersecret")){
+        if(!passwordEncoder.matches(password, u.getHashedPassword())) {
+            log.debug("validateUser: password !match");
             return false;
         }
 
