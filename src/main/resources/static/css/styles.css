@@ -1,9 +1,21 @@
+/*
+ * CSS Styles for the application
+ */
+
+/*
+ * Sets the height for html and body elements to cover the full viewport height,
+ * and removes default margin and padding.
+ */
 html, body {
     height: 100%; /* Ensure the body and html elements cover the full viewport height */
     margin: 0; /* Remove default margin */
     padding: 0; /* Remove default padding */
 }
 
+/*
+ * Styles for the first body background.
+ * Applies a full-screen background image with centered positioning and fixed attachment.
+ */
 .body1 {
     background-image: url('/images/homeScreenImage.jpg');
     background-size: cover; /* Ensures the image covers the whole page */
@@ -16,6 +28,10 @@ html, body {
     justify-content: center; /* Horizontally center */
 }
 
+/*
+ * Styles for the second body background.
+ * Similar to .body1 but uses a different background image.
+ */
 .body2 {
     background-image: url('/images/concertHands.jpg');
     background-size: cover; /* Ensures the image covers the whole page */
@@ -28,17 +44,23 @@ html, body {
     justify-content: center; /* Horizontally center */
 }
 
+/*
+ * Styles for the centered box.
+ * Provides a semi-transparent background with padding and centered text.
+ */
 .centered-box {
     background-color: rgba(255, 255, 255, 0.7); /* Transparency effect */
     padding: 20px; /* Add some padding inside the box */
     text-align: center; /* Center text inside the box */
     width: 100%;
-    /* Optional: Set a maximum width and height for better control */
     max-height: 80%; /* Limit the box height */
     box-sizing: border-box; /* Include padding and border in the element’s total width and height */
 }
 
-/* Text styling */
+/*
+ * Styles for the primary text (p1).
+ * Sets color, font family, size, and line height.
+ */
 .p1 {
     color: #333; /* Text color */
     font-family: "Lucida Console", "Courier New", monospace; /* Font family */
@@ -48,6 +70,10 @@ html, body {
     padding: 0; /* Remove default padding */
 }
 
+/*
+ * Styles for the secondary text (p2).
+ * Similar to p1 but with a smaller font size.
+ */
 .p2 {
     color: #333; /* Text color */
     font-family: "Lucida Console", "Courier New", monospace; /* Font family */

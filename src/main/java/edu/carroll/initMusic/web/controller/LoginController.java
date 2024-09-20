@@ -14,18 +14,37 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller for handling login-related requests.
+ * <p>
+ * This class manages the login process, including displaying the login form,
+ * validating user credentials, and redirecting to success or failure pages.
+ * </p>
+ */
 @Controller
 public class LoginController {
     /**
-     * Logger object used for logging
+     * Logger object used for logging actions within this controller.
      */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
 
+    /**
+     * Constructs a LoginController with the specified LoginService.
+     *
+     * @param loginService the service used for validating user login attempts.
+     */
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
+
+    /**
+     * Displays the login page.
+     *
+     * @param model the model to be used in the view.
+     * @return the name of the login view.
+     */
     @GetMapping("/login")
     public String loginGet(Model model) {
         log.info("Get login page");
@@ -33,15 +52,23 @@ public class LoginController {
         return "login";
     }
 
+    /**
+     * Processes the login form submission.
+     *
+     * @param loginForm the login form submitted by the user.
+     * @param result    the result of the validation.
+     * @param attrs     attributes to be passed to the redirect.
+     * @return the name of the view to render.
+     */
     @PostMapping("/login")
     public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs) {
-        log.info("User '{}' attempted login",loginForm.getUsername());
+        log.info("User '{}' attempted login", loginForm.getUsername());
 
         if (result.hasErrors()) {
-            log.info("Validation errors ,{}", result.getAllErrors());
+            log.info("Validation errors: {}", result.getAllErrors());
             return "login";
         }
-        if (!loginService.validateUser(loginForm.getUsername(),loginForm.getPassword())) {
+        if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
             log.info("Username and password don't match for user '{}'", loginForm.getUsername());
             result.addError(new ObjectError("globalError", "Username and password do not match known users"));
             return "login";
@@ -51,11 +78,21 @@ public class LoginController {
         return "redirect:/loginSuccess";
     }
 
+    /**
+     * Displays the login success page.
+     *
+     * @return the name of the login success view.
+     */
     @GetMapping("/loginSuccess")
     public String loginSuccess() {
         return "loginSuccess";
     }
 
+    /**
+     * Displays the login failure page.
+     *
+     * @return the name of the login failure view.
+     */
     @GetMapping("/loginFailure")
     public String loginFailure() {
         return "loginFailure";

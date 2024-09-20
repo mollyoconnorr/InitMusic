@@ -8,30 +8,49 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Security configuration for the application.
+ * <p>
+ * This class configures the security settings for the web application, including
+ * authentication and authorization rules.
+ * </p>
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Bean for password encoding using BCrypt.
+     *
+     * @return a BCryptPasswordEncoder instance for encoding passwords.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the security filter chain for the application.
+     *
+     * @param http the HttpSecurity object to configure.
+     * @return the configured SecurityFilterChain.
+     * @throws Exception if an error occurs while configuring the security settings.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
-                        .requestMatchers("/login", "/register").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/login", "/register").permitAll() // Allow access to login and registration pages
+                        .anyRequest().authenticated() // Require authentication for all other requests
                 )
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .permitAll()
+                        .loginPage("/login") // Custom login page
+                        .permitAll() // Allow all to access the login page
                 )
-                .logout(LogoutConfigurer::permitAll
-                );
-        return http.build();
+                .logout(LogoutConfigurer::permitAll); // Allow all to logout
+
+        return http.build(); // Build the security filter chain
     }
 }
 
