@@ -7,6 +7,7 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * <p>
@@ -19,6 +20,7 @@ import org.springframework.data.annotation.CreatedDate;
  * @since September 11, 2024
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "playlist")
 public class Playlist {
     /**
@@ -62,15 +64,17 @@ public class Playlist {
     private LocalDateTime dateCreated;
 
     /**
-     * Number of songs in playlist
+     * Number of songs in playlist.
+     * Default of 0, because on creation, there are no songs in a playlist.
      */
-    @Column(name = "number_of_songs", nullable = false)
+    @Column(name = "number_of_songs", nullable = false, columnDefinition = "int default 0")
     private int numberOfSongs;
 
     /**
-     * Total length of all songs in playlist in minutes
+     * Total length of all songs in playlist in minutes.
+     * Default of 0, because on creation, there are no songs in a playlist.
      */
-    @Column(name = "total_song_length", nullable = false)
+    @Column(name = "total_song_length", nullable = false, columnDefinition = "int default 0")
     private int totalSongLength;
 
     /**
@@ -79,6 +83,16 @@ public class Playlist {
     */
     public Playlist() {
         //Default Constructor
+    }
+
+    /**
+     * Creates new playlist instance
+     * @param author Author of playlist
+     * @param playlistName Name of playlist
+     */
+    public Playlist(User author, String playlistName) {
+        this.author = author;
+        this.playlistName = playlistName;
     }
 
     /**
@@ -105,7 +119,10 @@ public class Playlist {
      * @param song Song to add
      */
     public void addSong(Song song) {
+
         this.songs.add(song);
+        this.numberOfSongs++;
+        this.totalSongLength += song.getLength();
     }
 
     /**
@@ -114,14 +131,29 @@ public class Playlist {
      * @return If song was removed or not
      */
     public boolean removeSong(Song song) {
-        return this.songs.remove(song);
+        boolean removed = this.songs.remove(song);
+        if (removed) {
+            this.numberOfSongs--;
+            this.totalSongLength -= song.getLength();
+            return removed;
+        }
+        return removed;
+    }
+
+    /**
+     * Checks if song is in playlist
+     * @param song Song to check for
+     * @return If song is in playlist, false otherwise
+     */
+    public boolean containsSong(Song song) {
+        return songs.contains(song);
     }
 
     /**
      * Gets the ID of the playlist
      * @return The playlist's ID
      */
-    public Integer getplaylistID() {
+    public Integer getPlaylistID() {
         return playlistID;
     }
 
@@ -129,7 +161,7 @@ public class Playlist {
      * Sets the ID of the playlist
      * @param playlistID The id to set
      */
-    public void setplaylistID(Integer playlistID) {
+    public void setPlaylistID(Integer playlistID) {
         this.playlistID = playlistID;
     }
 

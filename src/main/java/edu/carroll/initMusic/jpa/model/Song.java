@@ -167,15 +167,24 @@ public class Song {
      * Gets artists of song
      * @return The artists
      */
-    public Set<Artist> getArtist() {
+    public Set<Artist> getArtists() {
         return artists;
+    }
+
+    /**
+     * Checks if song was created by given artist
+     * @param artist Artist to check
+     * @return If artist created the song, false otherwise
+     */
+    public boolean isCreatedBy(Artist artist){
+        return artists.contains(artist);
     }
 
     /**
      * Sets the artists of song
      * @param artists Artists to set
      */
-    public void setArtist(Set<Artist> artists) {
+    public void setArtists(Set<Artist> artists) {
         this.artists = artists;
     }
 

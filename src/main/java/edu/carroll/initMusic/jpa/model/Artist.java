@@ -4,7 +4,16 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 /**
  * <p>
@@ -56,7 +65,7 @@ public class Artist {
             joinColumns = { @JoinColumn(name = "artistID") },
             inverseJoinColumns = { @JoinColumn(name = "songID")}
     )
-    private final Set<Song> songs = new HashSet<>();
+    private Set<Song> songs = new HashSet<>();
 
     /**
      * First name of artist
@@ -96,6 +105,72 @@ public class Artist {
         this.artistFirstName = artistFirstName;
         this.artistLastName = artistLastName;
         this.country = country;
+    }
+
+    /**
+     * Gets songs this artist created
+     * @return Set of songs
+     */
+    public Set<Song> getSongs() {
+        return songs;
+    }
+
+    /**
+     * Sets songs to new set of songs
+     * @param songs Song set to set
+     */
+    public void setSongs(Set<Song> songs) {
+        this.songs = songs;
+    }
+
+    /**
+     * Adds a new song to song set
+     * @param song Song to add
+     */
+    public void addSong(Song song) {
+        this.songs.add(song);
+    }
+
+    /**
+     * Removes a song from artist
+     * @param song Song to remove
+     */
+    public void removeSong(Song song) {
+        this.songs.remove(song);
+    }
+
+    /**
+     * Check if artist created a song
+     * @param song Song to check
+     * @return If artist created song, false otherwise
+     */
+    public boolean createdSong(Song song) {
+        return this.songs.contains(song);
+    }
+
+    /**
+     * Gets number of albums artist has
+     * @return Number of albums
+     */
+    public int getNumberOfAlbums() {
+        return albums.size();
+    }
+
+    /**
+     * Gets number of songs artist has made
+     * @return Number of songs
+     */
+    public int getNumberOfSongs() {
+        return this.songs.size();
+    }
+
+    /**
+     * Checks if artist created album
+     * @param a Album to check for
+     * @return If artist created album, false otherwise
+     */
+    public boolean createdAlbum(Album a) {
+        return this.albums.contains(a);
     }
 
     /**
