@@ -41,16 +41,29 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
-                        .requestMatchers("/login", "/register").permitAll() // Allow access to login and registration pages
-                        .anyRequest().authenticated() // Require authentication for all other requests
+                        .requestMatchers("/","/login", "/register","/loginSuccess").permitAll()   // Allow access to login and registration pages
+                        .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/login") // Custom login page
-                        .permitAll() // Allow all to access the login page
-                )
-                .logout(LogoutConfigurer::permitAll); // Allow all to logout
+                .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint
+                );
 
-        return http.build(); // Build the security filter chain
+        return http.build();
     }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
+//                        .requestMatchers("/login", "/register").permitAll() // Allow access to login and registration pages
+//                        .anyRequest().authenticated() // Require authentication for all other requests
+//                )
+//                .formLogin(formLogin -> formLogin
+//                        .loginPage("/login") // Custom login page
+//                        .permitAll() // Allow all to access the login page
+//                )
+//                .logout(LogoutConfigurer::permitAll); // Allow all to logout
+//
+//        return http.build(); // Build the security filter chain
+//    }
 }
 
