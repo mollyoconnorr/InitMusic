@@ -66,10 +66,18 @@ public class Album {
     private String releaseDate;
 
     /**
-     * Total length of album, which is the sum of the length of all songs in album
+     * Total length of album, which is the sum of the length of all songs in album.
+     * Default of 0, because on creation, there are no songs in an album.
      */
-    @Column(name = "total_song_length", nullable = false)
+    @Column(name = "total_song_length", nullable = false, columnDefinition = "int default 0")
     private int totalSongLength;
+
+    /**
+     * Number of songs in the album.
+     * Default of 0, because on creation, there are no songs in an album.
+     */
+    @Column(name = "number_of_songs", nullable = false, columnDefinition = "int default 0")
+    private int numberOfSongs;
 
     /**
      * JPA needs this constructor to instantiate entities when retrieving data from the database.
@@ -84,13 +92,27 @@ public class Album {
      * @param albumName Name of album
      * @param genre Genre of album
      * @param releaseDate Release date of album
-     * @param totalSongLength Total runtime of all songs
      */
-    public Album(String albumName, String genre, String releaseDate, int totalSongLength) {
+    public Album(String albumName, String genre, String releaseDate) {
         this.albumName = albumName;
         this.genre = genre;
         this.releaseDate = releaseDate;
-        this.totalSongLength = totalSongLength;
+    }
+
+    /**
+     * Gets number of songs in album
+     * @return Number of songs in album
+     */
+    public int getNumberOfSongs() {
+        return numberOfSongs;
+    }
+
+    /**
+     * Sets number of songs in album
+     * @param numberOfSongs  Number of songs in album to set
+     */
+    public void setNumberOfSongs(int numberOfSongs) {
+        this.numberOfSongs = numberOfSongs;
     }
 
     /**
@@ -120,6 +142,15 @@ public class Album {
     }
 
     /**
+     * Check if a artist made this album
+     * @param artist Album to check
+     * @return If artist made this album
+     */
+    public boolean madeByArtist(Artist artist) {
+        return this.artists.contains(artist);
+    }
+
+    /**
      * Gets ID of album
      * @return ID of album
      */
@@ -144,11 +175,33 @@ public class Album {
     }
 
     /**
+     * Checks if album contains song
+     * @param song Song to check for
+     * @return If album contains song, false otherwise
+     */
+    public boolean containsSong(Song song) {
+        return this.songs.contains(song);
+    }
+
+    /**
      * Adds song to album
      * @param song Song to add
      */
     public void addSong(Song song) {
+
         this.songs.add(song);
+        this.numberOfSongs++;
+        this.totalSongLength += song.getLength();
+    }
+
+    /**
+     * Removes song from album
+     * @param song Song to remove
+     */
+    public void removeSong(Song song) {
+        this.songs.remove(song);
+        this.numberOfSongs--;
+        this.totalSongLength -= song.getLength();
     }
 
     /**
