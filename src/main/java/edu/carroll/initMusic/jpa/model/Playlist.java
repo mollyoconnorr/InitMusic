@@ -258,10 +258,8 @@ public class Playlist {
         Playlist playlist = (Playlist) o;
         return numberOfSongs == playlist.numberOfSongs &&
                 totalSongLength == playlist.totalSongLength &&
-                Objects.equals(playlistID, playlist.playlistID) &&
                 Objects.equals(author, playlist.author) &&
-                Objects.equals(playlistName, playlist.playlistName) &&
-                Objects.equals(dateCreated, playlist.dateCreated);
+                Objects.equals(playlistName, playlist.playlistName);
     }
 
     /**
@@ -270,7 +268,7 @@ public class Playlist {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(playlistID, author, playlistName, dateCreated, numberOfSongs, totalSongLength);
+        return Objects.hash(author, playlistName, numberOfSongs, totalSongLength);
     }
 
     /**

@@ -28,7 +28,7 @@ public class AlbumTests {
     /**
      * Genre of album
      */
-    private static final String genre = "Software Enginering";
+    private static final String genre = "Software Engineering";
 
     /**
      * Release date of album
@@ -125,9 +125,9 @@ public class AlbumTests {
         //Testing equals
         final Album fakeAlbumTwo = new Album(albumName, genre, releaseDate);
         assertTrue("Fake albums should be equal", fakeAlbum.equals(fakeAlbumTwo));
-        fakeAlbumTwo.setAlbumID(10);
+        fakeAlbumTwo.setAlbumName("Random");
 
-        //Test equals function and that setAlbumID
+        //Test equals function and
         assertFalse("Fake albums should not be equal", fakeAlbum.equals(fakeAlbumTwo));
 
         //Testing hashCode

@@ -273,8 +273,7 @@ public class Artist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return Objects.equals(artistID, artist.artistID) &&
-                Objects.equals(artistFirstName, artist.artistFirstName) &&
+        return Objects.equals(artistFirstName, artist.artistFirstName) &&
                 Objects.equals(artistLastName, artist.artistLastName) &&
                 Objects.equals(country, artist.country);
     }
@@ -285,7 +284,7 @@ public class Artist {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(artistID, artistFirstName, artistLastName, country);
+        return Objects.hash(artistFirstName, artistLastName, country);
     }
 
     /**

@@ -297,7 +297,6 @@ public class Song {
         Song song = (Song) o;
         return length == song.length &&
                 numberOfStreams == song.numberOfStreams &&
-                Objects.equals(songID, song.songID) &&
                 Objects.equals(songName, song.songName) &&
                 Objects.equals(artists, song.artists) &&
                 Objects.equals(album, song.album) &&
@@ -311,7 +310,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songID, songName, artists, album, genre, releaseDate, length, numberOfStreams);
+        return Objects.hash(songName, artists, album, genre, releaseDate, length, numberOfStreams);
     }
 
     /**
@@ -325,10 +324,6 @@ public class Song {
         sb.append(", songName='").append(songName).append('\'');
         sb.append(", artist='").append(artists).append('\'');
         sb.append(", album='").append(album).append('\'');
-        sb.append(", genre='").append(genre).append('\'');
-        sb.append(", releaseDate='").append(releaseDate).append('\'');
-        sb.append(", length=").append(length);
-        sb.append(", numberOfStreams=").append(numberOfStreams);
         sb.append('}');
         return sb.toString();
     }

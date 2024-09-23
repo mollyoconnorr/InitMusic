@@ -93,12 +93,12 @@ public class PlaylistTests {
         //Testing equals
         final Playlist fakePlaylistTwo = new Playlist(author, playlistName);
         assertTrue("Fake playlists should be equal", fakePlaylist.equals(fakePlaylistTwo));
-        fakePlaylistTwo.setPlaylistID(10);
+        fakePlaylistTwo.setPlaylistName("Random");
 
         final LocalDateTime now = LocalDateTime.now();
         fakePlaylistTwo.setDateCreated(now);
 
-        //Test equals function and that setAlbumID and setDateCreated work
+        //Test equals function and setDateCreated work
         assertFalse("Fake playlists should not be equal", fakePlaylist.equals(fakePlaylistTwo));
 
         //Testing hashCode

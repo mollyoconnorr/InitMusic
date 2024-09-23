@@ -280,7 +280,6 @@ public class Album {
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
         return totalSongLength == album.totalSongLength &&
-                Objects.equals(albumID, album.albumID) &&
                 Objects.equals(songs, album.songs) &&
                 Objects.equals(albumName, album.albumName) &&
                 Objects.equals(genre, album.genre) &&
@@ -293,7 +292,7 @@ public class Album {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(albumID, songs, albumName, genre, releaseDate, totalSongLength);
+        return Objects.hash(songs, albumName, genre, releaseDate, totalSongLength);
     }
 
     /**

@@ -22,13 +22,17 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * <p>
  * This class is used to represent User objects, and maps to our database table.
  * </p>
+ * <p>
+ * The table is called users, instead of user, because 'user' is a reserved word in h2, and we could not use
+ * a in memory database to test our program without changing the name.
+ * </p>
  *
  * @author Nick Clouse
  *
  * @since September 11, 2024
  */
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
     /**
@@ -295,8 +299,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(userID, user.userID) &&
-                Objects.equals(username, user.username) &&
+        return Objects.equals(username, user.username) &&
                 Objects.equals(hashedPassword, user.hashedPassword) &&
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
@@ -309,7 +312,7 @@ public class User {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(userID, username, hashedPassword, firstName, lastName, email, country);
+        return Objects.hash(username, hashedPassword, firstName, lastName, email, country);
     }
 
     /**

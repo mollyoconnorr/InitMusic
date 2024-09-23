@@ -113,7 +113,7 @@ public class ArtistTests {
             assertTrue("Album should be related to artist", fakeArtist.createdAlbum(a));
         }
 
-        //Now lets remove a album and see if that works
+        //Now lets remove an album and see if that works
         final Object albumToRemove = albums.toArray()[0];
         fakeArtist.removeAlbum((Album)albumToRemove);
         albums.remove((Album)albumToRemove);
@@ -132,9 +132,9 @@ public class ArtistTests {
         //Testing equals
         final Artist fakeArtistTwo = new Artist(firstName, lastName, country);
         assertTrue("Fake artists should be equal", fakeArtist.equals(fakeArtistTwo));
-        fakeArtistTwo.setArtistID(10);
+        fakeArtistTwo.setArtistFirstName("Random");
 
-        //Test equals function and that setArtstID
+        //Test equals function
         assertFalse("Fake artists should not be equal", fakeArtist.equals(fakeArtistTwo));
 
         //Testing hashCode
