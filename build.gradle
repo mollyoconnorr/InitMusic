@@ -30,6 +30,8 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 //	Bcrypt implementation for password hashing
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	implementation 'org.json:json:20231013'
 }
 
 tasks.named('test') {

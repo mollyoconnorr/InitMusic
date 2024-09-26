@@ -22,24 +22,14 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @SpringBootTest
 public class ArtistTests {
     /**
-     * Artist first name
+     * Artist name
      */
-    private static final String firstName = "Nathan";
-
-    /**
-     * Artist last name
-     */
-    private static final String lastName = "Williams";
-
-    /**
-     * Artist country
-     */
-    private static final String country = "USA";
+    private static final String name = "Nathan Williams";
 
     /**
      * Artist used for testing
      */
-    private static Artist fakeArtist = new Artist(firstName, lastName, country);
+    private static Artist fakeArtist = new Artist(name);
 
     /**
      * Reinitialize fakeArtist before each test, so each test has a fresh
@@ -48,7 +38,7 @@ public class ArtistTests {
     @BeforeEach
     public void setUp() {
         // Initialize fakeArtist with no albums and the correct properties
-        fakeArtist = new Artist(firstName, lastName, country);
+        fakeArtist = new Artist(name);
     }
 
     /**
@@ -56,14 +46,10 @@ public class ArtistTests {
      */
     @Test
     public void verifyCreationOfArtistAndGetters(){
-        final String setFirstName = fakeArtist.getArtistFirstName();
-        final String setLastName = fakeArtist.getArtistLastName();
-        final String setCountry = fakeArtist.getCountry();
+        final String setName = fakeArtist.getArtistName();
         final Set<Album> albums = fakeArtist.getAlbums();
 
-        assertTrue("First name should match name from getter", setFirstName.equals(firstName));
-        assertTrue("Last name should match name from getter", setLastName.equals(lastName));
-        assertTrue("Country should match name from getter", setCountry.equals(country));
+        assertTrue("Name should match name from getter", setName.equals(name));
         assertTrue("Albums size should be 0", albums.isEmpty());
     }
 
@@ -76,7 +62,7 @@ public class ArtistTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i, "Software Engineering","00/00/0000", 60, 1);
+            final Song tempSong = new Song("Random" + i,"00/00/0000", 60);
             fakeArtist.addSong(tempSong);
             songs.add(tempSong);
         }
@@ -130,9 +116,9 @@ public class ArtistTests {
     @Test
     public void verifyMiscFunctions(){
         //Testing equals
-        final Artist fakeArtistTwo = new Artist(firstName, lastName, country);
+        final Artist fakeArtistTwo = new Artist(name);
         assertTrue("Fake artists should be equal", fakeArtist.equals(fakeArtistTwo));
-        fakeArtistTwo.setArtistFirstName("Random");
+        fakeArtistTwo.setArtistName("Random");
 
         //Test equals function
         assertFalse("Fake artists should not be equal", fakeArtist.equals(fakeArtistTwo));

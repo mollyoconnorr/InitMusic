@@ -62,7 +62,7 @@ public class PlaylistTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i, "Software Engineering","00/00/0000", 60, 1);
+            final Song tempSong = new Song("Random" + i,"00/00/0000", 60);
             fakePlaylist.addSong(tempSong);
             songs.add(tempSong);
         }

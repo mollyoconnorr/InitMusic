@@ -69,7 +69,7 @@ public class AlbumTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i, "Software Engineering","00/00/0000", 60, 1);
+            final Song tempSong = new Song("Random" + i,"00/00/0000", 60);
             fakeAlbum.addSong(tempSong);
             songs.add(tempSong);
         }
@@ -95,7 +95,7 @@ public class AlbumTests {
         final Set<Artist> artists = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Artist tempArtist = new Artist("Nathan" + i, "Williams","USA");
+            final Artist tempArtist = new Artist("Nathan Williams" + i);
             fakeAlbum.addArtist(tempArtist);
             artists.add(tempArtist);
         }

@@ -4,16 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 /**
  * <p>
@@ -45,7 +36,7 @@ public class Artist {
      * Album could have multiple artists and one artist can have
      * multiple albums
      */
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "artist_album",
             joinColumns = { @JoinColumn(name = "artistID") },
@@ -59,7 +50,7 @@ public class Artist {
      * Song could have multiple artists and one artist can have
      * multiple songs
      */
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch = FetchType.EAGER)
     @JoinTable(
             name = "artist_song",
             joinColumns = { @JoinColumn(name = "artistID") },
@@ -70,22 +61,8 @@ public class Artist {
     /**
      * First name of artist
      */
-    @Column(name = "artist_first_name", nullable = false)
-    private String artistFirstName;
-
-    /**
-     * Last name of artist.
-     * Can be nullable if artist goes by one name,
-     * like Drake, Marshmello, etc.
-     */
-    @Column(name = "artist_last_name", nullable = true)
-    private String artistLastName;
-
-    /**
-     * Country artist is based in
-     */
-    @Column(name = "country", nullable = false)
-    private String country;
+    @Column(name = "artist_name", nullable = false)
+    private String artistName;
 
     /**
      * JPA needs this constructor to instantiate entities when retrieving data from the database.
@@ -97,14 +74,10 @@ public class Artist {
 
     /**
      * Creates new artist with given params
-     * @param artistFirstName Artists first name
-     * @param artistLastName Artists last name
-     * @param country Country artist is based in
+     * @param artistName Artists name
      */
-    public Artist(String artistFirstName, String artistLastName, String country) {
-        this.artistFirstName = artistFirstName;
-        this.artistLastName = artistLastName;
-        this.country = country;
+    public Artist(String artistName) {
+        this.artistName = artistName;
     }
 
     /**
@@ -219,48 +192,16 @@ public class Artist {
      * Gets artists first name
      * @return Artist's first name
      */
-    public String getArtistFirstName() {
-        return artistFirstName;
+    public String getArtistName() {
+        return artistName;
     }
 
     /**
      * Sets artist's first name
-     * @param artistFirstName First name to set
+     * @param artistName First name to set
      */
-    public void setArtistFirstName(String artistFirstName) {
-        this.artistFirstName = artistFirstName;
-    }
-
-    /**
-     * Gets artist's last name
-     * @return Artist's last name
-     */
-    public String getArtistLastName() {
-        return artistLastName;
-    }
-
-    /**
-     * Sets the artist's last name
-     * @param artistLastName Last name to set
-     */
-    public void setArtistLastName(String artistLastName) {
-        this.artistLastName = artistLastName;
-    }
-
-    /**
-     * Gets country of artist
-     * @return The country artists is based in
-     */
-    public String getCountry() {
-        return country;
-    }
-
-    /**
-     * Sets artist's country
-     * @param country Country to set
-     */
-    public void setCountry(String country) {
-        this.country = country;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     /**
@@ -273,9 +214,7 @@ public class Artist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return Objects.equals(artistFirstName, artist.artistFirstName) &&
-                Objects.equals(artistLastName, artist.artistLastName) &&
-                Objects.equals(country, artist.country);
+        return Objects.equals(artistName, artist.getArtistName());
     }
 
     /**
@@ -284,7 +223,7 @@ public class Artist {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(artistFirstName, artistLastName, country);
+        return Objects.hash(artistName);
     }
 
     /**
@@ -295,9 +234,7 @@ public class Artist {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Artist{");
         sb.append("artistID=").append(artistID);
-        sb.append(", artistFirstName='").append(artistFirstName).append('\'');
-        sb.append(", artistLastName='").append(artistLastName).append('\'');
-        sb.append(", country='").append(country).append('\'');
+        sb.append(", artistName='").append(artistName).append('\'');
         sb.append('}');
         return sb.toString();
     }

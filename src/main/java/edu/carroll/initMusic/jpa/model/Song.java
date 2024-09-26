@@ -34,7 +34,7 @@ public class Song {
      * Set that keeps track of what playlists this song is in.
      * Many-to-Many relationship with Playlist class
      */
-    @ManyToMany(mappedBy = "songs")
+    @ManyToMany(mappedBy = "songs",cascade = CascadeType.ALL)
     private Set<Playlist> playlists = new HashSet<>();
 
     /**
@@ -48,7 +48,7 @@ public class Song {
      * Album song belongs to.
      * Many-to-One relationship with Album class
      */
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "albumID")
     private Album album;
 
@@ -59,14 +59,8 @@ public class Song {
     private String songName;
 
     /**
-     * Closest genre of music for song
-     */
-    @Column(name = "genre", nullable=false)
-    private String genre;
-
-    /**
      * Release date of song,
-     * Has length of 10 for MM/DD/YYYY format
+     * Has length of 10 for YYYY/MM/DD format
      */
     @Column(name = "release_date", length = 10)
     private String releaseDate;
@@ -76,12 +70,6 @@ public class Song {
      */
     @Column(name = "length", nullable=false)
     private int length;
-
-    /**
-     * Number of streams song has
-     */
-    @Column(name = "album_name", nullable=true)
-    private int numberOfStreams;
 
     /**
     * JPA needs this constructor to instantiate entities when retrieving data from the database.
@@ -94,17 +82,13 @@ public class Song {
     /**
      * Creates a new song instance
      * @param songName Name of song
-     * @param genre Genre of song
      * @param releaseDate Release date of song
      * @param length Length of song in seconds
-     * @param numberOfStreams Number of streams song has
      */
-    public Song(String songName, String genre, String releaseDate, int length, int numberOfStreams) {
+    public Song(String songName, String releaseDate, int length) {
         this.songName = songName;
-        this.genre = genre;
         this.releaseDate = releaseDate;
         this.length = length;
-        this.numberOfStreams = numberOfStreams;
     }
 
     /**
@@ -222,22 +206,6 @@ public class Song {
     }
 
     /**
-     * Gets genre of song
-     * @return The genre of song
-     */
-    public String getGenre() {
-        return genre;
-    }
-
-    /**
-     * Sets genre of song
-     * @param genre Genre to set
-     */
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    /**
      * Gets release date of song
      * @return Release date of song
      */
@@ -270,22 +238,6 @@ public class Song {
     }
 
     /**
-     * Gets number of streams song has
-     * @return The number of streams
-     */
-    public int getNumberOfStreams() {
-        return numberOfStreams;
-    }
-
-    /**
-     * Sets the number of streams
-     * @param numberOfStreams Number of streams to set
-     */
-    public void setNumberOfStreams(int numberOfStreams) {
-        this.numberOfStreams = numberOfStreams;
-    }
-
-    /**
      * Compares Song object to another Song object
      * @param o Object to compare to
      * @return If two objects are equal or not
@@ -296,11 +248,9 @@ public class Song {
         if (o == null || getClass() != o.getClass()) return false;
         Song song = (Song) o;
         return length == song.length &&
-                numberOfStreams == song.numberOfStreams &&
                 Objects.equals(songName, song.songName) &&
                 Objects.equals(artists, song.artists) &&
                 Objects.equals(album, song.album) &&
-                Objects.equals(genre, song.genre) &&
                 Objects.equals(releaseDate, song.releaseDate);
     }
 
@@ -310,7 +260,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songName, artists, album, genre, releaseDate, length, numberOfStreams);
+        return Objects.hash(songName, releaseDate, length);
     }
 
     /**
