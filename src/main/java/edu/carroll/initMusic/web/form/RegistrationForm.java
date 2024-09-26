@@ -4,7 +4,7 @@ package edu.carroll.initMusic.web.form;
  * A form object for handling user registration data.
  * <p>
  * This class encapsulates the user's registration information, including
- * the username, email, password, first name, last name, and country.
+ * the username, email, password, first name, and last name.
  * It provides getter and setter methods for accessing and modifying these fields.
  * </p>
  */
@@ -14,7 +14,6 @@ public class RegistrationForm {
     private String password;
     private String firstName;  // New attribute
     private String lastName;   // New attribute
-    private String country;    // New attribute
 
     /**
      * Gets the username.
@@ -70,6 +69,7 @@ public class RegistrationForm {
         this.password = password;
     }
 
+
     /**
      * Gets the user's first name.
      *
@@ -104,23 +104,5 @@ public class RegistrationForm {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    /**
-     * Gets the user's country.
-     *
-     * @return the country entered by the user.
-     */
-    public String getCountry() {
-        return country;
-    }
-
-    /**
-     * Sets the user's country.
-     *
-     * @param country the country to set.
-     */
-    public void setCountry(String country) {
-        this.country = country;
     }
 }

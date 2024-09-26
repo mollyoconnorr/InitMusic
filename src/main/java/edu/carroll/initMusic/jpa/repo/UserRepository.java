@@ -17,4 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * either an empty list or a single element.
      */
     List<User> findByUsernameIgnoreCase(String username);
+
+    /**
+     * Searches for a user by email (case-insensitive)
+     * @param email Email to search for
+     * @return Optional<User>, which is empty if no user is found
+     */
+    List<User> findByEmailIgnoreCase(String email);
 }

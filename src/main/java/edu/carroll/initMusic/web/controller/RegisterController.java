@@ -1,5 +1,7 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.service.LoginService;
 import edu.carroll.initMusic.web.form.RegistrationForm; // Ensure correct import
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import edu.carroll.initMusic.service.UserService; // Import UserService
 import org.springframework.beans.factory.annotation.Autowired; // Import Autowired
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpSession;
+
+
 
 /**
  * Controller for handling user registration.
@@ -18,6 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired; // Import Autowir
  */
 @Controller
 public class RegisterController {
+    /**
+     * Logger object used for logging actions within this controller.
+     */
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private UserService userService; // Inject UserService
@@ -41,11 +52,23 @@ public class RegisterController {
      * @return a redirect URL to the login page after successful registration.
      */
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationForm registrationForm) {
-        // Add logic to save the registration details to the database
-        userService.saveUser(registrationForm);
+    public String registerUser(@ModelAttribute RegistrationForm registrationForm, HttpSession httpSession) {
+        String username = registrationForm.getUsername();
+        String email = registrationForm.getEmail();
 
-        // Redirect to login page after successful registration
-        return "redirect:/login";
+        log.info("Attempting to register user with username: {} and email: {}", username, email);
+
+        if (userService.uniqueUser(username, email)) {
+            log.info("Unique user. Proceeding with registration for {}", username);
+            User currentUser = userService.saveUser(registrationForm); // Make sure this returns the User object
+
+            log.info("Storing current user in session: {}", currentUser);
+            // Store user in session
+            httpSession.setAttribute("currentUser", currentUser);
+            return "redirect:/securityQuestions";
+        } else {
+            log.info("Username or email already exists for {}", username);
+            return "redirect:/login";
+        }
     }
 }

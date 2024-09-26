@@ -34,11 +34,9 @@ public class DbInit {
         // If the user doesn't exist in the database, populate it
         final List<User> defaultUsers = loginRepo.findByUsernameIgnoreCase(defaultUsername);
         if (defaultUsers.isEmpty()) {
-            User defaultUser = new User(defaultUsername,passwordEncoder.encode(defaultPass), "cs341","user","cs341User@gmail.com","America");
+            User defaultUser = new User(defaultUsername,passwordEncoder.encode(defaultPass), "cs341","user","cs341User@gmail.com","null", "null", "null", "null");
 
             loginRepo.save(defaultUser);
         }
     }
-
-
 }

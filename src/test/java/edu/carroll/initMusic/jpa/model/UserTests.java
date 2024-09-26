@@ -45,14 +45,11 @@ public class UserTests {
     private static final String email = "john.doe@example.com";
 
     /**
-     * Fake country
-     */
-    private static final String country = "United States";
-
-    /**
      * fakeUser used for testing
      */
-    private final User fakeUser = new User(username, password, firstName, lastName, email, country);
+    private final User fakeUser = new User(username, password, firstName, lastName, email,
+            "What is your favorite color?", "What is your pet's name?",
+            "Blue", "Fluffy");
 
     /**
      * Testing user creation and getters
@@ -64,13 +61,11 @@ public class UserTests {
         final String setFirstName = fakeUser.getFirstName();
         final String setLastName = fakeUser.getLastName();
         final String setEmail = fakeUser.getEmail();
-        final String setCountry = fakeUser.getCountry();
         assertTrue("Set username should match username from getter", setUsername.equals(username));
         assertTrue("Set password should match password from getter", setPassword.equals(password));
         assertTrue("Set firstName should match first name from getter", setFirstName.equals(firstName));
         assertTrue("Set lastName should match last name from getter", setLastName.equals(lastName));
         assertTrue("Set email should match email from getter", setEmail.equals(email));
-        assertTrue("Set country should match country from getter", setCountry.equals(country));
     }
 
     /**
@@ -82,7 +77,7 @@ public class UserTests {
         playlist.setPlaylistName("playlist");
         fakeUser.addPlaylist(playlist);
         //Testing getPlaylist and getPlaylists
-        assertTrue("getPlaylists should be one playlist linked to user" ,fakeUser.getPlaylists().size() == 1);
+        assertTrue("getPlaylists should be one playlist linked to user", fakeUser.getPlaylists().size() == 1);
         assertTrue("getPlaylist should return playlist" ,fakeUser.getPlaylist("playlist").equals(playlist));
 
         //Testing playlist removal
@@ -96,7 +91,8 @@ public class UserTests {
     @Test
     public void verifyMiscFunctions(){
         //Testing equals
-        final User fakeUserTwo = new User(username, password, firstName, lastName, email, country);
+        final User fakeUserTwo = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
+                "Red", "Rex");
         assertTrue("Fake users should be equal", fakeUser.equals(fakeUserTwo));
         fakeUserTwo.setuserID(10);
 

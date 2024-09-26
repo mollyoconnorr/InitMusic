@@ -33,7 +33,8 @@ public class LoginServiceTests {
     @Autowired
     private UserRepository userRepo;
 
-    private User fakeUser = new User(username, password, firstName, lastName, email, country);
+    private User fakeUser = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
+            "Blue", "Fluffy");
 
     @BeforeAll
     public void beforeAllTest(){

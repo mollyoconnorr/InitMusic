@@ -81,10 +81,28 @@ public class User {
     private String email;
 
     /**
-     * User's country
+     * User's Security Question1
      */
-    @Column(name = "country", nullable = false)
-    private String country;
+    @Column(name = "question1")
+    private String question1;
+
+    /**
+     * User's Security Question2
+     */
+    @Column(name = "question2")
+    private String question2;
+
+    /**
+     * User's Security Answer1
+     */
+    @Column(name = "answer1")
+    private String answer1;
+
+    /**
+     * User's Security Answer2
+     */
+    @Column(name = "answer2")
+    private String answer2;
 
     /**
      * Date user account was created.
@@ -108,15 +126,22 @@ public class User {
      * @param firstName User's first name
      * @param lastName User's last name
      * @param email User's email
-     * @param country User's country
+     * @param question1 User's first security question
+     * @param question2 User's second security question
+     * @param answer1 User's answer to first security question
+     * @param answer2 User's answer second security question
      */
-    public User(String username, String hashedPassword, String firstName, String lastName, String email, String country) {
+    public User(String username, String hashedPassword, String firstName, String lastName, String email,
+    String question1, String question2, String answer1, String answer2) {
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.country = country;
+        this.question1 = question1;
+        this.question2 = question2;
+        this.answer1 = answer1;
+        this.answer2 = answer2;
     }
 
     /**
@@ -254,19 +279,65 @@ public class User {
     }
 
     /**
-     * Gets user's country
-     * @return User's country
+     * Gets user's first security question
+     * @return User's first security question
      */
-    public String getCountry() {
-        return country;
+    public String getQuestion1() {
+        return question1;
     }
 
     /**
-     * Sets user's country
-     * @param country Country to set
+     * Sets user's first security question
+     * @param question1 question to set
      */
-    public void setCountry(String country) {
-        this.country = country;
+    public void setQuestion1(String question1) {
+        this.question1 = question1;
+    }
+
+    /**
+     * Gets user's second security question
+     * @return User's second security question
+     */
+    public String getQuestion2() {
+        return question2;
+    }
+
+    /**
+     * Sets user's second security question
+     * @param question2 question to set
+     */
+    public void setQuestion2(String question2) {
+        this.question2 = question2;
+    }
+
+    /**
+     * Gets user's first security question answer
+     * @return User's first security question answer
+     */
+    public String getAnswer1() { return answer1;
+    }
+
+    /**
+     * Sets user's answer to first security question
+     * @param answer1 answer to question1
+     */
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
+    }
+
+    /**
+     * Gets user's second security question answer
+     * @return User's scond security question answer
+     */
+    public String getAnswer2() { return answer2;
+    }
+
+    /**
+     * Sets user's answer to second security question
+     * @param answer2 answer to question1
+     */
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
     }
 
     /**
@@ -300,7 +371,11 @@ public class User {
                 Objects.equals(hashedPassword, user.hashedPassword) &&
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email) && Objects.equals(country, user.country);
+                Objects.equals(email, user.email) &&
+                Objects.equals(question1, user.question1) &&
+                Objects.equals(question2, user.question2) &&
+                Objects.equals(answer1, user.answer1) &&
+                Objects.equals(answer2, user.answer2);
     }
 
     /**
@@ -309,7 +384,7 @@ public class User {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(userID, username, hashedPassword, firstName, lastName, email, country);
+        return Objects.hash(userID, username, hashedPassword, firstName, lastName, email);
     }
 
     /**
@@ -325,7 +400,6 @@ public class User {
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", email='").append(email).append('\'');
-        sb.append(", country='").append(country).append('\'');
         sb.append('}');
         return sb.toString();
     }

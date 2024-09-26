@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Questions</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="body2">
+<div class="centered-box">
+    <h2>Security Questions</h2>
+    <form th:action="@{/securityQuestions}" th:object="${securityQuestionsForm}" method="post">
+        <label for="question1">Select your first security question:</label><br>
+        <select id="question1" th:field="*{question1}" required>
+            <option value="What was your first pet's name?">What was your first pet's name?</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+            <option value="What was the make of your first car?">What was the make of your first car?</option>
+        </select><br><br>
+
+        <label for="answer1">Answer:</label><br>
+        <input type="text" id="answer1" th:field="*{answer1}" required><br><br>
+
+        <label for="question2">Select your second security question:</label><br>
+        <select id="question2" th:field="*{question2}" required>
+            <option value="What was the name of your elementary school?">What was the name of your elementary school?</option>
+            <option value="In what city were you born?">In what city were you born?</option>
+            <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+        </select><br><br>
+
+        <label for="answer2">Answer:</label><br>
+        <input type="text" id="answer2" th:field="*{answer2}" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>

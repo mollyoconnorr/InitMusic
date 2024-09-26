@@ -29,6 +29,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 //	Bcrypt implementation for password hashing
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1' // Add this line
+
 }
 
 tasks.named('test') {
