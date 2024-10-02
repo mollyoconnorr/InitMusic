@@ -62,7 +62,7 @@ public class ArtistTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i,"00/00/0000", 60);
+            final Song tempSong = new Song(1L,"Random" + i,"00/00/0000", 60,"Name",1,"Album",1);
             fakeArtist.addSong(tempSong);
             songs.add(tempSong);
         }

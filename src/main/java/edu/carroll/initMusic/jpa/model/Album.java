@@ -305,6 +305,7 @@ public class Album {
         sb.append(", genre='").append(genre).append('\'');
         sb.append(", releaseDate='").append(releaseDate).append('\'');
         sb.append(", totalSongLength=").append(totalSongLength);
+        sb.append(", artists=").append(artists);
         sb.append('}');
         return sb.toString();
     }

@@ -24,11 +24,11 @@ public class Song {
     private static final long serialVersionID = 1L;
 
     /**
-     * ID number for song. Automatically generated
+     * ID number for song. A songs id is its deezer ID,
+     * makes it easier to check if a song is in database or not.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer songID;
+    private Long songID;
 
     /**
      * Set that keeps track of what playlists this song is in.
@@ -72,6 +72,41 @@ public class Song {
     private int length;
 
     /**
+     * Name of artist who produced the song
+     */
+    @Column(name = "artist_name", nullable=false)
+    private String artistName;
+
+    /**
+     * Deezer ID of artist
+     */
+    @Column(name = "artist_id", nullable=false)
+    private long artistID;
+
+    /**
+     * Name of album this song is in
+     */
+    @Column(name = "album_name", nullable=false)
+    private String albumName;
+
+    /**
+     * Deezer ID of album
+     */
+    @Column(name = "album_id", nullable=false)
+    private long albumID;
+
+    /**
+     * Link to songs cover art
+     */
+    @Column(name = "song_img")
+    private String songImg;
+
+    /**
+     * Link to a preview of song, approx 30 sec long
+     */
+    private String songPreview;
+
+    /**
     * JPA needs this constructor to instantiate entities when retrieving data from the database.
     * Its protected so it can't be used to create new Album objects by other classes.
     */
@@ -80,22 +115,29 @@ public class Song {
     }
 
     /**
-     * Creates a new song instance
+     * @param songID Song's Deezer id
      * @param songName Name of song
-     * @param releaseDate Release date of song
      * @param length Length of song in seconds
+     * @param artistName Artist who made song
+     * @param artistID Deezer id of artist
+     * @param albumName Album song is in
+     * @param albumID Deezer id of album
      */
-    public Song(String songName, String releaseDate, int length) {
+    public Song(Long songID, String songName, int length, String artistName, long artistID, String albumName, long albumID) {
+        this.songID = songID;
         this.songName = songName;
-        this.releaseDate = releaseDate;
         this.length = length;
+        this.artistName = artistName;
+        this.artistID = artistID;
+        this.albumName = albumName;
+        this.albumID = albumID;
     }
 
     /**
      * Gets the songs ID number
      * @return Song's ID number
      */
-    public Integer getSongID() {
+    public Long getSongID() {
         return songID;
     }
 
@@ -103,7 +145,7 @@ public class Song {
      * Sets the song ID
      * @param songID ID to set
      */
-    public void setSongID(Integer songID) {
+    public void setSongID(Long songID) {
         this.songID = songID;
     }
 
@@ -237,6 +279,22 @@ public class Song {
         this.length = length;
     }
 
+    public String getSongImg() {
+        return songImg;
+    }
+
+    public void setSongImg(String songImg) {
+        this.songImg = songImg;
+    }
+
+    public String getSongPreview() {
+        return songPreview;
+    }
+
+    public void setSongPreview(String songPreview) {
+        this.songPreview = songPreview;
+    }
+
     /**
      * Compares Song object to another Song object
      * @param o Object to compare to
@@ -272,8 +330,8 @@ public class Song {
         final StringBuilder sb = new StringBuilder("Song{");
         sb.append("songID=").append(songID);
         sb.append(", songName='").append(songName).append('\'');
-        sb.append(", artist='").append(artists).append('\'');
-        sb.append(", album='").append(album).append('\'');
+        sb.append(", artist='").append(artistName).append('\'');
+        sb.append(", album='").append(albumName).append('\'');
         sb.append('}');
         return sb.toString();
     }
