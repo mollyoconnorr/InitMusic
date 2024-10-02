@@ -28,7 +28,7 @@ public class AlbumTests {
     /**
      * Genre of album
      */
-    private static final String genre = "Software Enginering";
+    private static final String genre = "Software Engineering";
 
     /**
      * Release date of album
@@ -69,7 +69,7 @@ public class AlbumTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i, "Software Engineering","00/00/0000", 60, 1);
+            final Song tempSong = new Song(1L,"Random" + i,"00/00/0000", 60,"Name",1,"Album",1);
             fakeAlbum.addSong(tempSong);
             songs.add(tempSong);
         }
@@ -95,7 +95,7 @@ public class AlbumTests {
         final Set<Artist> artists = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Artist tempArtist = new Artist("Nathan" + i, "Williams","USA");
+            final Artist tempArtist = new Artist("Nathan Williams" + i);
             fakeAlbum.addArtist(tempArtist);
             artists.add(tempArtist);
         }
@@ -125,9 +125,9 @@ public class AlbumTests {
         //Testing equals
         final Album fakeAlbumTwo = new Album(albumName, genre, releaseDate);
         assertTrue("Fake albums should be equal", fakeAlbum.equals(fakeAlbumTwo));
-        fakeAlbumTwo.setAlbumID(10);
+        fakeAlbumTwo.setAlbumName("Random");
 
-        //Test equals function and that setAlbumID
+        //Test equals function and
         assertFalse("Fake albums should not be equal", fakeAlbum.equals(fakeAlbumTwo));
 
         //Testing hashCode

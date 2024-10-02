@@ -43,8 +43,7 @@ public class Album {
      * Many-to-Many relationship with Artist class
      */
     @ManyToMany(mappedBy = "albums")
-    private Set<Artist> artists = new HashSet<>();
-
+    private final Set<Artist> artists = new HashSet<>();
 
     /**
      * Name of album
@@ -279,9 +278,7 @@ public class Album {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return totalSongLength == album.totalSongLength &&
-                Objects.equals(albumID, album.albumID) &&
-                Objects.equals(songs, album.songs) &&
+        return Objects.equals(artists, album.artists) &&
                 Objects.equals(albumName, album.albumName) &&
                 Objects.equals(genre, album.genre) &&
                 Objects.equals(releaseDate, album.releaseDate);
@@ -293,7 +290,7 @@ public class Album {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(albumID, songs, albumName, genre, releaseDate, totalSongLength);
+        return Objects.hash(albumName, genre, releaseDate, totalSongLength);
     }
 
     /**
@@ -308,6 +305,7 @@ public class Album {
         sb.append(", genre='").append(genre).append('\'');
         sb.append(", releaseDate='").append(releaseDate).append('\'');
         sb.append(", totalSongLength=").append(totalSongLength);
+        sb.append(", artists=").append(artists);
         sb.append('}');
         return sb.toString();
     }

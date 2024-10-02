@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Search</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/searchPage.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">initMusic</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Playlists</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Account
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <form action="#" th:action="@{/search}" method="post">
+    <label for="search">Search:</label>
+    <input type="text" id="search" name="query" placeholder="Search for a song...">
+    <button type="submit">Search</button>
+  </form>
+
+  <div th:if="${error}">
+    <p style="color:red;" th:text="${error}"></p>
+  </div>
+
+  <!-- Display Results if Search is Performed -->
+  <div th:if="${results != null and #lists.size(results) > 0}">
+    <h2>Results for "<span th:text="${query}"></span>"</h2>
+
+    <div class="list-group">
+      <div th:each="item : ${results}">
+        <div class="list-group-item list-group-item-action" style="display: flex; align-items: center;">
+          <!-- Image for the song -->
+          <img class="songImg" th:src="${item.songImg}" alt="Image for ${item}" />
+
+          <!-- Text for the song (can be clicked like a link if needed) -->
+          <span class="songText" th:value="${item}" th:text="${item}"></span>
+          <span th:text="${(item.length / 60) + ' min. ' + (item.length % 60) + ' sec.'}"></span>
+          <!-- Preview link -->
+          <a class="songPreview" th:href="${item.songPreview}">Preview</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display message if no results found -->
+  <div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
+    <p>No results found for "<span th:text="${query}"></span>".</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

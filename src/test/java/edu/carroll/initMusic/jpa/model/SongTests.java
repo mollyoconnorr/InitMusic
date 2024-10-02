@@ -26,11 +26,6 @@ public class SongTests {
     private static final String songName = "Fake Song";
 
     /**
-     * Fake genre
-     */
-    private static final String genre = "Pop";
-
-    /**
      * Fake release Date
      */
     private static final String releaseDate = "09/19/2024";
@@ -41,14 +36,9 @@ public class SongTests {
     private static final int length = 180;
 
     /**
-     * Fake streams
-     */
-    private static final int numberOfStreams = 123456;
-
-    /**
      * Fake song for testing
      */
-    private final Song fakeSong = new Song(songName, genre, releaseDate,length, numberOfStreams);
+    private final Song fakeSong = new Song(1L,songName, releaseDate,length, "name",1,"album",1);
 
     /**
      * Testing song creation and getters
@@ -56,16 +46,12 @@ public class SongTests {
     @Test
     public void verifyCreationOfUserAndGetters(){
         final String setName = fakeSong.getSongName();
-        final String setGenre = fakeSong.getGenre();
         final String setReleaseDate = fakeSong.getReleaseDate();
         final int setLength = fakeSong.getLength();
-        final int setNumberOfStreams = fakeSong.getNumberOfStreams();
 
         assertTrue("Set name matches name from getter", setName.equals(songName));
-        assertTrue("Set genre matches genre from getter", setGenre.equals(genre));
         assertTrue("Set release date matches release date from getter", setReleaseDate.equals(releaseDate));
         assertTrue("Set length matches length from getter", setLength == length);
-        assertTrue("setNumberOfStreams matches numberOfStreams from getter", setNumberOfStreams == numberOfStreams);
     }
 
     /**
@@ -85,7 +71,7 @@ public class SongTests {
         //Testing setting artists to new set
         final Set<Artist> artists = new HashSet<>();
         artists.add(fakeArtist);
-        final Artist fakeArtistTwo = new Artist("name","last","USA");
+        final Artist fakeArtistTwo = new Artist("name");
         artists.add(fakeArtistTwo);
         fakeSong.setArtists(artists);
         assertTrue("There should be two artists attached to the song", fakeSong.getArtists().size() == 2);
@@ -106,7 +92,7 @@ public class SongTests {
      */
     @Test
     public void verifyMiscFunctions(){
-        final Song fakeSongTwo = new Song(songName, genre, releaseDate, length, numberOfStreams);
+        final Song fakeSongTwo = new Song(1L,songName, releaseDate,length, "name",1,"album",1);
         assertTrue("Songs should be equal", fakeSongTwo.equals(fakeSong));
 
         fakeSongTwo.setSongName("NewName");

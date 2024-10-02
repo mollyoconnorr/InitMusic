@@ -24,17 +24,17 @@ public class Song {
     private static final long serialVersionID = 1L;
 
     /**
-     * ID number for song. Automatically generated
+     * ID number for song. A songs id is its deezer ID,
+     * makes it easier to check if a song is in database or not.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer songID;
+    private Long songID;
 
     /**
      * Set that keeps track of what playlists this song is in.
      * Many-to-Many relationship with Playlist class
      */
-    @ManyToMany(mappedBy = "songs")
+    @ManyToMany(mappedBy = "songs",cascade = CascadeType.ALL)
     private Set<Playlist> playlists = new HashSet<>();
 
     /**
@@ -48,7 +48,7 @@ public class Song {
      * Album song belongs to.
      * Many-to-One relationship with Album class
      */
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "albumID")
     private Album album;
 
@@ -59,14 +59,8 @@ public class Song {
     private String songName;
 
     /**
-     * Closest genre of music for song
-     */
-    @Column(name = "genre", nullable=false)
-    private String genre;
-
-    /**
      * Release date of song,
-     * Has length of 10 for MM/DD/YYYY format
+     * Has length of 10 for YYYY/MM/DD format
      */
     @Column(name = "release_date", length = 10)
     private String releaseDate;
@@ -78,10 +72,39 @@ public class Song {
     private int length;
 
     /**
-     * Number of streams song has
+     * Name of artist who produced the song
      */
-    @Column(name = "album_name", nullable=true)
-    private int numberOfStreams;
+    @Column(name = "artist_name", nullable=false)
+    private String artistName;
+
+    /**
+     * Deezer ID of artist
+     */
+    @Column(name = "artist_id", nullable=false)
+    private long artistID;
+
+    /**
+     * Name of album this song is in
+     */
+    @Column(name = "album_name", nullable=false)
+    private String albumName;
+
+    /**
+     * Deezer ID of album
+     */
+    @Column(name = "album_id", nullable=false)
+    private long albumID;
+
+    /**
+     * Link to songs cover art
+     */
+    @Column(name = "song_img")
+    private String songImg;
+
+    /**
+     * Link to a preview of song, approx 30 sec long
+     */
+    private String songPreview;
 
     /**
     * JPA needs this constructor to instantiate entities when retrieving data from the database.
@@ -92,26 +115,29 @@ public class Song {
     }
 
     /**
-     * Creates a new song instance
+     * @param songID Song's Deezer id
      * @param songName Name of song
-     * @param genre Genre of song
-     * @param releaseDate Release date of song
      * @param length Length of song in seconds
-     * @param numberOfStreams Number of streams song has
+     * @param artistName Artist who made song
+     * @param artistID Deezer id of artist
+     * @param albumName Album song is in
+     * @param albumID Deezer id of album
      */
-    public Song(String songName, String genre, String releaseDate, int length, int numberOfStreams) {
+    public Song(Long songID, String songName, int length, String artistName, long artistID, String albumName, long albumID) {
+        this.songID = songID;
         this.songName = songName;
-        this.genre = genre;
-        this.releaseDate = releaseDate;
         this.length = length;
-        this.numberOfStreams = numberOfStreams;
+        this.artistName = artistName;
+        this.artistID = artistID;
+        this.albumName = albumName;
+        this.albumID = albumID;
     }
 
     /**
      * Gets the songs ID number
      * @return Song's ID number
      */
-    public Integer getSongID() {
+    public Long getSongID() {
         return songID;
     }
 
@@ -119,7 +145,7 @@ public class Song {
      * Sets the song ID
      * @param songID ID to set
      */
-    public void setSongID(Integer songID) {
+    public void setSongID(Long songID) {
         this.songID = songID;
     }
 
@@ -222,22 +248,6 @@ public class Song {
     }
 
     /**
-     * Gets genre of song
-     * @return The genre of song
-     */
-    public String getGenre() {
-        return genre;
-    }
-
-    /**
-     * Sets genre of song
-     * @param genre Genre to set
-     */
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    /**
      * Gets release date of song
      * @return Release date of song
      */
@@ -269,20 +279,20 @@ public class Song {
         this.length = length;
     }
 
-    /**
-     * Gets number of streams song has
-     * @return The number of streams
-     */
-    public int getNumberOfStreams() {
-        return numberOfStreams;
+    public String getSongImg() {
+        return songImg;
     }
 
-    /**
-     * Sets the number of streams
-     * @param numberOfStreams Number of streams to set
-     */
-    public void setNumberOfStreams(int numberOfStreams) {
-        this.numberOfStreams = numberOfStreams;
+    public void setSongImg(String songImg) {
+        this.songImg = songImg;
+    }
+
+    public String getSongPreview() {
+        return songPreview;
+    }
+
+    public void setSongPreview(String songPreview) {
+        this.songPreview = songPreview;
     }
 
     /**
@@ -296,12 +306,9 @@ public class Song {
         if (o == null || getClass() != o.getClass()) return false;
         Song song = (Song) o;
         return length == song.length &&
-                numberOfStreams == song.numberOfStreams &&
-                Objects.equals(songID, song.songID) &&
                 Objects.equals(songName, song.songName) &&
                 Objects.equals(artists, song.artists) &&
                 Objects.equals(album, song.album) &&
-                Objects.equals(genre, song.genre) &&
                 Objects.equals(releaseDate, song.releaseDate);
     }
 
@@ -311,7 +318,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songID, songName, artists, album, genre, releaseDate, length, numberOfStreams);
+        return Objects.hash(songName, releaseDate, length);
     }
 
     /**
@@ -323,12 +330,8 @@ public class Song {
         final StringBuilder sb = new StringBuilder("Song{");
         sb.append("songID=").append(songID);
         sb.append(", songName='").append(songName).append('\'');
-        sb.append(", artist='").append(artists).append('\'');
-        sb.append(", album='").append(album).append('\'');
-        sb.append(", genre='").append(genre).append('\'');
-        sb.append(", releaseDate='").append(releaseDate).append('\'');
-        sb.append(", length=").append(length);
-        sb.append(", numberOfStreams=").append(numberOfStreams);
+        sb.append(", artist='").append(artistName).append('\'');
+        sb.append(", album='").append(albumName).append('\'');
         sb.append('}');
         return sb.toString();
     }

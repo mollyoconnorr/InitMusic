@@ -18,14 +18,14 @@ public interface SongRepository extends JpaRepository<Song, Long> {
      */
     List<Song> findBySongNameContainingIgnoreCaseOrderBySongName(String name);
 
+    List<Song> findBySongNameAndArtists_ArtistName(String songName, String artistName);
+
     /**
-     * Finds songs by artist, where artist first name is required, but last name is optional
-     * @param firstName Artist's first name
-     * @param lastName Artist's last name
+     * Finds songs by artist
+     * @param name Artist's name
      * @return List of songs found
      */
-    @Query("SELECT s FROM Song s JOIN s.artists a WHERE LOWER(a.artistFirstName) = LOWER(:firstName) AND (:lastName IS NULL OR LOWER(a.artistLastName) = LOWER(:lastName))")
-    List<Song> findByArtistName(@Param("firstName") String firstName, @Param("lastName") String lastName);
+    List<Song> findAllByArtists_ArtistName(String name);
 
     /**
      * Finds songs by album
