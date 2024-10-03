@@ -2,7 +2,9 @@ package edu.carroll.initMusic;
 
 import java.util.List;
 
+import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,9 +25,12 @@ public class DbInit {
 
     private final UserRepository loginRepo;
 
-    public DbInit(UserRepository loginRepo, BCryptPasswordEncoder passwordEncoder) {
+    private final PlaylistRepository playlistRepo;
+
+    public DbInit(UserRepository loginRepo, PlaylistRepository playlistRepo, BCryptPasswordEncoder passwordEncoder) {
         this.loginRepo = loginRepo;
         this.passwordEncoder = passwordEncoder;
+        this.playlistRepo = playlistRepo;
     }
 
     // invoked during application startup
@@ -35,6 +40,10 @@ public class DbInit {
         final List<User> defaultUsers = loginRepo.findByUsernameIgnoreCase(defaultUsername);
         if (defaultUsers.isEmpty()) {
             User defaultUser = new User(defaultUsername,passwordEncoder.encode(defaultPass), "cs341","user","cs341User@gmail.com","null", "null", "null", "null");
+            loginRepo.save(defaultUser);
+            Playlist p = new Playlist(defaultUser,"Playlist 1");
+            playlistRepo.save(p);
+            defaultUser.addPlaylist(p);
 
             loginRepo.save(defaultUser);
         }

@@ -22,7 +22,7 @@
             <a class="nav-link" href="/search">Search</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Playlists</a>
+            <a class="nav-link" href="/playlist">Playlists</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,7 +46,7 @@
   </form>
 
   <div th:if="${error}">
-    <p style="color:red;" th:text="${error}"></p>
+    <p th:text="${error}"></p>
   </div>
 
   <!-- Display Results if Search is Performed -->
@@ -55,11 +55,11 @@
 
     <div class="list-group">
       <div th:each="item : ${results}">
-        <div class="list-group-item list-group-item-action" style="display: flex; align-items: center;">
+        <div class="list-group-item list-group-item-action">
           <!-- Image for the song -->
           <img class="songImg" th:src="${item.songImg}" alt="Image for ${item}" />
 
-          <!-- Text for the song (can be clicked like a link if needed) -->
+          <!-- Text for the song -->
           <span class="songText" th:value="${item}" th:text="${item}"></span>
           <span th:text="${(item.length / 60) + ' min. ' + (item.length % 60) + ' sec.'}"></span>
           <!-- Preview link -->

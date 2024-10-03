@@ -1,6 +1,7 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.service.LoginService;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.carroll.initMusic.web.form.LoginForm;
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import java.util.ArrayList;
 
 /**
  * Controller for handling login-related requests.
@@ -61,7 +68,7 @@ public class LoginController {
      * @return the name of the view to render.
      */
     @PostMapping("/login")
-    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs) {
+    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs, HttpSession httpSession) {
         log.info("User '{}' attempted login", loginForm.getUsername());
 
         if (result.hasErrors()) {
@@ -74,8 +81,19 @@ public class LoginController {
             return "login";
         }
         attrs.addAttribute("username", loginForm.getUsername());
+        httpSession.setAttribute("currentUser", loginForm.getUsername());
         log.info("User '{}' logged in, showing loginSuccess page", loginForm.getUsername());
-        return "redirect:/loginSuccess";
+
+        // Programmatically authenticate user
+        Authentication auth = new UsernamePasswordAuthenticationToken(loginForm.getUsername(), null, new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            log.info("User '{}' is authenticated", authentication.getName());
+        }
+
+        return "redirect:/playlist";
     }
 
     /**

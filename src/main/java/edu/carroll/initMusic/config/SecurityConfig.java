@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * Security configuration for the application.
@@ -42,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword").permitAll()   // Allow access to login and registration pages
-                        .requestMatchers("/","/login", "/register","/loginSuccess","/search").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/","/login", "/register","/loginSuccess","/search","/playlist").permitAll()   // Allow access to login and registration pages
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint

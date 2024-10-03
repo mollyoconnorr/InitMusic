@@ -38,7 +38,7 @@ public class SongTests {
     /**
      * Fake song for testing
      */
-    private final Song fakeSong = new Song(1L,songName, releaseDate,length, "name",1,"album",1);
+    private final Song fakeSong = new Song(1L,songName,length, "name",1,"album",1);
 
     /**
      * Testing song creation and getters
@@ -92,7 +92,7 @@ public class SongTests {
      */
     @Test
     public void verifyMiscFunctions(){
-        final Song fakeSongTwo = new Song(1L,songName, releaseDate,length, "name",1,"album",1);
+        final Song fakeSongTwo = new Song(1L,songName,length, "name",1,"album",1);
         assertTrue("Songs should be equal", fakeSongTwo.equals(fakeSong));
 
         fakeSongTwo.setSongName("NewName");
