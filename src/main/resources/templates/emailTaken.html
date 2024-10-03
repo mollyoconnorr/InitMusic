@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Email Already Exists</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="body2">
+<div class="centered-box">
+    <h2>Email Already Exists</h2>
+
+    <p>The email address you entered is already associated with an account.</p>
+    <p>Please choose one of the following options:</p>
+
+    <p>
+        <a th:href="@{/changePassword}">Change Password</a> |
+        <a th:href="@{/login}">Login</a>
+    </p>
+</div>
+</body>
+</html>

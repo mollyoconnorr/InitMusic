@@ -23,6 +23,10 @@
 <body class="body2">
 <div class="centered-box">
 <h2>Register</h2>
+    <!-- Display error message if it exists -->
+    <div th:if="${errorMessage}" style="color: red;">
+        <p th:text="${errorMessage}"></p>
+    </div>
 <form th:action="@{/register}" th:object="${registrationForm}" method="post" onsubmit="return validatePassword()">
     <label for="firstName">First Name:</label><br>
     <input type="text" id="firstName" th:field="*{firstName}" required><br><br>

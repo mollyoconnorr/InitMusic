@@ -18,11 +18,4 @@ public interface LoginService {
      * @return Hashed password
      */
     String hashPassword(String password);
-
-    /**
-     * Given a createForm, determine if the information provided is valid and all conditions have been met,
-     * and add the user to the system
-     * @return true if the user has been added to the system, false otherwise
-     */
-    boolean addUser();
 }

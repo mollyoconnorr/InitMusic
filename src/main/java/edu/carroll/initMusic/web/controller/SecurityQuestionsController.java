@@ -33,16 +33,21 @@ public class SecurityQuestionsController {
     }
 
     @PostMapping("/securityQuestions")
-    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, HttpSession httpSession) {
+    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, HttpSession httpSession, Model model) {
         User currentUser = (User) httpSession.getAttribute("currentUser");
         if (currentUser != null) {
             log.info("Security questions submitted for user: {}", currentUser.getUsername());
             // Call the updated updateUser method, passing the user and the form
             userService.updateUser(currentUser, securityQuestionsForm);
+            model.addAttribute("username", currentUser.getUsername());
+            return "userRegistered";
         } else {
-            log.warn("No user found in session.");
-            return "redirect:/login";
+            log.warn("Security questions answered incorrectly for user: {}", currentUser.getUsername());
+            // Add an error message to the model
+            model.addAttribute("errorMessage", "Your answers to the security questions were incorrect. Please try again.");
         }
-        return "redirect:/login"; // Redirect after submission
+        // Add security questions to the model to display them again
+        model.addAttribute("securityQuestionsForm", securityQuestionsForm); // Preserve the submitted answers
+        return "securityQuestions"; // Return to the security questions view
     }
 }

@@ -42,6 +42,8 @@ public class PassSecurityController {
             } else {
                 // Provide feedback to the user
                 log.info("Answered Questions Wrong");
+                model.addAttribute("question1", currentUser.getQuestion1()); // Assuming you have this method
+                model.addAttribute("question2", currentUser.getQuestion2());
                 model.addAttribute("errorMessage", "Incorrect answers. Please try again.");
                 return "passSecurity"; // Return to the security questions page with an error message
             }

@@ -52,23 +52,34 @@ public class RegisterController {
      * @return a redirect URL to the login page after successful registration.
      */
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationForm registrationForm, HttpSession httpSession) {
+    public String registerUser(@ModelAttribute RegistrationForm registrationForm, HttpSession httpSession, Model model) {
         String username = registrationForm.getUsername();
         String email = registrationForm.getEmail();
 
         log.info("Attempting to register user with username: {} and email: {}", username, email);
 
-        if (userService.uniqueUser(username, email)) {
+        if (!userService.uniqueEmail(email)) {
+        log.info("Email already exists for {}", email);
+        // Redirect to a new page for users with existing emails
+        return "emailTaken"; // Redirect to email taken page
+        } else if (!userService.uniqueUserName(username)) {
+            log.info("Username or email already exists for {}", username);
+            // Set an error message
+            model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
+            // Return to the registration form with the error message
+            model.addAttribute("registrationForm", registrationForm); // Preserve the submitted data
+            return "register"; // Return to the registration view
+            // Check if the email is taken
+        } else if (userService.uniqueUserName(username) & userService.uniqueEmail(email)) {
             log.info("Unique user. Proceeding with registration for {}", username);
-            User currentUser = userService.saveUser(registrationForm); // Make sure this returns the User object
+            User currentUser = userService.saveUser(registrationForm); // Save the user
 
             log.info("Storing current user in session: {}", currentUser);
             // Store user in session
             httpSession.setAttribute("currentUser", currentUser);
             return "redirect:/securityQuestions";
-        } else {
-            log.info("Username or email already exists for {}", username);
-            return "redirect:/login";
         }
+        log.info("User did something very unexpected");
+        return "redirect:/login";
     }
 }

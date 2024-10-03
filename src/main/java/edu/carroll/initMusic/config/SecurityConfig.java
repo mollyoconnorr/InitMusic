@@ -41,7 +41,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
-                        .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions",
+                                "/changePasswordEmail", "/passSecurity", "/changePassword", "/emailTaken", "/userRegistered").permitAll()   // Allow access to login and registration pages
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint

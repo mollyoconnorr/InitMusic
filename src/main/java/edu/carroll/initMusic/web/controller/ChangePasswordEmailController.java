@@ -37,7 +37,6 @@ public class ChangePasswordEmailController {
     public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, HttpSession httpSession, Model model) {
         User user = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
         if (user != null) {
-            log.info("USER FOUND!");
             httpSession.setAttribute("currentUser", user);
 
             // Email exists, redirect to the security questions page
@@ -47,8 +46,9 @@ public class ChangePasswordEmailController {
             return "passSecurity"; // Change this to your Thymeleaf template for the security questions
         } else {
             // Email does not exist, return an error message
-            log.info( "No user found with this email.");
-            return "redirect:/login"; // Return to the email page with an error message
+            log.info("When trying to change password, no user found with this email.");
+            model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again."); // Add error message to model
+            return "changePasswordEmail";
         }
     }
 }

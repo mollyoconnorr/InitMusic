@@ -28,7 +28,6 @@ public class LoginServiceImpl implements LoginService {
      * Bcrypt password encoder, used for hashing passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
-
     /**
      * Constructor, makes a new loginServiceImpl object
      * @param userRepo UserRepository
@@ -58,8 +57,7 @@ public class LoginServiceImpl implements LoginService {
         }
         User u = users.getFirst();
 
-        log.info("username:  {} password: {}",u.getUsername(), u.getHashedPassword());
-        log.info("Hashed password in DB: {}", u.getHashedPassword());
+        log.info("username:  {} password: {}", u.getUsername(), u.getHashedPassword());
         //If password is incorrect
         if(!passwordEncoder.matches(password, u.getHashedPassword())) {
             log.debug("validateUser: password !match");
@@ -79,10 +77,5 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String hashPassword(String password) {
         return passwordEncoder.encode(password);
-    }
-
-    @Override
-    public boolean addUser() {
-        return false;
     }
 }

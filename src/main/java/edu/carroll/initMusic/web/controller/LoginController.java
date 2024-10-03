@@ -61,7 +61,7 @@ public class LoginController {
      * @return the name of the view to render.
      */
     @PostMapping("/login")
-    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs) {
+    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs, Model model) {
         log.info("User '{}' attempted login", loginForm.getUsername());
 
         if (result.hasErrors()) {
@@ -70,7 +70,8 @@ public class LoginController {
         }
         if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
             log.info("Username and password don't match for user '{}'", loginForm.getUsername());
-            result.addError(new ObjectError("globalError", "Username and password do not match known users"));
+            // Add error message to the model
+            model.addAttribute("errorMessage", "That username and password don't match.");
             return "login";
         }
         attrs.addAttribute("username", loginForm.getUsername());

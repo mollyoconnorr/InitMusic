@@ -25,7 +25,6 @@ public class LoginServiceTests {
     private static final String firstName = "John";
     private static final String lastName = "Doe";
     private static final String email = "john.doe@example.com";
-    private static final String country = "United States";
 
     @Autowired
     private LoginService loginService;

@@ -8,6 +8,10 @@
 <body class="body2">
 <div class="centered-box">
   <h2>Login</h2>
+  <div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+  </div>
+
   <form th:action="@{/login}" th:object="${loginForm}" method="post">
     <label for="username">Username:</label><br>
     <input type="text" id="username" th:field="*{username}" placeholder="Username" required><br><br>

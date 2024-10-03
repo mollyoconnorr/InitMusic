@@ -32,8 +32,13 @@ public class NewPasswordController {
     @PostMapping("/changePassword")
     public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession httpSession, Model model) {
         User currentUser = (User) httpSession.getAttribute("currentUser"); // Ensure this attribute is set in the session
-        log.info("Security questions submitted for user: {}", currentUser.getUsername());
-        userService.updatePassword(currentUser, passwordForm.getNewPassword());
-        return "redirect:/login"; // Redirect to login if no user is found
+        if (currentUser != null) {
+            log.info("Password changed for {}", currentUser.getUsername());
+            userService.updatePassword(currentUser, passwordForm.getNewPassword());
+            return "passwordChanged"; // Redirect to the password changed page
+        } else {
+            log.error("No user found in session.");
+            return "redirect:/login"; // Redirect to login if no user is found
+        }
     }
 }

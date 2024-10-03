@@ -46,13 +46,12 @@ public class UserService {
      *
      * @param registrationForm the form containing user registration details.
      */
-    public boolean uniqueUser(String username, String email) {
+    public boolean uniqueUserName(String username) {
         List<User> usersByName = userRepository.findByUsernameIgnoreCase(username);
-        List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
 
         // If either username or email exists, return false
-        if (!usersByName.isEmpty() || !usersByEmail.isEmpty()) {
-            log.info("Username or email already exists");
+        if (!usersByName.isEmpty()) {
+            log.info("Username already exists");
             return false;
         } else {
             log.info("User doesn't exist, registration is allowed");
@@ -60,6 +59,23 @@ public class UserService {
         }
     }
 
+    /**
+     * Checks to see if the username or email already exists in database
+     *
+     * @param registrationForm the form containing user registration details.
+     */
+    public boolean uniqueEmail(String email) {
+        List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
+
+        // If either username or email exists, return false
+        if ( !usersByEmail.isEmpty()) {
+            log.info("Email already exists");
+            return false;
+        } else {
+            log.info("User doesn't exist, registration is allowed");
+            return true;
+        }
+    }
 
     /**
      * Saves a new user based on the provided registration form data.
@@ -68,10 +84,11 @@ public class UserService {
      * @return
      */
     public User saveUser(RegistrationForm registrationForm) {
-        User user = new User();
         user.setUsername(registrationForm.getUsername());
         user.setEmail(registrationForm.getEmail());
-        user.setHashedPassword(passwordEncoder.encode(registrationForm.getPassword())); // Hash the password
+        String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
+        user.setHashedPassword(hashedPassword);
+        log.info("Hashed Password for user '{}': {}", user.getUsername(), hashedPassword);
         user.setFirstName(registrationForm.getFirstName());
         user.setLastName(registrationForm.getLastName());
         user.setQuestion1("null");
