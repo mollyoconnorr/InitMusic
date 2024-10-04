@@ -91,8 +91,9 @@ public class UserTests {
     @Test
     public void verifyMiscFunctions(){
         //Testing equals
-        final User fakeUserTwo = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
-                "Red", "Rex");
+        final User fakeUserTwo = new User(username, password, firstName, lastName, email,
+                "What is your favorite color?", "What is your pet's name?",
+                "Blue", "Fluffy");
         assertTrue("Fake users should be equal", fakeUser.equals(fakeUserTwo));
         fakeUserTwo.setUsername("random");
 

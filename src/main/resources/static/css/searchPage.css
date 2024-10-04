@@ -13,6 +13,14 @@
     margin-left: 10px;
 }
 
-.songPreview{
+.btn{
+    width: 14vw;
+    height: 3vh;
+    font-size: 1vw;
+    text-align: center;
+    vertical-align: center;
+}
 
+.dropdown-item, .dropdown-menu{
+    cursor: pointer;
 }

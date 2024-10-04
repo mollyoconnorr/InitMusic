@@ -26,11 +26,6 @@ public class SongTests {
     private static final String songName = "Fake Song";
 
     /**
-     * Fake release Date
-     */
-    private static final String releaseDate = "09/19/2024";
-
-    /**
      * Fake length of song
      */
     private static final int length = 180;
@@ -46,11 +41,9 @@ public class SongTests {
     @Test
     public void verifyCreationOfUserAndGetters(){
         final String setName = fakeSong.getSongName();
-        final String setReleaseDate = fakeSong.getReleaseDate();
         final int setLength = fakeSong.getLength();
 
         assertTrue("Set name matches name from getter", setName.equals(songName));
-        assertTrue("Set release date matches release date from getter", setReleaseDate.equals(releaseDate));
         assertTrue("Set length matches length from getter", setLength == length);
     }
 

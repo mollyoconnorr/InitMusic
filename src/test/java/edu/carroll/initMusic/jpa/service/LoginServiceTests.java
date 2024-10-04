@@ -25,7 +25,6 @@ public class LoginServiceTests {
     private static final String firstName = "John";
     private static final String lastName = "Doe";
     private static final String email = "john.doe@example.com";
-    private static final String country = "United States";
 
     @Autowired
     private LoginService loginService;
@@ -33,7 +32,7 @@ public class LoginServiceTests {
     @Autowired
     private UserRepository userRepo;
 
-    private User fakeUser = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
+    private final User fakeUser = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
             "Blue", "Fluffy");
 
     @BeforeAll
@@ -70,8 +69,6 @@ public class LoginServiceTests {
         assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an invalid user, valid pass", loginService.validateUser(username + "not", password));
         assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an empty user, valid pass", loginService.validateUser(" ", password));
         assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an valid user + a space, valid pass", loginService.validateUser(username + " ", password));
-
-
     }
 
     @Test

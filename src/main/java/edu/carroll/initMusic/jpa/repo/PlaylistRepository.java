@@ -8,7 +8,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 /**
+ * <p>
  * Repository used for performing CRUD actions on the Playlist Entity
+ * </p>
+ *
+ * @author Nick Clouse
+ *
+ * @since September 11, 2024
  */
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     /**
@@ -25,4 +31,11 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
      * @return List of all playlists found related to given name.
      */
     List<Playlist> findByPlaylistNameContainingIgnoreCase(String name);
+
+    /**
+     * Finds playlist by its id
+     * @param id ID to check for
+     * @return List of all playlists found with given id (Should only be 1)
+     */
+    List<Playlist> findByPlaylistIDEquals(Long id);
 }

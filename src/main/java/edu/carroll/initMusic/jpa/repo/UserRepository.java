@@ -6,7 +6,13 @@ import edu.carroll.initMusic.jpa.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Repository used for performing CRUD actions on the user Entity
+ * <p>
+ * Repository used for performing CRUD actions on the User Entity
+ * </p>
+ *
+ * @author Nick Clouse
+ *
+ * @since September 11, 2024
  */
 public interface UserRepository extends JpaRepository<User, Long> {
     /**

@@ -34,7 +34,7 @@ public class Song {
      * Set that keeps track of what playlists this song is in.
      * Many-to-Many relationship with Playlist class
      */
-    @ManyToMany(mappedBy = "songs",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "songs", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Playlist> playlists = new HashSet<>();
 
     /**
@@ -279,20 +279,100 @@ public class Song {
         this.length = length;
     }
 
+    /**
+     * Gets the cover art for the song
+     * @return The songs cover art url
+     */
     public String getSongImg() {
         return songImg;
     }
 
+    /**
+     * Sets the songs cover art
+     * @param songImg Image url to set
+     */
     public void setSongImg(String songImg) {
         this.songImg = songImg;
     }
 
+    /**
+     * Gets the url for the songs preview
+     * @return The url for the songs preview
+     */
     public String getSongPreview() {
         return songPreview;
     }
 
+    /**
+     * Sets the url for the songs preview
+     * @param songPreview Url to set
+     */
     public void setSongPreview(String songPreview) {
         this.songPreview = songPreview;
+    }
+
+    /**
+     * Gets name of artist who made song
+     * @return Name of artist who made song
+     */
+    public String getArtistName() {
+        return artistName;
+    }
+
+    /**
+     * Sets name of artist that made song
+     * @param artistName Name to set
+     */
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
+    /**
+     * Gets Deezer id of artist
+     * @return Deezer id of artist
+     */
+    public long getArtistID() {
+        return artistID;
+    }
+
+    /**
+     * Sets id of artist
+     * @param artistID Id to set
+     */
+    public void setArtistID(long artistID) {
+        this.artistID = artistID;
+    }
+
+    /**
+     * Gets name of songs' album
+     * @return Name of album
+     */
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    /**
+     * Sets name of songs' album
+     * @param albumName Name to set
+     */
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
+
+    /**
+     * Gets Deezer ID of songs' album
+     * @return ID of album
+     */
+    public long getAlbumID() {
+        return albumID;
+    }
+
+    /**
+     * Sets Deezer ID of songs' album
+     * @param albumID ID to set
+     */
+    public void setAlbumID(long albumID) {
+        this.albumID = albumID;
     }
 
     /**
@@ -304,12 +384,8 @@ public class Song {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Song song = (Song) o;
-        return length == song.length &&
-                Objects.equals(songName, song.songName) &&
-                Objects.equals(artists, song.artists) &&
-                Objects.equals(album, song.album) &&
-                Objects.equals(releaseDate, song.releaseDate);
+        final Song song = (Song) o;
+        return length == song.length && artistID == song.artistID && albumID == song.albumID && Objects.equals(songID, song.songID) && Objects.equals(songName, song.songName) && Objects.equals(artistName, song.artistName) && Objects.equals(albumName, song.albumName) && Objects.equals(songImg, song.songImg) && Objects.equals(songPreview, song.songPreview);
     }
 
     /**
@@ -318,7 +394,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songName, releaseDate, length);
+        return Objects.hash(songName, length, songID,artistName, artistID, album, albumID);
     }
 
     /**
@@ -328,10 +404,15 @@ public class Song {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Song{");
-        sb.append("songID=").append(songID);
-        sb.append(", songName='").append(songName).append('\'');
-        sb.append(", artist='").append(artistName).append('\'');
-        sb.append(", album='").append(albumName).append('\'');
+        sb.append("songName='").append(songName).append('\'');
+        sb.append(", songID=").append(songID);
+        sb.append(", artistName='").append(artistName).append('\'');
+        sb.append(", artistID=").append(artistID);
+        sb.append(", albumName='").append(albumName).append('\'');
+        sb.append(", albumID=").append(albumID);
+        sb.append(", length=").append(length);
+        sb.append(", songImg='").append(songImg).append('\'');
+        sb.append(", songPreview='").append(songPreview).append('\'');
         sb.append('}');
         return sb.toString();
     }

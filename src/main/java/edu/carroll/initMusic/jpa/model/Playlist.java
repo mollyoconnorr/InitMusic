@@ -33,7 +33,7 @@ public class Playlist {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer playlistID;
+    private Long playlistID;
 
     /**
      * ID of author who made playlist. A Many to one relationship.
@@ -151,9 +151,10 @@ public class Playlist {
 
     /**
      * Gets the ID of the playlist
+     *
      * @return The playlist's ID
      */
-    public Integer getPlaylistID() {
+    public Long getPlaylistID() {
         return playlistID;
     }
 
@@ -161,7 +162,7 @@ public class Playlist {
      * Sets the ID of the playlist
      * @param playlistID The id to set
      */
-    public void setPlaylistID(Integer playlistID) {
+    public void setPlaylistID(Long playlistID) {
         this.playlistID = playlistID;
     }
 

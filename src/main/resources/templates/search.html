@@ -16,9 +16,6 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="/login">Home</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/search">Search</a>
           </li>
           <li class="nav-item">
@@ -39,6 +36,8 @@
     </div>
   </nav>
 
+  <p th:text="${currentUser.getUsername()} + ' Search:'">Default message if not set</p>
+
   <form action="#" th:action="@{/search}" method="post">
     <label for="search">Search:</label>
     <input type="text" id="search" name="query" placeholder="Search for a song...">
@@ -57,13 +56,36 @@
       <div th:each="item : ${results}">
         <div class="list-group-item list-group-item-action">
           <!-- Image for the song -->
-          <img class="songImg" th:src="${item.songImg}" alt="Image for ${item}" />
+          <img class="songImg" th:src="${item.getSongImg()}" alt="Image for ${item}" />
 
           <!-- Text for the song -->
           <span class="songText" th:value="${item}" th:text="${item}"></span>
-          <span th:text="${(item.length / 60) + ' min. ' + (item.length % 60) + ' sec.'}"></span>
+          <span th:text="${(item.getLength() / 60) + ' min. ' + (item.getLength() % 60) + ' sec.'}"></span>
           <!-- Preview link -->
-          <a class="songPreview" th:href="${item.songPreview}">Preview</a>
+          <a class="songPreview" th:href="${item.getSongPreview()}">Preview</a>
+
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Add to playlist
+            </button>
+            <ul class="dropdown-menu" th:each="playlist : ${currentUser.getPlaylists()}">
+              <th:block th:each="playlist : ${currentUser.getPlaylists()}">
+                <li>
+                  <form th:action="@{/addSongToPlaylist}" method="post" th:object="${item}">
+                    <input type="hidden" name="songID" th:value="${item.getSongID()}" />
+                    <input type="hidden" name="songName" th:value="${item.getSongName()}" />
+                    <input type="hidden" name="length" th:value="${item.getLength()}" />
+                    <input type="hidden" name="artistName" th:value="${item.getArtistName()}" />
+                    <input type="hidden" name="artistID" th:value="${item.getArtistID()}" />
+                    <input type="hidden" name="albumName" th:value="${item.getAlbumName()}" />
+                    <input type="hidden" name="albumID" th:value="${item.getAlbumID()}" />
+                    <input type="hidden" name="playlistId" th:value="${playlist.getPlaylistID()}" />
+                    <button type="submit" class="dropdown-item" th:text="${playlist.getPlaylistName()}"></button>
+                  </form>
+                </li>
+              </th:block>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
