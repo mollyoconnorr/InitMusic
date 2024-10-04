@@ -63,7 +63,7 @@ public class RegisterController {
         // Redirect to a new page for users with existing emails
         return "emailTaken"; // Redirect to email taken page
         } else if (!userService.uniqueUserName(username)) {
-            log.info("Username or email already exists for {}", username);
+            log.info("Username already exists for {}", username);
             // Set an error message
             model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
             // Return to the registration form with the error message

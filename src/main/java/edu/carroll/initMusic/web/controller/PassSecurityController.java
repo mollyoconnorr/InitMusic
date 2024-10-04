@@ -41,7 +41,7 @@ public class PassSecurityController {
                 return "changePassword"; // Redirect to the change password page
             } else {
                 // Provide feedback to the user
-                log.info("Answered Questions Wrong");
+                log.info("Answered Security Questions Wrong");
                 model.addAttribute("question1", currentUser.getQuestion1()); // Assuming you have this method
                 model.addAttribute("question2", currentUser.getQuestion2());
                 model.addAttribute("errorMessage", "Incorrect answers. Please try again.");

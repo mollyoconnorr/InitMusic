@@ -10,27 +10,35 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Login Service Implementation, used for handling logging in and account creation
+ * Login Service Implementation, used for handling user login and account creation.
+ * <p>
+ * This service interacts with the {@link UserRepository} to validate users during login and
+ * manages password hashing using {@link BCryptPasswordEncoder}.
+ * </p>
  */
 @Service
 public class LoginServiceImpl implements LoginService {
+
     /**
-     * Logger object used for logging
+     * Logger object used for logging activities within the LoginServiceImpl.
      */
     private static final Logger log = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     /**
-     * User repository
+     * User repository for interacting with the user data in the database.
      */
     private final UserRepository userRepo;
 
     /**
-     * Bcrypt password encoder, used for hashing passwords.
+     * BCrypt password encoder for securely hashing passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
+
     /**
-     * Constructor, makes a new loginServiceImpl object
-     * @param userRepo UserRepository
+     * Constructor to initialize the LoginServiceImpl with the required dependencies.
+     *
+     * @param userRepo the repository used for managing user data
+     * @param passwordEncoder the password encoder used for hashing passwords
      */
     public LoginServiceImpl(UserRepository userRepo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
@@ -38,44 +46,50 @@ public class LoginServiceImpl implements LoginService {
     }
 
     /**
-     * Given a loginForm, determine if the information provided is valid, and the user exists in the system.
+     * Validates the provided username and password by checking the user data stored in the repository.
      *
-     * @param username Users username
-     * @param password Users password
-     * @return true if data exists and matches what's on record, false otherwise
+     * @param username the username provided by the user during login
+     * @param password the password provided by the user during login
+     * @return true if the user exists and the password matches; false otherwise
      */
     @Override
     public boolean validateUser(String username, String password) {
-        log.debug("validateUser: user '{}' attempted login", username);
-        // Always do the lookup in a case-insensitive manner (lower-casing the data).
+        log.info("validateUser: Attempting to validate user '{}' for login", username);
+
+        // Perform a case-insensitive search for the user in the repository.
         List<User> users = userRepo.findByUsernameIgnoreCase(username);
 
-        // We expect 0 or 1, so if we get more than 1, bail out as this is an error we don't deal with properly.
+        // Check if exactly one user is found. If zero or more than one are found, return false.
         if (users.size() != 1) {
-            log.debug("validateUser: found {} users", users.size());
-            return false;
-        }
-        User u = users.getFirst();
-
-        log.info("username:  {} password: {}", u.getUsername(), u.getHashedPassword());
-        //If password is incorrect
-        if(!passwordEncoder.matches(password, u.getHashedPassword())) {
-            log.debug("validateUser: password !match");
+            log.info("validateUser: Found {} users with username '{}'", users.size(), username);
             return false;
         }
 
-        // User exists, and the provided password matches the hashed password in the database.
-        log.info("validateUser: successful login for {}", username);
+        User u = users.get(0);
+        log.info("validateUser: User '{}' found with hashed password: {}", u.getUsername(), u.getHashedPassword());
+
+        // Check if the provided password matches the hashed password stored in the database.
+        if (!passwordEncoder.matches(password, u.getHashedPassword())) {
+            log.info("validateUser: Password does not match for user '{}'", username);
+            return false;
+        }
+
+        // User exists, and the password matches the stored hash.
+        log.info("validateUser: Successful login for user '{}'", username);
         return true;
     }
 
     /**
-     * Hashes password using Bcrypt algorithm
-     * @param password Password to hash
-     * @return Hashed password
+     * Hashes the provided password using the BCrypt algorithm.
+     *
+     * @param password the raw password to hash
+     * @return the hashed password
      */
     @Override
     public String hashPassword(String password) {
-        return passwordEncoder.encode(password);
+        log.info("hashPassword: Hashing password using BCrypt");
+        String hashedPassword = passwordEncoder.encode(password);
+        log.info("hashPassword: Password successfully hashed");
+        return hashedPassword;
     }
 }

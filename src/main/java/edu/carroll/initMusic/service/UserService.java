@@ -4,7 +4,6 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -15,7 +14,8 @@ import java.util.List;
 /**
  * Service class for handling user-related operations.
  * <p>
- * This class provides methods for saving user information and managing user data.
+ * This class provides methods for saving user information, checking unique usernames/emails,
+ * updating security questions, and managing passwords.
  * </p>
  */
 @Service
@@ -24,55 +24,60 @@ public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     /**
-     * User repository
+     * User repository for interacting with the user database.
      */
     private final UserRepository userRepository;
 
     /**
-     * Bcrypt password encoder, used for hashing passwords.
+     * BCrypt password encoder used for hashing passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
 
-
-    public UserService(UserRepository userRepository, UserRepository userRepo, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository; // This line will now work
+    /**
+     * Constructor to initialize the UserService with the required dependencies.
+     *
+     * @param userRepository   the repository for interacting with the user data
+     * @param passwordEncoder  the encoder used to hash passwords
+     */
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    User user = new User();
-
     /**
-     * Checks to see if the username or email already exists in database
+     * Checks whether the provided username is unique (i.e., not already present in the database).
      *
-     * @param registrationForm the form containing user registration details.
+     * @param username the username to check for uniqueness
+     * @return true if the username is unique, false otherwise
      */
     public boolean uniqueUserName(String username) {
+        log.info("Checking if username '{}' is unique", username);
         List<User> usersByName = userRepository.findByUsernameIgnoreCase(username);
 
-        // If either username or email exists, return false
         if (!usersByName.isEmpty()) {
-            log.info("Username already exists");
+            log.info("Username '{}' already exists", username);
             return false;
         } else {
-            log.info("User doesn't exist, registration is allowed");
+            log.info("Username '{}' is available", username);
             return true;
         }
     }
 
     /**
-     * Checks to see if the username or email already exists in database
+     * Checks whether the provided email is unique (i.e., not already present in the database).
      *
-     * @param registrationForm the form containing user registration details.
+     * @param email the email to check for uniqueness
+     * @return true if the email is unique, false otherwise
      */
     public boolean uniqueEmail(String email) {
+        log.info("Checking if email '{}' is unique", email);
         List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
 
-        // If either username or email exists, return false
-        if ( !usersByEmail.isEmpty()) {
-            log.info("Email already exists");
+        if (!usersByEmail.isEmpty()) {
+            log.info("Email '{}' already exists", email);
             return false;
         } else {
-            log.info("User doesn't exist, registration is allowed");
+            log.info("Email '{}' is available", email);
             return true;
         }
     }
@@ -80,41 +85,75 @@ public class UserService {
     /**
      * Saves a new user based on the provided registration form data.
      *
-     * @param registrationForm the form containing user registration details.
-     * @return
+     * @param registrationForm the form containing user registration details
+     * @return the saved {@link User} object
      */
     public User saveUser(RegistrationForm registrationForm) {
-        user.setUsername(registrationForm.getUsername());
-        user.setEmail(registrationForm.getEmail());
+        log.info("Saving new user with username '{}'", registrationForm.getUsername());
+        User newUser = new User();  // Create a new User object inside the method
+        newUser.setUsername(registrationForm.getUsername());
+        newUser.setEmail(registrationForm.getEmail());
+
         String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
-        user.setHashedPassword(hashedPassword);
-        log.info("Hashed Password for user '{}': {}", user.getUsername(), hashedPassword);
-        user.setFirstName(registrationForm.getFirstName());
-        user.setLastName(registrationForm.getLastName());
-        user.setQuestion1("null");
-        user.setAnswer1("null");
-        user.setQuestion2("null");
-        user.setAnswer2("null");
-        // Log user information
-        log.info("User saved! Username: {}, Email: {}", user.getUsername(), user.getEmail());
-        return userRepository.save(user);
+        newUser.setHashedPassword(hashedPassword);
+        log.info("Password for user '{}' has been hashed", newUser.getUsername());
+
+        newUser.setFirstName(registrationForm.getFirstName());
+        newUser.setLastName(registrationForm.getLastName());
+        newUser.setQuestion1("null");
+        newUser.setAnswer1("null");
+        newUser.setQuestion2("null");
+        newUser.setAnswer2("null");
+
+        log.info("User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
+        return userRepository.save(newUser);
     }
 
+    /**
+     * Updates the security questions and answers for the specified user.
+     *
+     * @param user         the user whose security questions are being updated
+     * @param questionForm the form containing the new security questions and answers
+     */
     public void updateUser(User user, SecurityQuestionsForm questionForm) {
+        log.info("Updating security questions for user '{}'", user.getUsername());
         user.setQuestion1(questionForm.getQuestion1());
         user.setAnswer1(questionForm.getAnswer1());
         user.setQuestion2(questionForm.getQuestion2());
         user.setAnswer2(questionForm.getAnswer2());
         userRepository.save(user); // Save the user with updated security questions to the database
+        log.info("Security questions updated for user '{}'", user.getUsername());
     }
 
+    /**
+     * Finds a user by email address, ignoring case sensitivity.
+     *
+     * @param email the email address to search for
+     * @return the user if found, otherwise null
+     */
     public User findByEmail(String email) {
+        log.info("Finding user by email '{}'", email);
         List<User> users = userRepository.findByEmailIgnoreCase(email);
-        return users.isEmpty() ? null : users.getFirst(); // Return the first user or null if none found
+        User foundUser = users.isEmpty() ? null : users.get(0);  // Return the first user or null if none found
+
+        if (foundUser != null) {
+            log.info("User found with email '{}'", email);
+        } else {
+            log.info("No user found with email '{}'", email);
+        }
+        return foundUser;
     }
 
+    /**
+     * Updates the password for the specified user.
+     *
+     * @param user        the user whose password is being updated
+     * @param newPassword the new password to be hashed and saved
+     */
     public void updatePassword(User user, String newPassword) {
+        log.info("Updating password for user '{}'", user.getUsername());
         user.setHashedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user); // Save the user with updated password to the database
+        log.info("Password updated for user '{}'", user.getUsername());
     }
 }
