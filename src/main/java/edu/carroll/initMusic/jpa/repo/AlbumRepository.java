@@ -18,13 +18,6 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
      */
     List<Album> findByAlbumNameContainingIgnoreCase(String name);
 
-    /**
-     * Finds albums based off of artist name
-     * @param firstName First name of artist
-     * @param lastName Last name of artist, can be optional
-     * @return List of albums found related to artist
-     */
-    @Query("SELECT a FROM Album a JOIN a.artists ar WHERE ar.artistFirstName = :firstName AND (:lastName IS NULL OR ar.artistLastName = :lastName)")
-    List<Album> findByArtistName(@Param("firstName") String firstName, @Param("lastName") String lastName);
+    List<Album>  findByArtists_ArtistNameAndAlbumName(String artistName,String albumName);
 
 }

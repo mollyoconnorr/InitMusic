@@ -1,0 +1,9 @@
+.list-group-item-action {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.dropdown {
+    margin-left: auto;
+}

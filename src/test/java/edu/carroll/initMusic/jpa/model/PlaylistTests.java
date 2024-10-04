@@ -62,7 +62,7 @@ public class PlaylistTests {
         final Set<Song> songs = new HashSet<>();
         for(int i = 0; i < 3; i++){
             //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song("Random" + i, "Software Engineering","00/00/0000", 60, 1);
+            final Song tempSong = new Song(1L,"Random" + i, 60,"Name",1,"Album",1);
             fakePlaylist.addSong(tempSong);
             songs.add(tempSong);
         }
@@ -93,12 +93,12 @@ public class PlaylistTests {
         //Testing equals
         final Playlist fakePlaylistTwo = new Playlist(author, playlistName);
         assertTrue("Fake playlists should be equal", fakePlaylist.equals(fakePlaylistTwo));
-        fakePlaylistTwo.setPlaylistID(10);
+        fakePlaylistTwo.setPlaylistName("Random");
 
         final LocalDateTime now = LocalDateTime.now();
         fakePlaylistTwo.setDateCreated(now);
 
-        //Test equals function and that setAlbumID and setDateCreated work
+        //Test equals function and setDateCreated work
         assertFalse("Fake playlists should not be equal", fakePlaylist.equals(fakePlaylistTwo));
 
         //Testing hashCode

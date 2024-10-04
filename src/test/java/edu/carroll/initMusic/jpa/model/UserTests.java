@@ -91,15 +91,16 @@ public class UserTests {
     @Test
     public void verifyMiscFunctions(){
         //Testing equals
-        final User fakeUserTwo = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
-                "Red", "Rex");
+        final User fakeUserTwo = new User(username, password, firstName, lastName, email,
+                "What is your favorite color?", "What is your pet's name?",
+                "Blue", "Fluffy");
         assertTrue("Fake users should be equal", fakeUser.equals(fakeUserTwo));
-        fakeUserTwo.setuserID(10);
+        fakeUserTwo.setUsername("random");
 
         final LocalDateTime now = LocalDateTime.now();
         fakeUserTwo.setAccountCreationDate(now);
 
-        //Test equals function and that setUserID and setAccountCreationDate work
+        //Test equals function and setAccountCreationDate work
         assertFalse("Fake users should not be equal", fakeUser.equals(fakeUserTwo));
 
         //Testing hashCode

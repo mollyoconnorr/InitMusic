@@ -28,7 +28,7 @@ public class RegisterController {
     /**
      * Logger object used for logging actions within this controller.
      */
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
     @Autowired
     private UserService userService; // Inject UserService
