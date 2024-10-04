@@ -19,7 +19,7 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
-public class SearchServiceTests {
+public class SongServiceTests {
 
     @Autowired
     private SongService songService;
@@ -48,11 +48,13 @@ public class SearchServiceTests {
     @Test
     @Transactional
     public void verifyAddSongToPlaylist(){
+        userRepository.deleteAll();
+        playlistRepository.deleteAll();
         final User user = new User("username","password","user","name","us@gmail.com","q1","q2","a1","a2");
         final Playlist p = new Playlist(user,"Playlist");
+
         userRepository.save(user);
         playlistRepository.save(p);
-
 
         final Object[] songs = songService.searchForSongs("Zach Bryan").toArray();
         assertTrue("Song should've been added to the playlist", songService.addSongToPlaylist(p.getPlaylistID(),(Song) songs[0]));
@@ -63,6 +65,8 @@ public class SearchServiceTests {
     @Test
     @Transactional
     public void verifyGetUser(){
+        userRepository.deleteAll();
+        playlistRepository.deleteAll();
         final User user = new User("username","password","user","name","usa@gmail.com","q1","q2","a1","a2");
         userRepository.save(user);
 

@@ -1,7 +1,6 @@
 package edu.carroll.initMusic.jpa.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -45,7 +44,7 @@ public class User {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userID;
+    private Long userID;
 
     /**
      * User's playlists, has a one-to-many relationship
@@ -188,9 +187,10 @@ public class User {
 
     /**
      * Gets the user's id
+     *
      * @return User's id
      */
-    public Integer getuserID() {
+    public Long getuserID() {
         return userID;
     }
 
@@ -198,7 +198,7 @@ public class User {
      * Sets the users id
      * @param userID ID to set
      */
-    public void setuserID(Integer userID) {
+    public void setuserID(Long userID) {
         this.userID = userID;
     }
 
