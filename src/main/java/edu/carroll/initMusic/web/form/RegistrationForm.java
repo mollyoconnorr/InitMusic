@@ -14,6 +14,7 @@ public class RegistrationForm {
     private String password;
     private String firstName;  // New attribute
     private String lastName;   // New attribute
+    private String confirmPassword;
 
     /**
      * Gets the username.
@@ -67,6 +68,24 @@ public class RegistrationForm {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * Gets the password.
+     *
+     * @return the password entered by the user.
+     */
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    /**
+     * Sets the password.
+     *
+     * @param confirmPassword the password to set.
+     */
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
 

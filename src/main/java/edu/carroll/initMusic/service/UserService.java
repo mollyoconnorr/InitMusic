@@ -93,7 +93,7 @@ public class UserService {
         User newUser = new User();  // Create a new User object inside the method
         newUser.setUsername(registrationForm.getUsername());
         newUser.setEmail(registrationForm.getEmail());
-
+        // Validate that password is not null
         String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
         newUser.setHashedPassword(hashedPassword);
         log.info("Password for user '{}' has been hashed", newUser.getUsername());

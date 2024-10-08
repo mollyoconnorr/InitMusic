@@ -14,7 +14,7 @@
     <logger name="org.springframework" level="WARN" />
 
     <!-- Increase verbosity for local classes during testing -->
-    <logger name="edu.carroll.cs341" level="DEBUG" />
+    <logger name="edu.carroll.initMusic" level="INFO" />
 
     <!-- Default level is INFO -->
     <root level="INFO">
