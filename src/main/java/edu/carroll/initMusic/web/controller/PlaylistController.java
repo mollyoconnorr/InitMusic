@@ -2,12 +2,18 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.web.form.LoginForm;
+import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * <p>
@@ -41,13 +47,13 @@ public class PlaylistController {
     }
 
     /**
-     * This shows the default search page
+     * This shows the default playlist page
      * @param model Model to use
      * @param httpSession httpSession of user
      * @return Page to go to
      */
     @GetMapping("/playlist")
-    public String showSearchPage(Model model, HttpSession httpSession) {
+    public String showPlaylistPage(Model model, HttpSession httpSession) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
         final User user = songService.getUser(sessionUser.getUsername());
@@ -55,7 +61,19 @@ public class PlaylistController {
         log.info("{} went to playlist page", user.getUsername());
 
         model.addAttribute("currentUser", user);
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
-        return "playlist"; // Return to the search page
+        return "playlist"; // Return to the playlist page
+    }
+
+    @PostMapping("/playlist")
+    public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model) {
+        //Reload user
+        final User sessionUser = (User) httpSession.getAttribute("currentUser");
+        final User user = songService.getUser(sessionUser.getUsername());
+        model.addAttribute("currentUser", user);
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+        log.info("User wants to make a new playlist with name {}",newPlaylistForm.getPlaylistName());
+        return "playlist";
     }
 }

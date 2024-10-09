@@ -94,6 +94,11 @@ public class SearchController {
 
         final Set<Song> results = songService.searchForSongs(query);
 
+        if(results.isEmpty()) {
+            model.addAttribute("error", "No songs found.");
+            return "search";
+        }
+
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         model.addAttribute("currentUser", user);

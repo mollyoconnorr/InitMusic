@@ -80,6 +80,12 @@ public class SongService {
      * @return List of songs related to query
      */
     public Set<Song> searchForSongs(String query) {
+
+        //Make sure there is test in query
+        if (query.trim().isEmpty() || query.length() < 3) {
+            return new HashSet<>();
+        }
+
         final HttpRequest request;
         // Encode the query to handle special characters
         final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
