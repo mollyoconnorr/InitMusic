@@ -66,7 +66,7 @@ public class PlaylistController {
         return "playlist"; // Return to the playlist page
     }
 
-    @PostMapping("/playlist")
+    @PostMapping("/createPlaylist")
     public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
@@ -74,6 +74,14 @@ public class PlaylistController {
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
         log.info("User wants to make a new playlist with name {}",newPlaylistForm.getPlaylistName());
-        return "playlist";
+        return "redirect:/playlist";
+    }
+
+    @PostMapping("/renamePlaylist")
+    public String renamePlaylist(){
+
+
+
+        return "redirect:/playlist";
     }
 }

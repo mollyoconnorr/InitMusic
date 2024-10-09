@@ -60,7 +60,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form th:action="@{/playlist}" method="post" th:object="${NewPlaylistForm}">
+                <form th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
 
                   <label> Playlist Name:
                     <input type="text" name="playlistName" th:value="*{playlistName}" />
