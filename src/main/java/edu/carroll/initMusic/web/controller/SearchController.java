@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -124,7 +125,7 @@ public class SearchController {
      * Handles adding a song to a playlist. Since we can't
      * pass a Song object through the form, we need to pass
      * all the params needed for a song and create a new object.
-     * @param playlistId ID of Playlist to add to
+     * @param selectedPlaylists IDs of Playlists to add to
      * @param songID Song's id
      * @param songName Song's name
      * @param length Length of song
@@ -136,22 +137,31 @@ public class SearchController {
      */
     @PostMapping("/addSongToPlaylist")
     public String addSongToPlaylist(
-            @RequestParam Long playlistId,
+            @RequestParam("selectedPlaylists") List<String> selectedPlaylists,
             @RequestParam Long songID,
             @RequestParam String songName,
-            @RequestParam int length,
+            @RequestParam int songLength,
             @RequestParam String artistName,
             @RequestParam long artistID,
             @RequestParam String albumName,
-            @RequestParam long albumID) {
+            @RequestParam long albumID,
+            @RequestParam String songImg,
+            @RequestParam String songPreview) {
 
         // Create a new Song object
-        final Song song = new Song(songID, songName, length, artistName, artistID, albumName, albumID);
+        final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);
+        song.setSongImg(songImg);
+        song.setSongPreview(songPreview);
 
-        log.info("Adding song: {} to playlist with ID: {}", songName, playlistId);
+        // Handle the logic for adding the song to the selected playlists
+        for (String playlistId : selectedPlaylists) {
+            log.info("Add {} to playlist {}", song, playlistId);
+        }
 
-        // Add song to playlist
-        songService.addSongToPlaylist(playlistId, song);
+//        log.info("Adding song: {} to playlist with ID: {}", songName, playlistId);
+//
+//        // Add song to playlist
+//        songService.addSongToPlaylist(playlistId, song);
 
         return "redirect:/search"; // Redirect to the playlist page
     }

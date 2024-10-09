@@ -65,7 +65,19 @@
           <a class="songPreview" th:href="${item.getSongPreview()}">Preview</a>
 
           <div class="dropdown">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToPlaylistModal">
+            <button type="button" class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addToPlaylistModal"
+                    th:data-song-id="${item.getSongID()}"
+                    th:data-song-name="${item.getSongName()}"
+                    th:data-song-length="${item.getLength()}"
+                    th:data-artist-name="${item.getArtistName()}"
+                    th:data-artist-id="${item.getArtistID()}"
+                    th:data-album-name="${item.getAlbumName()}"
+                    th:data-album-id="${item.getAlbumID()}"
+                    th:data-song-img="${item.getSongImg()}"
+                    th:data-song-pre="${item.getSongPreview()}"
+                    onclick="populateModal(this)">
               Add to Playlist
             </button>
           </div>
@@ -87,42 +99,43 @@
           <h1 class="modal-title fs-5" id="addToPlaylistModalLabel">Modal title</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <ul class="list-group" th:each="playlist : ${currentUser.getPlaylists()}">
-            <li class="list-group-item">
+        <form th:action="@{/addSongToPlaylist}" method="post">
+          <input type="hidden" id="songID" name="songID" />
+          <input type="hidden" id="songName" name="songName" />
+          <input type="hidden" id="songLength" name="songLength"/>
+          <input type="hidden" id="artistName" name="artistName" />
+          <input type="hidden" id="artistID" name="artistID" />
+          <input type="hidden" id="albumName" name="albumName" />
+          <input type="hidden" id="albumID" name="albumID" />
+          <input type="hidden" id="songImg" name="songImg" />
+          <input type="hidden" id="songPreview" name="songPreview" />
+
+          <div class="modal-body">
+            <ul class="list-group">
               <th:block th:each="playlist : ${currentUser.getPlaylists()}">
-                <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckboxStretched">
-                <label class="form-check-label stretched-link" for="firstCheckboxStretched" th:text="${playlist.getPlaylistName()}"></label>
+                <li class="list-group-item">
+                  <input class="form-check-input me-1"
+                         type="checkbox"
+                         th:value="${playlist.getPlaylistID()}"
+                         th:id="'checkbox-' + ${playlist.getPlaylistID()}"
+                         name="selectedPlaylists" />
+                  <label class="form-check-label stretched-link"
+                         th:for="'checkbox-' + ${playlist.getPlaylistID()}"
+                         th:text="${playlist.getPlaylistName()}"></label>
+                </li>
               </th:block>
-            </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
-<!--  <ul class="dropdown-menu" th:each="playlist : ${currentUser.getPlaylists()}">-->
-<!--    <th:block th:each="playlist : ${currentUser.getPlaylists()}">-->
-<!--      <li>-->
-<!--        <form th:action="@{/addSongToPlaylist}" method="post" th:object="${item}">-->
-<!--          <input type="hidden" name="songID" th:value="${item.getSongID()}" />-->
-<!--          <input type="hidden" name="songName" th:value="${item.getSongName()}" />-->
-<!--          <input type="hidden" name="length" th:value="${item.getLength()}" />-->
-<!--          <input type="hidden" name="artistName" th:value="${item.getArtistName()}" />-->
-<!--          <input type="hidden" name="artistID" th:value="${item.getArtistID()}" />-->
-<!--          <input type="hidden" name="albumName" th:value="${item.getAlbumName()}" />-->
-<!--          <input type="hidden" name="albumID" th:value="${item.getAlbumID()}" />-->
-<!--          <input type="hidden" name="playlistId" th:value="${playlist.getPlaylistID()}" />-->
-<!--          <button type="submit" class="dropdown-item" th:text="${playlist.getPlaylistName()}"></button>-->
-<!--        </form>-->
-<!--      </li>-->
-<!--    </th:block>-->
-<!--  </ul>-->
-
+  <script src="/js/searchPage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
