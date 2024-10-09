@@ -4,6 +4,7 @@ import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.NewSongForm;
 import jakarta.servlet.http.HttpSession;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -11,9 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -77,6 +81,7 @@ public class SearchController {
         // Initialize results and query
         model.addAttribute("results", new HashSet<>()); // Initialize results as empty
         model.addAttribute("query", null); // Initialize query as empty
+        model.addAttribute("newSongForm", new NewSongForm());
 
         return "search"; // Return to the search page
     }
@@ -116,7 +121,7 @@ public class SearchController {
         model.addAttribute("query", query);
         model.addAttribute("currentUser", user);
         model.addAttribute("playlists",user.getPlaylists());
-
+        model.addAttribute("newSongForm", new NewSongForm());
 
         return "search"; // Return the search template
     }
@@ -125,45 +130,52 @@ public class SearchController {
      * Handles adding a song to a playlist. Since we can't
      * pass a Song object through the form, we need to pass
      * all the params needed for a song and create a new object.
-     * @param selectedPlaylists IDs of Playlists to add to
-     * @param songID Song's id
-     * @param songName Song's name
-     * @param length Length of song
-     * @param artistName Name of artist who created song
-     * @param artistID Deezer id of artist
-     * @param albumName Name of album song is in
-     * @param albumID Deezer id of album
-     * @return The search page after song has been added
      */
     @PostMapping("/addSongToPlaylist")
-    public String addSongToPlaylist(
-            @RequestParam("selectedPlaylists") List<String> selectedPlaylists,
-            @RequestParam Long songID,
-            @RequestParam String songName,
-            @RequestParam int songLength,
-            @RequestParam String artistName,
-            @RequestParam long artistID,
-            @RequestParam String albumName,
-            @RequestParam long albumID,
-            @RequestParam String songImg,
-            @RequestParam String songPreview) {
-
-        // Create a new Song object
-        final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);
-        song.setSongImg(songImg);
-        song.setSongPreview(songPreview);
-
-        // Handle the logic for adding the song to the selected playlists
-        for (String playlistId : selectedPlaylists) {
-            log.info("Add {} to playlist {}", song, playlistId);
+    public String addSongToPlaylist(@ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
+        
+        if (result.hasErrors()) {
+            log.info("Adding song errors: {}", result.getAllErrors());
+            return "redirect:/search"; // Handle errors
         }
 
-//        log.info("Adding song: {} to playlist with ID: {}", songName, playlistId);
+        // Access the selected playlist IDs
+        List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
+        System.out.println("Selected Playlists: " + selectedPlaylists);
+
+        final Song song = getSong(newSongForm);
+
+        // Handle the logic for adding the song to the selected playlists
+        for (Long playlistId : newSongForm.getSelectedPlaylists()) {
+            log.info("Added {} to playlist {}", song, playlistId);
+            songService.addSongToPlaylist(playlistId, song);
+        }
+
+//        log.info("Adding song: {} to playlist with ID: {}", song, playlistId);
 //
 //        // Add song to playlist
 //        songService.addSongToPlaylist(playlistId, song);
 
         return "redirect:/search"; // Redirect to the playlist page
+    }
+
+    private static Song getSong(NewSongForm addSongForm) {
+        Long songID = addSongForm.getSongID();
+        String songName = addSongForm.getSongName();
+        int songLength = addSongForm.getSongLength();
+        String artistName = addSongForm.getArtistName();
+        Long artistID = addSongForm.getArtistID();
+        String albumName = addSongForm.getAlbumName();
+        Long albumID = addSongForm.getAlbumID();
+        String songImg = addSongForm.getSongImg();
+        String songPreview = addSongForm.getSongPreview();
+
+
+        // Create a new Song object
+        final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);
+        song.setSongImg(songImg);
+        song.setSongPreview(songPreview);
+        return song;
     }
 }
 

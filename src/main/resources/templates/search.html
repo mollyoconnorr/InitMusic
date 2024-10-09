@@ -99,16 +99,16 @@
           <h1 class="modal-title fs-5" id="addToPlaylistModalLabel">Modal title</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form th:action="@{/addSongToPlaylist}" method="post">
-          <input type="hidden" id="songID" name="songID" />
-          <input type="hidden" id="songName" name="songName" />
-          <input type="hidden" id="songLength" name="songLength"/>
-          <input type="hidden" id="artistName" name="artistName" />
-          <input type="hidden" id="artistID" name="artistID" />
-          <input type="hidden" id="albumName" name="albumName" />
-          <input type="hidden" id="albumID" name="albumID" />
-          <input type="hidden" id="songImg" name="songImg" />
-          <input type="hidden" id="songPreview" name="songPreview" />
+        <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post">
+          <input type="hidden" id="songID" th:field="*{songID}" />
+          <input type="hidden" id="songName" th:field="*{songName}" />
+          <input type="hidden" id="songLength" th:field="*{songLength}" />
+          <input type="hidden" id="artistName" th:field="*{artistName}" />
+          <input type="hidden" id="artistID" th:field="*{artistID}" />
+          <input type="hidden" id="albumName" th:field="*{albumName}" />
+          <input type="hidden" id="albumID" th:field="*{albumID}" />
+          <input type="hidden" id="songImg" th:field="*{songImg}" />
+          <input type="hidden" id="songPreview" th:field="*{songPreview}" />
 
           <div class="modal-body">
             <ul class="list-group">
@@ -118,6 +118,7 @@
                          type="checkbox"
                          th:value="${playlist.getPlaylistID()}"
                          th:id="'checkbox-' + ${playlist.getPlaylistID()}"
+                         th:field="*{selectedPlaylists}"
                          name="selectedPlaylists" />
                   <label class="form-check-label stretched-link"
                          th:for="'checkbox-' + ${playlist.getPlaylistID()}"
