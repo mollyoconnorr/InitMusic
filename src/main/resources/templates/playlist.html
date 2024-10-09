@@ -92,14 +92,17 @@
           <ul class="dropdown-menu">
             <li>
               <!-- Button trigger modal for renaming a playlist -->
-              <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#renamePlaylistModal"
+              <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal"
+                      data-bs-target="#renamePlaylistModal"
                       th:attr="data-playlist-name=${playlist.getPlaylistName()}">
                 Rename Playlist
               </button>
             </li>
             <li>
               <!-- Button trigger modal for deleting a playlist -->
-              <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#deletePlaylistModal">
+              <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal"
+                      data-bs-target="#deletePlaylistModal"
+                      th:attr="data-playlist-name=${playlist.getPlaylistName()}">
                 Delete playlist
               </button>
             </li>
