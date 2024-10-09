@@ -3,6 +3,7 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -40,12 +41,16 @@ public class SearchController {
      */
     private final SongService songService;
 
+    private final UserService userService;
+
     /**
      * Constructor
      * @param songService Injected song service
      */
-    public SearchController(SongService songService) {
+    public SearchController(SongService songService, UserService userService) {
+
         this.songService = songService;
+        this.userService = userService;
     }
 
     /**
@@ -56,15 +61,22 @@ public class SearchController {
      */
     @GetMapping("/search")
     public String showSearchPage(Model model, HttpSession httpSession) {
+        // Retrieve the current user from the session
         final User user = (User) httpSession.getAttribute("currentUser");
-        log.info("{} went to search page", user.getUsername());
 
+        // Fetch user with playlists
+        User fullUser = userService.findByIdWithPlaylists(user.getuserID());
 
-        model.addAttribute("currentUser", user);
-        model.addAttribute("playlists",user.getPlaylists());
+        log.info("{} went to search page", fullUser.getUsername());
 
+        // Add the user and their playlists to the model
+        model.addAttribute("currentUser", fullUser);
+        model.addAttribute("playlists", fullUser.getPlaylists());
+
+        // Initialize results and query
         model.addAttribute("results", new HashSet<>()); // Initialize results as empty
         model.addAttribute("query", null); // Initialize query as empty
+
         return "search"; // Return to the search page
     }
 

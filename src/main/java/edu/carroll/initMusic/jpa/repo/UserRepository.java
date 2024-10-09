@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.carroll.initMusic.jpa.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * <p>
@@ -30,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional<User>, which is empty if no user is found
      */
     List<User> findByEmailIgnoreCase(String email);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.playlists WHERE u.userID = :id")
+    User findByIdWithPlaylists(@Param("id") Long id);
 }

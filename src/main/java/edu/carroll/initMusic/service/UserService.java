@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
@@ -155,5 +156,9 @@ public class UserService {
         user.setHashedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user); // Save the user with updated password to the database
         log.info("Password updated for user '{}'", user.getUsername());
+    }
+
+    public User findByIdWithPlaylists(Long userId) {
+        return userRepository.findByIdWithPlaylists(userId);
     }
 }
