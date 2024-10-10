@@ -15,6 +15,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * This class configures the security settings for the web application, including
  * authentication and authorization rules.
  * </p>
+ * @author Nick Clouse
+ * @author Molly O'Connor
+ *
+ * @since September 11, 2024
  */
 @Configuration
 @EnableWebSecurity
@@ -41,11 +45,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/images/**").permitAll() // Allow access to static resources
+                        .requestMatchers("/css/**", "/images/**","/js/**").permitAll() // Allow access to static resources
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions",
                                 "/changePasswordEmail", "/passSecurity", "/changePassword", "/emailTaken", "/userRegistered").permitAll()   // Allow access to login and registration pages
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword").permitAll()   // Allow access to login and registration pages
-                        .requestMatchers("/search","/playlist","/addSongToPlaylist").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/search","/playlist","/addSongToPlaylist","/createPlaylist").permitAll()   // Allow access to login and registration pages
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint

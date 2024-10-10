@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -77,9 +78,15 @@ public class SongService {
      * HttpResponse, and this function takes the body of it, and parses the data into song objects,
      * and returns a list of songs found related to the query.
      * @param query Query to search for
-     * @return List of songs related to query
+     * @return Set of songs related to query
      */
     public Set<Song> searchForSongs(String query) {
+
+        //Make sure there is test in query
+        if (query.trim().isEmpty() || query.length() < 3) {
+            return new HashSet<>();
+        }
+
         final HttpRequest request;
         // Encode the query to handle special characters
         final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
@@ -152,25 +159,38 @@ public class SongService {
     public boolean addSongToPlaylist(Long playlistId, Song song) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
 
-        //IF there was not 1 playlist found
-        if(playlistsFound.size() != 1){
-            return false;
+        // Check if exactly one playlist was found
+        if (playlistsFound.size() != 1) {
+            return false; // Or throw an exception if that suits your design better
         }
 
-        final Playlist playlist = playlistsFound.getFirst();
+        final Playlist playlist = playlistsFound.getFirst(); // Get the playlist from the list
 
-        //If song already in playlist, dont add it
-        if(playlist.containsSong(song)) {
-            return false;
+        // Check if the song is already in the playlist
+        if (playlist.containsSong(song)) {
+            return false; // Song is already in the playlist
         }
-        //Save everything and add song to playlist
-        songRepository.save(song);
-        playlist.addSong(song);
-        song.addPlaylist(playlist);
+
+        // Attempt to find the song in the repository
+        final Optional<Song> songFound = songRepository.findById(song.getSongID());
+        if (songFound.isPresent()) {
+            // Add the managed song to the playlist
+            playlist.addSong(songFound.get());
+            songFound.get().addPlaylist(playlist);
+        } else {
+            // If the song does not exist, save it
+            songRepository.save(song);
+            playlist.addSong(song);
+            song.addPlaylist(playlist);
+        }
+
+        // Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
-        log.info("Song {} added to playlist{}", song.getSongID(),playlist.getPlaylistID());
+
+        log.info("Song {} added to playlist {}", song.getSongID(), playlist.getPlaylistID());
         return true;
     }
+
 
     /**
      * Gets user object from inputted username. All usernames are unique, so

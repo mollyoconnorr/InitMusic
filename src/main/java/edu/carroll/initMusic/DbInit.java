@@ -44,6 +44,9 @@ public class DbInit {
             Playlist p = new Playlist(defaultUser,"Playlist 1");
             playlistRepo.save(p);
             defaultUser.addPlaylist(p);
+            Playlist p2 = new Playlist(defaultUser,"Playlist 2");
+            playlistRepo.save(p2);
+            defaultUser.addPlaylist(p2);
 
             loginRepo.save(defaultUser);
         }
