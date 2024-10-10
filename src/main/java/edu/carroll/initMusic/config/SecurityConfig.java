@@ -15,6 +15,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * This class configures the security settings for the web application, including
  * authentication and authorization rules.
  * </p>
+ * @author Nick Clouse
+ * @author Molly O'Connor
+ *
+ * @since September 11, 2024
  */
 @Configuration
 @EnableWebSecurity

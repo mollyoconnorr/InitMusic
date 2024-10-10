@@ -2,7 +2,6 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
-import edu.carroll.initMusic.web.form.LoginForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -66,6 +65,14 @@ public class PlaylistController {
         return "playlist"; // Return to the playlist page
     }
 
+    /**
+     * Handles creating a new playlist with name inputted by user
+     * @param newPlaylistForm Form to get name from
+     * @param bindingResult Result of validation
+     * @param httpSession Current httpSession
+     * @param model Model for page
+     * @return Redirect to playlist
+     */
     @PostMapping("/createPlaylist")
     public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model) {
         //Reload user

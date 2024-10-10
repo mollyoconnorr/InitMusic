@@ -46,14 +46,17 @@ public class SearchController {
      */
     private final SongService songService;
 
+    /**
+     * User service for operations with user objects
+     */
     private final UserService userService;
 
     /**
      * Constructor
      * @param songService Injected song service
+     * @param userService Injected user service
      */
     public SearchController(SongService songService, UserService userService) {
-
         this.songService = songService;
         this.userService = userService;
     }
@@ -66,19 +69,19 @@ public class SearchController {
      */
     @GetMapping("/search")
     public String showSearchPage(Model model, HttpSession httpSession) {
-        // Retrieve the current user from the session
+        //Retrieve the current user from the session
         final User user = (User) httpSession.getAttribute("currentUser");
 
-        // Fetch user with playlists
+        //Fetch user with playlists
         final User fullUser = userService.findByIdWithPlaylists(user.getuserID());
 
         log.info("{} went to search page", fullUser.getUsername());
 
-        // Add the user and their playlists to the model
+        //Add the user and their playlists to the model
         model.addAttribute("currentUser", fullUser);
         model.addAttribute("playlists", fullUser.getPlaylists());
 
-        // Initialize results and query
+        //Initialize results and query
         model.addAttribute("results", new HashSet<>()); // Initialize results as empty
         model.addAttribute("query", null); // Initialize query as empty
         model.addAttribute("newSongForm", new NewSongForm());
@@ -103,11 +106,13 @@ public class SearchController {
 
         log.info("{} searched for songs with query '{}'", user.getUsername(), query);
 
+        //If query doesnt have any text
         if (query.trim().isEmpty() || query.length() < 3) {
             model.addAttribute("error", "Search term must be at least 3 characters long.");
             return "search"; // Return to the search page with error message
         }
 
+        //Initialize playlist so its loaded and we can perform actions with it if needed
         Hibernate.initialize(user.getPlaylists());
 
         final Set<Song> results = songService.searchForSongs(query);
@@ -151,16 +156,22 @@ public class SearchController {
         return "redirect:/search";
     }
 
+    /**
+     * Gets the song attributes from a NewSongForm object and creates a new song
+     * @param addSongForm Form to get attributes from
+     * @return The new song object
+     * @see NewSongForm
+     */
     private static Song getSong(NewSongForm addSongForm) {
-        Long songID = addSongForm.getSongID();
-        String songName = addSongForm.getSongName();
-        int songLength = addSongForm.getSongLength();
-        String artistName = addSongForm.getArtistName();
-        Long artistID = addSongForm.getArtistID();
-        String albumName = addSongForm.getAlbumName();
-        Long albumID = addSongForm.getAlbumID();
-        String songImg = addSongForm.getSongImg();
-        String songPreview = addSongForm.getSongPreview();
+        final Long songID = addSongForm.getSongID();
+        final  String songName = addSongForm.getSongName();
+        final int songLength = addSongForm.getSongLength();
+        final String artistName = addSongForm.getArtistName();
+        final Long artistID = addSongForm.getArtistID();
+        final String albumName = addSongForm.getAlbumName();
+        final Long albumID = addSongForm.getAlbumID();
+        final String songImg = addSongForm.getSongImg();
+        final String songPreview = addSongForm.getSongPreview();
 
 
         // Create a new Song object

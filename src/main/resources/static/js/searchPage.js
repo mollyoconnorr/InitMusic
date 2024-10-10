@@ -1,3 +1,9 @@
+/**
+ * This function takes all the song attributes from a song when its 'Add to playlist' button is pressed
+ * And then adds them to their corresponding ids, which are used in a form so the song can eventually
+ * be turned into a song object and then added to a playlist.
+ * @param button Button of song that was pressed.
+ */
 function populateModal(button) {
     const songId = button.getAttribute('data-song-id');
     const songName = button.getAttribute('data-song-name');
@@ -10,7 +16,7 @@ function populateModal(button) {
     const songPreview = button.getAttribute('data-song-pre');
 
 
-    // Get the hidden input fields in the modal
+    //Get the hidden input fields in the modal
     document.getElementById('songID').value = songId;
     document.getElementById('songName').value = songName;
     document.getElementById('songLength').value = songLength;

@@ -64,23 +64,21 @@
           <!-- Preview link -->
           <a class="songPreview" th:href="${item.getSongPreview()}">Preview</a>
 
-          <div class="dropdown">
-            <button type="button" class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addToPlaylistModal"
-                    th:data-song-id="${item.getSongID()}"
-                    th:data-song-name="${item.getSongName()}"
-                    th:data-song-length="${item.getLength()}"
-                    th:data-artist-name="${item.getArtistName()}"
-                    th:data-artist-id="${item.getArtistID()}"
-                    th:data-album-name="${item.getAlbumName()}"
-                    th:data-album-id="${item.getAlbumID()}"
-                    th:data-song-img="${item.getSongImg()}"
-                    th:data-song-pre="${item.getSongPreview()}"
-                    onclick="populateModal(this)">
-              Add to Playlist
-            </button>
-          </div>
+          <button type="button" class="btn btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addToPlaylistModal"
+                  th:data-song-id="${item.getSongID()}"
+                  th:data-song-name="${item.getSongName()}"
+                  th:data-song-length="${item.getLength()}"
+                  th:data-artist-name="${item.getArtistName()}"
+                  th:data-artist-id="${item.getArtistID()}"
+                  th:data-album-name="${item.getAlbumName()}"
+                  th:data-album-id="${item.getAlbumID()}"
+                  th:data-song-img="${item.getSongImg()}"
+                  th:data-song-pre="${item.getSongPreview()}"
+                  onclick="populateModal(this)">
+            Add to Playlist
+          </button>
         </div>
       </div>
     </div>
@@ -91,7 +89,7 @@
     <p>No results found for "<span th:text="${query}"></span>".</p>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal for adding song to playlist -->
   <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
