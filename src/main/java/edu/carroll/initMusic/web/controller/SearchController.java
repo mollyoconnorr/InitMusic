@@ -70,7 +70,7 @@ public class SearchController {
         final User user = (User) httpSession.getAttribute("currentUser");
 
         // Fetch user with playlists
-        User fullUser = userService.findByIdWithPlaylists(user.getuserID());
+        final User fullUser = userService.findByIdWithPlaylists(user.getuserID());
 
         log.info("{} went to search page", fullUser.getUsername());
 
@@ -136,27 +136,19 @@ public class SearchController {
         
         if (result.hasErrors()) {
             log.info("Adding song errors: {}", result.getAllErrors());
-            return "redirect:/search"; // Handle errors
+            return "redirect:/search";
         }
-
-        // Access the selected playlist IDs
-        List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
-        System.out.println("Selected Playlists: " + selectedPlaylists);
+        final List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
 
         final Song song = getSong(newSongForm);
 
         // Handle the logic for adding the song to the selected playlists
-        for (Long playlistId : newSongForm.getSelectedPlaylists()) {
-            log.info("Added {} to playlist {}", song, playlistId);
+        for (Long playlistId : selectedPlaylists) {
+            log.info("Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
             songService.addSongToPlaylist(playlistId, song);
         }
 
-//        log.info("Adding song: {} to playlist with ID: {}", song, playlistId);
-//
-//        // Add song to playlist
-//        songService.addSongToPlaylist(playlistId, song);
-
-        return "redirect:/search"; // Redirect to the playlist page
+        return "redirect:/search";
     }
 
     private static Song getSong(NewSongForm addSongForm) {
