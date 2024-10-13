@@ -7,6 +7,7 @@ import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.SongRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class SongServiceTests {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -105,17 +109,17 @@ public class SongServiceTests {
         userRepository.save(user);
 
         //Test finding user, and not finding, and searching with empty string
-        User foundUser = songService.getUser(user.getUsername());
+        User foundUser = userService.getUser(user.getUsername());
         assertEquals("User should have been found", foundUser,user);
-        assertNull("User should not have been found because there is no user with the username given", songService.getUser("fakename"));
-        assertNull("User should not be found because a empty string was passed", songService.getUser(""));
+        assertNull("User should not have been found because there is no user with the username given", userService.getUser("fakename"));
+        assertNull("User should not be found because a empty string was passed", userService.getUser(""));
 
         //Add a user to the repository with mixed case username
         final User testUser = new User("TestUser", "password", "first", "last", "email@test.com", "q1", "q2", "a1", "a2");
         userRepository.save(testUser);
 
         //Call the method with different case
-        final User result = songService.getUser("testuser");
+        final User result = userService.getUser("testuser");
 
         //Verify the correct user is returned regardless of case
         assertNotNull("A user should be found, regardless of String case",result);

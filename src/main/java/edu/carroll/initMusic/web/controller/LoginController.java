@@ -3,6 +3,7 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.LoginService;
 import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +34,15 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    private final SongService songService;
+    private final UserService userService;
 
     /**
      * Constructs a LoginController with the specified LoginService.
      *
      * @param loginService the service used for validating user login attempts.
      */
-    public LoginController(LoginService loginService, SongService songService) {
-        this.songService = songService;
+    public LoginController(LoginService loginService, UserService userService) {
+        this.userService = userService;
         this.loginService = loginService;
     }
 
@@ -80,7 +81,7 @@ public class LoginController {
             model.addAttribute("errorMessage", "That username and password don't match.");
             return "login";
         }
-        User foundUser = songService.getUser(loginForm.getUsername());
+        User foundUser = userService.getUser(loginForm.getUsername());
         attrs.addAttribute("username", foundUser.getUsername());
         httpSession.setAttribute("currentUser", foundUser);
         log.info("User '{}' logged in, showing loginSuccess page", foundUser.getUsername());

@@ -2,6 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -37,12 +38,16 @@ public class PlaylistController {
      */
     private final SongService songService;
 
+    private final UserService userService;
+
     /**
      * Default constructor
      * @param songService Injected SongService
+     * @param userService Injected userService
      */
-    public PlaylistController(SongService songService) {
+    public PlaylistController(SongService songService, UserService userService) {
         this.songService = songService;
+        this.userService = userService;
     }
 
     /**
@@ -55,7 +60,7 @@ public class PlaylistController {
     public String showPlaylistPage(Model model, HttpSession httpSession) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = songService.getUser(sessionUser.getUsername());
+        final User user = userService.getUser(sessionUser.getUsername());
 
         log.info("{} went to playlist page", user.getUsername());
 
@@ -77,7 +82,7 @@ public class PlaylistController {
     public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = songService.getUser(sessionUser.getUsername());
+        final User user = userService.getUser(sessionUser.getUsername());
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
         log.info("User wants to make a new playlist with name {}",newPlaylistForm.getPlaylistName());

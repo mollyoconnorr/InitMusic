@@ -102,7 +102,7 @@ public class SearchController {
     public String search(@RequestParam(value = "query") String query, Model model, HttpSession httpSession) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = songService.getUser(sessionUser.getUsername());
+        final User user = userService.getUser(sessionUser.getUsername());
 
         log.info("{} searched for songs with query '{}'", user.getUsername(), query);
 
