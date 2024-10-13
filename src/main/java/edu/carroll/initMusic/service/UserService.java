@@ -191,19 +191,19 @@ public class UserService {
     public boolean createPlaylist(String name, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
-            log.info("User {} doesn't exist", user.getuserID());
+            log.warn("Attempted to create a new playlist, but User {} doesn't exist", user.getuserID());
             return false;
         }
 
         //If user already has a playlist with the same name
         if(user.getPlaylist(name) != null){
-            log.info("Playlist '{}' already exists for user {}", name, user.getuserID());
+            log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user {}", name, user.getuserID());
             return false;
         }
 
         //If string is empty or blank
         if(name.isBlank()){
-            log.info("User {} tried to make a playlist with a blank String", user.getuserID());
+            log.warn("Attempted to create a new playlist, but User {} tried to make a playlist with a blank String", user.getuserID());
             return false;
         }
 
@@ -219,11 +219,30 @@ public class UserService {
     }
 
     public boolean renamePlaylist(String newName, Long playlistID, User user){
+        //If user already has playlist with same name
+        if(user.getPlaylist(newName) != null){
+            log.warn("Attempted to rename playlist, but a Playlist with name '{}' already exists for user '{}'", newName, user.getuserID());
+            return false;
+        }
+
+        //If user doesn't exist
+        if(!userRepository.existsById(user.getuserID())){
+            log.warn("Attempted to rename playlist, but User {} doesn't exist", user.getuserID());
+            return false;
+        }
+
+        //If string is empty or blank
+        if(newName.isBlank()){
+            log.warn("Attempted to rename playlist, but User {} tried to rename playlist with a blank String", user.getuserID());
+            return false;
+        }
+
+        //Look through each playlist, faster to do in-memory then pull playlist from repository
         for(Playlist playlist : user.getPlaylists()){
             if(Objects.equals(playlist.getPlaylistID(), playlistID)){
                 playlist.setPlaylistName(newName);
                 playlistRepository.save(playlist);
-                log.info("Playlist '{}' renamed to '{}'", playlistID, newName);
+                log.info("Playlist with id '{}' renamed to '{}'", playlistID, newName);
                 return true;
             }
         }

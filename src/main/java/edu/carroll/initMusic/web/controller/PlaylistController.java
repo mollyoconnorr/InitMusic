@@ -117,7 +117,10 @@ public class PlaylistController {
 
         log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
-        userService.renamePlaylist(newPlaylistName,playlistID,user);
+        final boolean playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
+        if(!playlistRenamed){
+            model.addAttribute("error", "Error renaming playlist");
+        }
 
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
