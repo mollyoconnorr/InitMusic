@@ -4,6 +4,7 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
+import edu.carroll.initMusic.web.form.RenamePlaylistForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -66,6 +67,7 @@ public class PlaylistController {
 
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
 
         return "playlist"; // Return to the playlist page
     }
@@ -95,13 +97,31 @@ public class PlaylistController {
 
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
 
         return "redirect:/playlist";
     }
 
     @PostMapping("/renamePlaylist")
-    public String renamePlaylist(){
+    public String renamePlaylist(@Valid @ModelAttribute RenamePlaylistForm renamePlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model){
+        if (bindingResult.hasErrors()) {
+            log.error("Binding errors found: {}", bindingResult.getAllErrors());
+            return "redirect:/playlist";  // Return the view with errors
+        }
 
+        //Reload user
+        final User sessionUser = (User) httpSession.getAttribute("currentUser");
+        final User user = userService.getUser(sessionUser.getUsername());
+        final String newPlaylistName = renamePlaylistForm.getNewPlaylistName();
+        final Long playlistID = renamePlaylistForm.getPlaylistID();
+
+        log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
+
+        userService.renamePlaylist(newPlaylistName,playlistID,user);
+
+        model.addAttribute("currentUser", user);
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
 
         return "redirect:/playlist";
     }

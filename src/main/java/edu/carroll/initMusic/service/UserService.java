@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service class for handling user-related operations.
@@ -215,5 +216,18 @@ public class UserService {
         log.info("Playlist '{}' created for user '{}'", name, user.getuserID());
 
         return true;
+    }
+
+    public boolean renamePlaylist(String newName, Long playlistID, User user){
+        for(Playlist playlist : user.getPlaylists()){
+            if(Objects.equals(playlist.getPlaylistID(), playlistID)){
+                playlist.setPlaylistName(newName);
+                playlistRepository.save(playlist);
+                log.info("Playlist '{}' renamed to '{}'", playlistID, newName);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -49,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions",
                                 "/changePasswordEmail", "/passSecurity", "/changePassword", "/emailTaken", "/userRegistered").permitAll()   // Allow access to login and registration pages
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword").permitAll()   // Allow access to login and registration pages
-                        .requestMatchers("/search","/playlist","/addSongToPlaylist","/createPlaylist").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/search","/playlist","/addSongToPlaylist","/createPlaylist","/renamePlaylist").permitAll()   // Allow access to login and registration pages
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint
