@@ -83,15 +83,24 @@ public class PlaylistController {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
         final User user = userService.getUser(sessionUser.getUsername());
+        final String playlistName = newPlaylistForm.getPlaylistName();
+
+        log.info("User {} wants to make a new playlist with name {}",user.getuserID(),playlistName);
+
+        //Create new playlist
+        final boolean playlistCreated = userService.createPlaylist(playlistName,user);
+        if(!playlistCreated) {
+            model.addAttribute("error", "Error creating new playlist");
+        }
+
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-        log.info("User wants to make a new playlist with name {}",newPlaylistForm.getPlaylistName());
+
         return "redirect:/playlist";
     }
 
     @PostMapping("/renamePlaylist")
     public String renamePlaylist(){
-
 
 
         return "redirect:/playlist";

@@ -2,6 +2,7 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
@@ -33,6 +34,7 @@ public class UserService {
      * BCrypt password encoder used for hashing passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
+    private final PlaylistRepository playlistRepository;
 
     /**
      * Constructor to initialize the UserService with the required dependencies.
@@ -40,9 +42,10 @@ public class UserService {
      * @param userRepository   the repository for interacting with the user data
      * @param passwordEncoder  the encoder used to hash passwords
      */
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PlaylistRepository playlistRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.playlistRepository = playlistRepository;
     }
 
     /**
@@ -135,7 +138,7 @@ public class UserService {
     public User findByEmail(String email) {
         log.info("Finding user by email '{}'", email);
         List<User> users = userRepository.findByEmailIgnoreCase(email);
-        User foundUser = users.isEmpty() ? null : users.get(0);  // Return the first user or null if none found
+        User foundUser = users.isEmpty() ? null : users.getFirst();  // Return the first user or null if none found
 
         if (foundUser != null) {
             log.info("User found with email '{}'", email);
@@ -174,5 +177,43 @@ public class UserService {
             return null;
         }
         return user.getFirst();
+    }
+
+    /**
+     * Creates a new playlist for the given user with the given username. Returns true if the playlist
+     * was created. It will false if the given user doesn't exist, the user already has a playlist
+     * with the given name, or if the given name isn't valid (Is blank).
+     * @param name Name of new playlist
+     * @param user User who created playlist
+     * @return True if playlist was created, false otherwise
+     */
+    public boolean createPlaylist(String name, User user){
+        //If user doesn't exist
+        if(!userRepository.existsById(user.getuserID())){
+            log.info("User {} doesn't exist", user.getuserID());
+            return false;
+        }
+
+        //If user already has a playlist with the same name
+        if(user.getPlaylist(name) != null){
+            log.info("Playlist '{}' already exists for user {}", name, user.getuserID());
+            return false;
+        }
+
+        //If string is empty or blank
+        if(name.isBlank()){
+            log.info("User {} tried to make a playlist with a blank String", user.getuserID());
+            return false;
+        }
+
+        name = name.strip();
+
+        final Playlist newPlaylist = new Playlist(user,name);
+        playlistRepository.save(newPlaylist);
+        user.addPlaylist(newPlaylist);
+
+        log.info("Playlist '{}' created for user '{}'", name, user.getuserID());
+
+        return true;
     }
 }
