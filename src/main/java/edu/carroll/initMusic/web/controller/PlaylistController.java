@@ -94,13 +94,8 @@ public class PlaylistController {
         //Create new playlist
         final boolean playlistCreated = userService.createPlaylist(playlistName,user);
         if(!playlistCreated) {
-            model.addAttribute("error", "Error creating new playlist");
+            model.addAttribute("creationError", "Error creating new playlist");
         }
-
-        model.addAttribute("currentUser", user);
-        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
-        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "redirect:/playlist";
     }
@@ -130,13 +125,8 @@ public class PlaylistController {
 
         final boolean playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
         if(!playlistRenamed){
-            model.addAttribute("error", "Error renaming playlist");
+            model.addAttribute("renameError", "Error renaming playlist");
         }
-
-        model.addAttribute("currentUser", user);
-        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
-        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "redirect:/playlist";
     }
@@ -159,14 +149,9 @@ public class PlaylistController {
         //If there was an error deleting a playlist, add error attr to model and return it
         final boolean playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
         if(!playlistDeleted){
-            model.addAttribute("error", "Error deleting playlist");
+            model.addAttribute("deleteError", "Error deleting playlist");
             return "redirect:/playlist";
         }
-
-        model.addAttribute("currentUser", user);
-        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
-        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "redirect:/playlist";
     }
