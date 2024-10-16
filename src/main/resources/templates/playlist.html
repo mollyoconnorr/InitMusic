@@ -56,6 +56,19 @@
     </div>
   </div>
 
+  <div th:if="${creationError}" style="color: red;">
+    <p th:text="${creationError}"></p>
+  </div>
+
+<div th:if="${deleteError}" style="color: red;">
+  <p th:text="${deleteError}"></p>
+</div>
+
+<div th:if="${renameError}" style="color: red;">
+  <p th:text="${renameError}"></p>
+</div>
+
+
 <div class="list-group playlistItem">
     <div th:each="playlist : ${currentUser.getPlaylists()}">
       <div class="list-group-item list-group-item-action">
