@@ -257,12 +257,11 @@ public class UserService {
             return false;
         }
 
+        //If playlist isn't found for given user.
         if(user.getPlaylist(playlistName) == null){
             log.warn("Attempted to delete playlist, but User {} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
             return false;
         }
-
-        //Probably need some more checks here
 
         playlistRepository.delete(user.getPlaylist(playlistName));
         user.removePlaylist(user.getPlaylist(playlistName));
