@@ -156,7 +156,12 @@ public class PlaylistController {
 
         log.info("User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
 
-        userService.deletePlaylist(playlistName,playlistID,user);
+        //If there was an error deleting a playlist, add error attr to model and return it
+        final boolean playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
+        if(!playlistDeleted){
+            model.addAttribute("error", "Error deleting playlist");
+            return "redirect:/playlist";
+        }
 
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
