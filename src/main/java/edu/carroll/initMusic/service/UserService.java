@@ -249,4 +249,27 @@ public class UserService {
 
         return false;
     }
+
+    public boolean deletePlaylist(String playlistName, Long playlistID, User user){
+        //If user doesn't exist
+        if(!userRepository.existsById(user.getuserID())){
+            log.warn("Attempted to delete playlist, but User {} doesn't exist", user.getuserID());
+            return false;
+        }
+
+        if(user.getPlaylist(playlistName) == null){
+            log.warn("Attempted to delete playlist, but User {} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
+            return false;
+        }
+
+        //Probably need some more checks here
+
+        playlistRepository.delete(user.getPlaylist(playlistName));
+        user.removePlaylist(user.getPlaylist(playlistName));
+        log.info("Playlist '{}' deleted for user '{}'", playlistName, user.getuserID());
+
+        userRepository.save(user);
+
+        return true;
+    }
 }

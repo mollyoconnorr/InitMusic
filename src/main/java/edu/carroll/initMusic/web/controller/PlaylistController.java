@@ -3,6 +3,7 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.DeletePlaylistForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.RenamePlaylistForm;
 import jakarta.servlet.http.HttpSession;
@@ -68,6 +69,7 @@ public class PlaylistController {
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
         model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
+        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "playlist"; // Return to the playlist page
     }
@@ -98,14 +100,23 @@ public class PlaylistController {
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
         model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
+        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "redirect:/playlist";
     }
 
+    /**
+     * Handles renaming a playlist using data from user
+     * @param renamePlaylistForm Form to get data from
+     * @param bindingResult Binding result
+     * @param httpSession Current httpSession
+     * @param model Model for page
+     * @return Redirect to playlist page
+     */
     @PostMapping("/renamePlaylist")
     public String renamePlaylist(@Valid @ModelAttribute RenamePlaylistForm renamePlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model){
         if (bindingResult.hasErrors()) {
-            log.error("Binding errors found: {}", bindingResult.getAllErrors());
+            log.error("Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlist";  // Return the view with errors
         }
 
@@ -125,6 +136,32 @@ public class PlaylistController {
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
         model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
+        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
+
+        return "redirect:/playlist";
+    }
+
+    @PostMapping("/deletePlaylist")
+    public String deletePlaylist(@Valid @ModelAttribute DeletePlaylistForm deletePlaylistForm, BindingResult bindingResult, HttpSession httpSession,Model model){
+        if (bindingResult.hasErrors()) {
+            log.error("Binding errors found when attempting to delete a playlist: {}", bindingResult.getAllErrors());
+            return "redirect:/playlist";  // Return the view with errors
+        }
+
+        //Reload user
+        final User sessionUser = (User) httpSession.getAttribute("currentUser");
+        final User user = userService.getUser(sessionUser.getUsername());
+        final Long playlistID = deletePlaylistForm.getPlaylistID();
+        final String playlistName = deletePlaylistForm.getPlaylistName();
+
+        log.info("User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
+
+        userService.deletePlaylist(playlistName,playlistID,user);
+
+        model.addAttribute("currentUser", user);
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+        model.addAttribute("RenamePlaylistForm", new RenamePlaylistForm());
+        model.addAttribute("DeletePlaylistForm",new DeletePlaylistForm());
 
         return "redirect:/playlist";
     }

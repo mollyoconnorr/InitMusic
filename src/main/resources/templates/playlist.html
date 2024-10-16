@@ -153,10 +153,15 @@
         <div class="modal-body">
           Are you sure you want to delete (Playlist name)?
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn btn-primary">Yes</button>
-        </div>
+        <form th:action="@{/deletePlaylist}" method="post" th:object="${DeletePlaylistForm}">
+          <input type="hidden" id="deletePlaylistID" th:field="*{playlistID}">
+          <input type="hidden" id="deletePlaylistName" th:field="*{playlistName}" >
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

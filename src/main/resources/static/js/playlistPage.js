@@ -24,10 +24,14 @@ function populateRenamePlaylistModal(modal, playlistName, playlistID) {
  * Populate the DeletePlaylistModal with the playlist name that will be deleted
  * @param modal Modal to use.
  * @param playlistName Name of playlist
+ * @param playlistID ID of playlist to delete
  */
-function populateDeletePlaylistModal(modal, playlistName){
+function populateDeletePlaylistModal(modal, playlistName,playlistID){
     const modalBody = modal.querySelector('.modal-body');
     modalBody.textContent = 'Are you sure you want to delete ' + playlistName + '?';
+
+    document.getElementById('deletePlaylistID').value = playlistID;
+    document.getElementById('deletePlaylistName').value = playlistName;
 }
 
 /**
@@ -64,5 +68,6 @@ const deletePlaylistModal = document.getElementById('deletePlaylistModal');
 deletePlaylistModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     const playlistName = button.getAttribute('data-playlist-name');
-    populateDeletePlaylistModal(deletePlaylistModal, playlistName);
+    const playlistID = button.getAttribute('data-playlist-id');
+    populateDeletePlaylistModal(deletePlaylistModal, playlistName, playlistID);
 });
