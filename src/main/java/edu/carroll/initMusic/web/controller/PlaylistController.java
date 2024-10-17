@@ -106,6 +106,7 @@ public class PlaylistController {
         final ResponseStatus playlistCreated = userService.createPlaylist(playlistName,user);
         if(playlistCreated.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
+            return "redirect:/playlist";
         }
 
         redirectAttributes.addFlashAttribute("successMsg", "Playlist '" + playlistName + "' created!");
@@ -142,6 +143,7 @@ public class PlaylistController {
         final ResponseStatus playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
         if(playlistRenamed.failed()){
             redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
+            return "redirect:/playlist";
         }
 
         redirectAttributes.addFlashAttribute("successMsg", "Playlist renamed to "+newPlaylistName +"!");
@@ -168,11 +170,13 @@ public class PlaylistController {
         log.info("User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
 
         //If there was an error deleting a playlist, add error attr to model and return it
-        final boolean playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
-        if(!playlistDeleted){
-            redirectAttributes.addFlashAttribute("deleteError", "Error deleting playlist");
+        final ResponseStatus playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
+        if(playlistDeleted.failed()){
+            redirectAttributes.addFlashAttribute("error", playlistDeleted.getMessage());
             return "redirect:/playlist";
         }
+
+        redirectAttributes.addFlashAttribute("successMsg", "Playlist '"+playlistName+"' deleted!");
 
         return "redirect:/playlist";
     }

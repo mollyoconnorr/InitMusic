@@ -219,6 +219,13 @@ public class UserService {
         return ResponseStatus.SUCCESS;
     }
 
+    /**
+     * This function handles renaming a playlist
+     * @param newName New name of playlist
+     * @param playlistID ID of playlist to rename
+     * @param user User who created playlist
+     * @return ResponseStatus Enum which corresponds to outcome of function
+     */
     public ResponseStatus renamePlaylist(String newName, Long playlistID, User user){
         //If user already has playlist with same name
         if(user.getPlaylist(newName) != null){
@@ -251,17 +258,24 @@ public class UserService {
         return ResponseStatus.PLAYLIST_RENAME_ERROR;
     }
 
-    public boolean deletePlaylist(String playlistName, Long playlistID, User user){
+    /**
+     * This function handles deleting a song from a playlist.
+     * @param playlistName Name of playlist to delete
+     * @param playlistID ID of playlist to delete
+     * @param user User who created playlist
+     * @return ResponseStatus Enum which corresponds to outcome of function
+     */
+    public ResponseStatus deletePlaylist(String playlistName, Long playlistID, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("Attempted to delete playlist, but User {} doesn't exist", user.getuserID());
-            return false;
+            return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If playlist isn't found for given user.
         if(user.getPlaylist(playlistName) == null){
             log.warn("Attempted to delete playlist, but User {} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
-            return false;
+            return ResponseStatus.PLAYLIST_NOT_FOUND;
         }
 
         playlistRepository.delete(user.getPlaylist(playlistName));
@@ -270,6 +284,6 @@ public class UserService {
 
         userRepository.save(user);
 
-        return true;
+        return ResponseStatus.SUCCESS;
     }
 }
