@@ -55,6 +55,8 @@ function addCsrfTokenToForm(modal) {
     }
 }
 
+
+
 // Use the modal's 'show.bs.modal' event
 const renamePlaylistModal = document.getElementById('renamePlaylistModal');
 renamePlaylistModal.addEventListener('show.bs.modal', function (event) {
@@ -71,3 +73,23 @@ deletePlaylistModal.addEventListener('show.bs.modal', function (event) {
     const playlistID = button.getAttribute('data-playlist-id');
     populateDeletePlaylistModal(deletePlaylistModal, playlistName, playlistID);
 });
+
+const playlistContainer = document.getElementsByClassName('list-group-item-container');
+for (let i = 0; i < playlistContainer.length; i++) {
+    playlistContainer[i].addEventListener('dblclick', function() {
+        //Find the button inside this container
+        const button = playlistContainer[i].querySelector('#renameBtn');
+
+        //Get the data-playlist-name and data-playlist-id attributes from the button
+        const playlistName = button.getAttribute('data-playlist-name');
+        const playlistID = button.getAttribute('data-playlist-id');
+
+        //Check if the attributes were correctly retrieved
+        if (playlistName && playlistID) {
+            //Redirect to a URL, including the playlist ID and name as query parameters
+            window.location.href = `/search?playlistName=${encodeURIComponent(playlistName)}&playlistID=${encodeURIComponent(playlistID)}`;
+        } else {
+            console.log('Playlist name or ID is missing');
+        }
+    });
+}
