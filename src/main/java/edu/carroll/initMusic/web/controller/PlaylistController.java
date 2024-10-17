@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
@@ -102,10 +103,12 @@ public class PlaylistController {
         log.info("User {} wants to make a new playlist with name {}",user.getuserID(),playlistName);
 
         //Create new playlist
-        final boolean playlistCreated = userService.createPlaylist(playlistName,user);
-        if(!playlistCreated) {
-            redirectAttributes.addFlashAttribute("creationError", "Error creating new playlist");
+        final ResponseStatus playlistCreated = userService.createPlaylist(playlistName,user);
+        if(!playlistCreated.passed()) {
+            redirectAttributes.addFlashAttribute("creationError", playlistCreated.getMessage());
         }
+
+        redirectAttributes.addFlashAttribute("playlistCreated", "Playlist '" + playlistName + "' created!");
 
         return "redirect:/playlist";
     }

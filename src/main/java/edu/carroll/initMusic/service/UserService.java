@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
@@ -188,23 +189,23 @@ public class UserService {
      * @param user User who created playlist
      * @return True if playlist was created, false otherwise
      */
-    public boolean createPlaylist(String name, User user){
+    public ResponseStatus createPlaylist(String name, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("Attempted to create a new playlist, but User {} doesn't exist", user.getuserID());
-            return false;
+            return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If user already has a playlist with the same name
         if(user.getPlaylist(name) != null){
             log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user {}", name, user.getuserID());
-            return false;
+            return ResponseStatus.PLAYLIST_ALREADY_EXISTS;
         }
 
         //If string is empty or blank
         if(name.isBlank()){
             log.warn("Attempted to create a new playlist, but User {} tried to make a playlist with a blank String", user.getuserID());
-            return false;
+            return ResponseStatus.PLAYLIST_NAME_EMPTY;
         }
 
         name = name.strip();
@@ -215,7 +216,7 @@ public class UserService {
 
         log.info("Playlist '{}' created for user '{}'", name, user.getuserID());
 
-        return true;
+        return ResponseStatus.SUCCESS;
     }
 
     public boolean renamePlaylist(String newName, Long playlistID, User user){

@@ -68,6 +68,9 @@
   <p th:text="${renameError}"></p>
 </div>
 
+<div th:if="${playlistCreated}" style="color: green;">
+  <p th:text="${playlistCreated}"></p>
+</div>
 
 <div class="list-group playlistItem">
     <div th:each="playlist : ${currentUser.getPlaylists()}">
