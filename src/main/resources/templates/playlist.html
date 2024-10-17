@@ -43,13 +43,13 @@
   <div class="container text-center">
     <div class="row align-items-start">
       <div class="col">
-        <p th:text="${currentUser.getUsername()} + ' Playlists:'">Default message if not set</p>
-      </div>
-      <div class="col">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlaylistModal">
-          Create Playlist
-        </button>
+        <div>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlaylistModal">
+            Create Playlist
+          </button>
+          <p th:text="${currentUser.getUsername()} + ' Playlists:'">Default message if not set</p>
+        </div>
 
         <!-- Modal for making a new playlist-->
         <div class="modal fade" id="newPlaylistModal" tabindex="-1" aria-labelledby="newPlaylistModalLabel" aria-hidden="true">
@@ -83,8 +83,8 @@
   <div class="list-group playlistItem">
     <div th:each="playlist : ${currentUser.getPlaylists()}">
       <div class="list-group-item list-group-item-action">
-        <span th:text="${playlist.getPlaylistName()}"></span>
         <span th:text="' Number of songs: ' + ${playlist.getNumberOfSongs()}"></span>
+        <span th:text="${playlist.getPlaylistName()}"></span>
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Edit

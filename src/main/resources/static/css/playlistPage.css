@@ -5,7 +5,7 @@ body {
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents image from repeating */
     background-attachment: fixed; /* Fixes the image relative to the viewport */
-    font-family: 'Arial', sans-serif;
+    font-family: 'Lato', sans-serif;
     color: #343a40;
     padding-top: 20px;
 }
@@ -17,7 +17,7 @@ h1 {
     margin-bottom: 30px;
     font-size: 2.5rem;
     color: #ff8c00; /* color for the header */
-    padding: 40px 5px 5px 5px;
+    padding: 40px 0px 0px 5px;
 }
 
 /* Style the playlist description */
@@ -25,11 +25,15 @@ p {
     text-align: center;
     font-size: 1.2rem;
     color: #6c757d;
+    margin-top: 20px; /* Adjust the value for desired spacing */
 }
 
 /* Style the playlist items */
 .list-group {
+    max-width: 800px;
     margin-top: 20px;
+    margin-left: auto; /* Center it horizontally */
+    margin-right: auto;
 }
 
 .list-group-item {
@@ -145,4 +149,15 @@ h1 {
     font-size: 2.5rem;
     color: #ff8c00; /* color for the header */
     padding: 20px 5px 5px 20px;
+}
+
+.container {
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+}
+
+.col {
+    text-align: center; /* Ensures text and button inside the column are centered */
 }
