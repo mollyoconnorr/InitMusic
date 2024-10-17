@@ -104,11 +104,11 @@ public class PlaylistController {
 
         //Create new playlist
         final ResponseStatus playlistCreated = userService.createPlaylist(playlistName,user);
-        if(!playlistCreated.passed()) {
-            redirectAttributes.addFlashAttribute("creationError", playlistCreated.getMessage());
+        if(playlistCreated.failed()) {
+            redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
         }
 
-        redirectAttributes.addFlashAttribute("playlistCreated", "Playlist '" + playlistName + "' created!");
+        redirectAttributes.addFlashAttribute("successMsg", "Playlist '" + playlistName + "' created!");
 
         return "redirect:/playlist";
     }
@@ -139,10 +139,12 @@ public class PlaylistController {
 
         log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
-        final boolean playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
-        if(!playlistRenamed){
-            redirectAttributes.addFlashAttribute("renameError", "Error renaming playlist");
+        final ResponseStatus playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
+        if(playlistRenamed.failed()){
+            redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
         }
+
+        redirectAttributes.addFlashAttribute("successMsg", "Playlist renamed to "+newPlaylistName +"!");
 
         return "redirect:/playlist";
     }

@@ -7,7 +7,8 @@ public enum ResponseStatus {
     PLAYLIST_NOT_FOUND("Playlist not found!"),
     PLAYLIST_ALREADY_EXISTS("Playlist already exists!"),
     PLAYLIST_NAME_EXISTS("Playlist with given name already exists!"),
-    PLAYLIST_NAME_EMPTY("Playlist name cannot be empty!");
+    PLAYLIST_NAME_EMPTY("Playlist name cannot be empty!"),
+    PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),;
 
     private final String message;
 
@@ -15,8 +16,8 @@ public enum ResponseStatus {
         this.message = message;
     }
 
-    public boolean passed(){
-        return SUCCESS.getMessage().equals(this.message);
+    public boolean failed(){
+        return !SUCCESS.getMessage().equals(this.message);
     }
 
     public String getMessage() {

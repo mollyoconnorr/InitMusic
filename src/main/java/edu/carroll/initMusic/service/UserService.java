@@ -187,7 +187,7 @@ public class UserService {
      * with the given name, or if the given name isn't valid (Is blank).
      * @param name Name of new playlist
      * @param user User who created playlist
-     * @return True if playlist was created, false otherwise
+     * @return ResponseStatus Enum which corresponds to outcome of function
      */
     public ResponseStatus createPlaylist(String name, User user){
         //If user doesn't exist
@@ -199,7 +199,7 @@ public class UserService {
         //If user already has a playlist with the same name
         if(user.getPlaylist(name) != null){
             log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user {}", name, user.getuserID());
-            return ResponseStatus.PLAYLIST_ALREADY_EXISTS;
+            return ResponseStatus.PLAYLIST_NAME_EXISTS;
         }
 
         //If string is empty or blank
@@ -219,23 +219,23 @@ public class UserService {
         return ResponseStatus.SUCCESS;
     }
 
-    public boolean renamePlaylist(String newName, Long playlistID, User user){
+    public ResponseStatus renamePlaylist(String newName, Long playlistID, User user){
         //If user already has playlist with same name
         if(user.getPlaylist(newName) != null){
             log.warn("Attempted to rename playlist, but a Playlist with name '{}' already exists for user '{}'", newName, user.getuserID());
-            return false;
+            return ResponseStatus.PLAYLIST_NAME_EXISTS;
         }
 
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("Attempted to rename playlist, but User {} doesn't exist", user.getuserID());
-            return false;
+            return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If string is empty or blank
         if(newName.isBlank()){
             log.warn("Attempted to rename playlist, but User {} tried to rename playlist with a blank String", user.getuserID());
-            return false;
+            return ResponseStatus.PLAYLIST_NAME_EMPTY;
         }
 
         //Look through each playlist, faster to do in-memory then pull playlist from repository
@@ -244,11 +244,11 @@ public class UserService {
                 playlist.setPlaylistName(newName);
                 playlistRepository.save(playlist);
                 log.info("Playlist with id '{}' renamed to '{}'", playlistID, newName);
-                return true;
+                return ResponseStatus.SUCCESS;
             }
         }
 
-        return false;
+        return ResponseStatus.PLAYLIST_RENAME_ERROR;
     }
 
     public boolean deletePlaylist(String playlistName, Long playlistID, User user){

@@ -56,21 +56,13 @@
     </div>
   </div>
 
-  <div th:if="${creationError}" style="color: red;">
-    <p th:text="${creationError}"></p>
+  <div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
   </div>
 
-<div th:if="${deleteError}" style="color: red;">
-  <p th:text="${deleteError}"></p>
-</div>
-
-<div th:if="${renameError}" style="color: red;">
-  <p th:text="${renameError}"></p>
-</div>
-
-<div th:if="${playlistCreated}" style="color: green;">
-  <p th:text="${playlistCreated}"></p>
-</div>
+  <div th:if="${successMsg}" style="color: green;">
+    <p th:text="${successMsg}"></p>
+  </div>
 
 <div class="list-group playlistItem">
     <div th:each="playlist : ${currentUser.getPlaylists()}">
