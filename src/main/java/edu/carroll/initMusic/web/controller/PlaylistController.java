@@ -151,6 +151,14 @@ public class PlaylistController {
         return "redirect:/playlist";
     }
 
+    /**
+     * Handles deleting a playlist
+     * @param deletePlaylistForm Form to get data from
+     * @param bindingResult Binding result
+     * @param httpSession Current httpSession
+     * @param redirectAttributes Attributes to show once redirecting, if any
+     * @return Redirect to playlist page
+     */
     @PostMapping("/deletePlaylist")
     public String deletePlaylist(@Valid @ModelAttribute DeletePlaylistForm deletePlaylistForm,
                                  BindingResult bindingResult,
