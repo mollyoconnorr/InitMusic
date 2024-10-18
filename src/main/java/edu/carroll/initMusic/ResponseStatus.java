@@ -19,7 +19,8 @@ public enum ResponseStatus {
     PLAYLIST_ALREADY_EXISTS("Playlist already exists!"),
     PLAYLIST_NAME_EXISTS("Playlist with given name already exists!"),
     PLAYLIST_NAME_EMPTY("Playlist name cannot be empty!"),
-    PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),;
+    PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),
+    SONG_NOT_IN_PLAYLIST("Song is not playlist!");
 
     /**
      * Message of the constant, part of what is displayed to the user
