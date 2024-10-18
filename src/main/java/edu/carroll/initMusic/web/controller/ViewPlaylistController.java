@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ViewPlaylistController {
@@ -36,5 +37,12 @@ public class ViewPlaylistController {
         model.addAttribute("playlistID",playlistID);
 
         return "viewPlaylist";
+    }
+
+    @PostMapping("/deleteSongFromPlaylist")
+    public String deleteSongFromPlaylist(){
+
+
+        return "redirect:/viewPlaylist/";
     }
 }
