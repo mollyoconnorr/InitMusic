@@ -310,6 +310,7 @@ public class UserService {
 
         //If there was 0 or more than 1 playlist found
         if(playlistsFound.size() != 1){
+            log.warn("Playlist#{} not found",playlistID);
             return ResponseStatus.PLAYLIST_NOT_FOUND;
         }
         final Playlist playlist = playlistsFound.getFirst();
@@ -318,8 +319,11 @@ public class UserService {
 
         //If song wasn't removed
         if(!songRemoved){
+            log.warn("Error when removing song#{} from playlist#{} using removeSong(songID)",songID,playlistID);
             return ResponseStatus.SONG_NOT_IN_PLAYLIST;
         }
+
+        log.info("Song#{} successfully removed from playlist#{}", songID, playlistID);
 
         return ResponseStatus.SUCCESS;
     }

@@ -1,6 +1,8 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.Playlist;
+import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeleteSongFromPlaylistForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
@@ -34,12 +36,17 @@ public class ViewPlaylistController {
     }
 
     @GetMapping("/viewPlaylist/{playlistID}")
-    public String getViewPlaylistPage(@PathVariable("playlistID") Long playlistID, Model model) {
+    public String getViewPlaylistPage(@PathVariable("playlistID") Long playlistID, Model model,HttpSession httpSession) {
+
+        final User sessionUser = (User) httpSession.getAttribute("currentUser");
+        final User user = userService.getUser(sessionUser.getUsername());
+        log.info("User#{} went to view playlist#{}", user.getuserID(), playlistID);
 
         final Playlist playlist = userService.getPlaylist(playlistID);
 
         if(playlist == null) {
             model.addAttribute("error", "Playlist not found");
+            log.info("Playlist not found when user#{} tried to view playlist#{}", user.getuserID(), playlistID);
             return "viewPlaylist";
         }
 
@@ -59,8 +66,23 @@ public class ViewPlaylistController {
                                          BindingResult bindingResult,
                                          HttpSession httpSession,
                                          RedirectAttributes redirectAttributes){
+
+        final User sessionUser = (User) httpSession.getAttribute("currentUser");
+        final User user = userService.getUser(sessionUser.getUsername());
+
         final Long playlistID = deleteSongFromPlaylistForm.getPlaylistID();
-        log.info("User wants to delete song from playlist {}", playlistID);
+        final Long songID = deleteSongFromPlaylistForm.getSongID();
+        log.info("User#{} wants to delete song from playlist#{}", user.getuserID(),playlistID);
+
+        final ResponseStatus songRemoved = userService.removeSongFromPlaylist(playlistID, songID);
+
+        if(songRemoved.failed()){
+            redirectAttributes.addFlashAttribute("error", songRemoved.getMessage());
+            return "redirect:/viewPlaylist/"+playlistID;
+        }
+
+        redirectAttributes.addFlashAttribute("successMsg", "Playlist '"+songRemoved+"' deleted!");
+
 
         return "redirect:/viewPlaylist/"+playlistID;
     }
