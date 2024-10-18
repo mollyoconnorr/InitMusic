@@ -83,16 +83,19 @@ button.btn-primary:hover {
 
 /* Modal styles */
 .modal-header {
-    padding: 20px;
     background-color: #52595D;
     color: white;
     border-bottom: 2px solid #dcdcdc;
 }
 
 .modal-footer {
-    padding: 20px;
     background-color: #f8f9fa;
     border-top: 2px solid #dcdcdc;
+}
+
+.modal-body {
+    max-height: 400px; /* Set a maximum height for the modal body */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
 /* Container holding the song image and text */
