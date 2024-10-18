@@ -102,13 +102,13 @@
         <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post">
           <input type="hidden" id="songID" th:field="*{songID}" />
           <input type="hidden" id="songName" th:field="*{songName}" />
-          <input type="hidden" id="songLength" th:field="*{songLength}" />
           <input type="hidden" id="artistName" th:field="*{artistName}" />
           <input type="hidden" id="artistID" th:field="*{artistID}" />
           <input type="hidden" id="albumName" th:field="*{albumName}" />
           <input type="hidden" id="albumID" th:field="*{albumID}" />
           <input type="hidden" id="songImg" th:field="*{songImg}" />
           <input type="hidden" id="songPreview" th:field="*{songPreview}" />
+          <input type="hidden" id="songLength" th:field="*{songLength}" th:value="${item.getSongLength() ?: 0}" />
 
           <div class="modal-body">
             <ul class="list-group">
