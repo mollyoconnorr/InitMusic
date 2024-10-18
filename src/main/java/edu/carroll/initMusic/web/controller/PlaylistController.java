@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * <p>
  * This controller handles the playlist page, which is where users can do things like
  * look at their playlists and add/remove playlists.
- * </p>
  *
  * @author Nick Clouse
  *
@@ -141,7 +139,8 @@ public class PlaylistController {
         log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
         final ResponseStatus playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
-        if(playlistRenamed.failed()){
+
+        if (playlistRenamed.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
             return "redirect:/playlists";
         }

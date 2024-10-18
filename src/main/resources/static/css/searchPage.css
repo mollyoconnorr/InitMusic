@@ -17,7 +17,7 @@ h1 {
     text-align: center;
     font-size: 2.5rem;
     color: black;
-    padding: 40px 0px 0px 20px;
+    padding: 40px 0px 20px 0px; /* top, right, bottom, left */
 }
 
 /* Center the search result heading */
@@ -169,6 +169,7 @@ button.btn-primary:hover {
     width: 100%;
     display: flex; /* Align the button and song-info horizontally */
     align-items: center; /* Vertically center the content */
+    transition: background-color 0.3s; /* Smooth background transition */
 }
 
 .modal-content {
@@ -187,7 +188,7 @@ button.btn-primary:hover {
 }
 
 .modal-body {
-    max-height: 400px; /* Set a maximum height for the modal body */
+    max-height: 500px; /* Set a maximum height for the modal body */
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
@@ -205,8 +206,10 @@ button.btn-primary:hover {
     background-color: #aaa; /* Darker on hover */
 }
 
-.list-group-item {
-    transition: background-color 0.3s; /* Smooth background transition */
+.modal-footer {
+    display: flex;
+    justify-content: space-between; /* Space buttons apart */
+    padding-top: 0; /* Remove extra padding on top */
 }
 
 .list-group-item:hover {
@@ -223,6 +226,10 @@ button.btn-primary:hover {
 }
 
 .errorMsg {
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 30px;
+    margin-bottom: 20px;
     color: red;
 }
 

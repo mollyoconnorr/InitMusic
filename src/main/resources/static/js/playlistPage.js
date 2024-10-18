@@ -93,3 +93,15 @@ for (let i = 0; i < playlistContainer.length; i++) {
         }
     });
 }
+
+const dropdown = document.getElementById('dropdownMenu');
+
+// Open dropdown on hover
+dropdown.addEventListener('mouseenter', function () {
+    dropdown.querySelector('.dropdown-menu').classList.add('show');
+});
+
+// Close dropdown on mouse leave
+dropdown.addEventListener('mouseleave', function () {
+    dropdown.querySelector('.dropdown-menu').classList.remove('show');
+});
