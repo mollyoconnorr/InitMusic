@@ -40,7 +40,7 @@ p {
 .list-group-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    background-color: #ff8c00; /* Lighter shade on hover */
+    background-color: #C19A6B; /* Lighter shade on hover */
 }
 
 .list-group-item-action {
