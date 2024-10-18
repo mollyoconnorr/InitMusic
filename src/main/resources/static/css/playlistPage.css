@@ -1,9 +1,163 @@
+/* Style for the playlist page */
+body {
+    background-image: url('/images/playlist.jpg');
+    background-size: cover; /* Ensures the image covers the whole page */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents image from repeating */
+    background-attachment: fixed; /* Fixes the image relative to the viewport */
+    font-family: 'Lato', sans-serif;
+    color: #343a40;
+    padding-top: 20px;
+}
+
+/* Center align the playlist header */
+h1 {
+    margin-top: 60px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    color: #ff8c00; /* color for the header */
+    padding: 40px 0px 0px 5px;
+}
+
+/* Style the playlist description */
+p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 20px; /* Adjust the value for desired spacing */
+}
+
+/* Style the playlist items */
+.list-group {
+    max-width: 800px;
+    margin-top: 20px;
+    margin-left: auto; /* Center it horizontally */
+    margin-right: auto;
+}
+
+.list-group-item {
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #fff8dc; /* Cornsilk background for playlist items */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background-color: #ff8c00; /* Lighter shade on hover */
+}
+
 .list-group-item-action {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
 }
 
-.dropdown {
+/* Dropdown button style */
+.dropdown button {
     margin-left: auto;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #4682b4; /* Steel blue for dropdown button */
+    color: white;
+    border: none;
+}
+
+.dropdown button:hover {
+    background-color: #5f9ea0; /* Cadet blue for hover state */
+}
+
+/* Style for the buttons */
+button.btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+button.btn-primary {
+    background-color: #F4A460; /*  primary buttons */
+    border-color: #F4A460;
+    color: white;
+}
+
+button.btn-primary:hover {
+    background-color: #C19A6B; /*  on hover */
+}
+
+button.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+button.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Modal style */
+.modal-header {
+    padding: 20px;
+    background-color: #52595D; /* Steel blue header for modals */
+    border-bottom: 2px solid #dcdcdc;
+    color: white;
+}
+
+.modal-footer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-top: 2px solid #dcdcdc;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Style form inputs in the modal */
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .list-group-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dropdown {
+        margin-top: 10px;
+        margin-left: 0;
+    }
+}
+
+/* Center align the playlist header */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    color: #ff8c00; /* color for the header */
+    padding: 20px 5px 5px 20px;
+}
+
+.container {
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+}
+
+.col {
+    text-align: center; /* Ensures text and button inside the column are centered */
 }

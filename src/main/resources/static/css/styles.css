@@ -63,7 +63,7 @@ html, body {
  */
 .p1 {
     color: #333; /* Text color */
-    font-family: "Lucida Console", "Courier New", monospace; /* Font family */
+    font-family: 'Lato', sans-serif; /* Font family */
     font-size: 30px; /* Font size */
     line-height: 1.5; /* Line height */
     margin: 0; /* Remove default margin */
@@ -76,7 +76,7 @@ html, body {
  */
 .p2 {
     color: #333; /* Text color */
-    font-family: "Lucida Console", "Courier New", monospace; /* Font family */
+    font-family: 'Lato', sans-serif; /* Font family */
     font-size:  16px; /* Font size */
     line-height: 1.5; /* Line height */
     margin: 0; /* Remove default margin */
