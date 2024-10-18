@@ -54,7 +54,11 @@
 
         <!-- Button trigger modal for deleting a song from playlist -->
         <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal"
-                data-bs-target="#deleteSongModal">
+                data-bs-target="#deleteSongModal"
+                th:data-playlist-name="${playlistName}"
+                th:data-playlist-id="${playlistID}"
+                th:data-song-name="${song.getSongName()}"
+                th:data-song-id="${song.getSongID()}">
           Remove
         </button>
       </div>
