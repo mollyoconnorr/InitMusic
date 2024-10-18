@@ -161,3 +161,11 @@ h1 {
 .col {
     text-align: center; /* Ensures text and button inside the column are centered */
 }
+
+.errorMsg {
+    color: red;
+}
+
+.successMsg {
+    color: green;
+}
