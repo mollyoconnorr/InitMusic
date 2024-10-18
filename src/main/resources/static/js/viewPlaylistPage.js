@@ -5,6 +5,8 @@ function populateDeleteSongModal(modal, songID, songName, playlistID, playlistNa
 
     document.getElementById('playlistID').value = playlistID;
     document.getElementById('songID').value = songID;
+    document.getElementById('playlistName').value = playlistName;
+    document.getElementById('songName').value = songName;
 }
 
 const deleteSongModal = document.getElementById('deleteSongModal');

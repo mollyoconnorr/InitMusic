@@ -40,6 +40,14 @@
   <h1 th:text="${playlistName}"></h1>
   <p th:text="'Created by: '+${playlistAuthor}"></p>
 
+  <div th:if="${error}">
+    <p class="errorMsg" th:text="${error}"></p>
+  </div>
+
+  <div th:if="${successMsg}">
+    <p class="successMsg" th:text="${successMsg}"></p>
+  </div>
+
   <div class="list-group playlistItem">
     <div class="list-group-item-container" th:each="song : ${playlistSongs}">
       <div class="list-group-item list-group-item-action">
@@ -79,6 +87,8 @@
         <form th:action="@{/deleteSongFromPlaylist}" method="post" th:object="${deleteSongFromPlaylistForm}">
           <input type="hidden" id="playlistID" th:field="*{playlistID}">
           <input type="hidden" id="songID" th:field="*{songID}">
+          <input type="hidden" id="playlistName" th:field="*{playlistName}">
+          <input type="hidden" id="songName" th:field="*{songName}">
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>

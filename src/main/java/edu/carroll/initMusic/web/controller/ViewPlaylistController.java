@@ -72,6 +72,8 @@ public class ViewPlaylistController {
 
         final Long playlistID = deleteSongFromPlaylistForm.getPlaylistID();
         final Long songID = deleteSongFromPlaylistForm.getSongID();
+        final String songName = deleteSongFromPlaylistForm.getSongName();
+        final String playlistName = deleteSongFromPlaylistForm.getPlaylistName();
         log.info("User#{} wants to delete song from playlist#{}", user.getuserID(),playlistID);
 
         final ResponseStatus songRemoved = userService.removeSongFromPlaylist(playlistID, songID);
@@ -81,7 +83,8 @@ public class ViewPlaylistController {
             return "redirect:/viewPlaylist/"+playlistID;
         }
 
-        redirectAttributes.addFlashAttribute("successMsg", "Playlist '"+songRemoved+"' deleted!");
+        redirectAttributes.addFlashAttribute("successMsg", "Removed " +
+                songName + " from " + playlistName);
 
 
         return "redirect:/viewPlaylist/"+playlistID;
