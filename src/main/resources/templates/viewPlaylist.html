@@ -76,7 +76,7 @@
         <div class="modal-body">
           Are you sure you want to delete (Song name) from (Playlist name)?
         </div>
-        <form th:action="@{/deleteSongFromPlaylist}" method="post" th:object="${DeleteSongFromPlaylistForm}">
+        <form th:action="@{/deleteSongFromPlaylist}" method="post" th:object="${deleteSongFromPlaylistForm}">
           <input type="hidden" id="playlistID" th:field="*{playlistID}">
           <input type="hidden" id="songID" th:field="*{songID}">
 
@@ -89,6 +89,7 @@
     </div>
   </div>
 
+  <script src="/js/viewPlaylistPage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
