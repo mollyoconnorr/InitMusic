@@ -87,7 +87,7 @@ for (let i = 0; i < playlistContainer.length; i++) {
         //Check if the attributes were correctly retrieved
         if (playlistName && playlistID) {
             //Redirect to a URL, including the playlist ID and name as query parameters
-            window.location.href = `/search?playlistName=${encodeURIComponent(playlistName)}&playlistID=${encodeURIComponent(playlistID)}`;
+            window.location.href = `/viewPlaylist/${playlistID}`;
         } else {
             console.log('Playlist name or ID is missing');
         }
