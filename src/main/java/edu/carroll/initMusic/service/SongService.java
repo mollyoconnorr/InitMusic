@@ -161,6 +161,7 @@ public class SongService {
 
         //Check if exactly one playlist was found
         if (playlistsFound.size() != 1) {
+            log.info("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
             return false;
         }
 
@@ -168,6 +169,7 @@ public class SongService {
 
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
+            log.info("Playlist id#{} already contains song#{}",playlistId,song.getSongID());
             return false; //Song is already in the playlist
         }
 

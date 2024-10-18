@@ -146,7 +146,12 @@ public class Playlist {
      * @return If song is in playlist, false otherwise
      */
     public boolean containsSong(Song song) {
-        return songs.contains(song);
+        for(Song s: this.songs){
+            if(s.getSongID().equals(song.getSongID())){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
