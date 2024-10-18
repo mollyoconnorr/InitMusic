@@ -60,7 +60,7 @@ public class PlaylistController {
      * @param httpSession httpSession of user
      * @return Page to go to
      */
-    @GetMapping("/playlist")
+    @GetMapping("/playlists")
     public String showPlaylistPage(Model model, HttpSession httpSession) {
         //Reload user
         final User sessionUser = (User) httpSession.getAttribute("currentUser");
@@ -78,7 +78,7 @@ public class PlaylistController {
             log.info("Flash attribute 'creationError' found: {}", model.getAttribute("creationError"));
         }
 
-        return "playlist"; // Return to the playlist page
+        return "playlists"; // Return to the playlist page
     }
 
     /**
@@ -106,12 +106,12 @@ public class PlaylistController {
         final ResponseStatus playlistCreated = userService.createPlaylist(playlistName,user);
         if(playlistCreated.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
-            return "redirect:/playlist";
+            return "redirect:/playlists";
         }
 
         redirectAttributes.addFlashAttribute("successMsg", "Playlist '" + playlistName + "' created!");
 
-        return "redirect:/playlist";
+        return "redirect:/playlists";
     }
 
     /**
@@ -129,7 +129,7 @@ public class PlaylistController {
                                  RedirectAttributes redirectAttributes){
         if (bindingResult.hasErrors()) {
             log.error("Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
-            return "redirect:/playlist";  // Return the view with errors
+            return "redirect:/playlists";  // Return the view with errors
         }
 
         //Reload user
@@ -143,12 +143,12 @@ public class PlaylistController {
         final ResponseStatus playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
         if(playlistRenamed.failed()){
             redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
-            return "redirect:/playlist";
+            return "redirect:/playlists";
         }
 
         redirectAttributes.addFlashAttribute("successMsg", "Playlist renamed to "+newPlaylistName +"!");
 
-        return "redirect:/playlist";
+        return "redirect:/playlists";
     }
 
     /**
@@ -166,7 +166,7 @@ public class PlaylistController {
                                  RedirectAttributes redirectAttributes){
         if (bindingResult.hasErrors()) {
             log.error("Binding errors found when attempting to delete a playlist: {}", bindingResult.getAllErrors());
-            return "redirect:/playlist";  // Return the view with errors
+            return "redirect:/playlists";  // Return the view with errors
         }
 
         //Reload user
@@ -181,11 +181,11 @@ public class PlaylistController {
         final ResponseStatus playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
         if(playlistDeleted.failed()){
             redirectAttributes.addFlashAttribute("error", playlistDeleted.getMessage());
-            return "redirect:/playlist";
+            return "redirect:/playlists";
         }
 
         redirectAttributes.addFlashAttribute("successMsg", "Playlist '"+playlistName+"' deleted!");
 
-        return "redirect:/playlist";
+        return "redirect:/playlists";
     }
 }
