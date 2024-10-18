@@ -1,26 +1,158 @@
-.songImg{
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-}
-.list-group-item-action{
-    display: flex;
-}
-.songText{
-    flex-grow: 1;
-}
-.songLink{
-    margin-left: 10px;
+/* Background for the search page */
+body {
+    background-image: url('/images/playlist.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Lato', sans-serif;
+    color: black;
+    padding-top: 20px;
 }
 
-.btn{
-    width: 14vw;
-    height: 3vh;
-    font-size: 1vw;
+/* Center align the search header */
+h1 {
+    margin-bottom: 30px;
     text-align: center;
-    vertical-align: center;
+    font-size: 2.5rem;
+    color: black;
+    padding: 40px 0px 0px 20px;
 }
 
-.dropdown-item, .dropdown-menu{
-    cursor: pointer;
+/* Center the search result heading */
+h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: black;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* Style the search form */
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    width: 70%;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border-radius: 5px;
+    background-color: black;
+    border-color: black;
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #52595D;
+    border-color: #52595D;
+}
+
+/* Style the results section */
+.list-group {
+    width: 100%; /* Set the parent container to take full width */
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0; /* Remove any automatic margins */
+    height: 30px;
+}
+
+/* Style for buttons inside the list */
+button.btn-primary {
+    background-color: #F4A460;
+    border-color: #F4A460;
+    color: white;
+    margin-left: auto; /* Push the button to the far right */
+    margin-right: 30px; /* Add space between button and right edge */
+}
+
+button.btn-primary:hover {
+    background-color: #C19A6B;
+}
+
+/* Modal styles */
+.modal-header {
+    padding: 20px;
+    background-color: #52595D;
+    color: white;
+    border-bottom: 2px solid #dcdcdc;
+}
+
+.modal-footer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-top: 2px solid #dcdcdc;
+}
+
+/* Container holding the song image and text */
+.song-info {
+    display: flex; /* Align the image and text horizontally */
+    align-items: center; /* Vertically align the content */
+    flex-grow: 1; /* Allow this section to take up all the available space */
+}
+
+/* Adjust the album image size */
+.songImg {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 20px; /* Add space between the image and text */
+    margin-left: 30px;
+}
+
+/* Style for song details */
+.song-details {
+    display: flex; /* Align song title, artist, and preview horizontally */
+    align-items: center; /* Vertically align song details */
+    margin-left: 20px; /* Add space between the image and song details */
+}
+
+/* Styling for song name */
+.songText {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #343a40;
+    margin-right: 20px; /* Space between title and artist */
+}
+
+/* Styling for artist name */
+.artistText {
+    font-size: 0.9rem;
+    color: #666666;
+    margin-right: 20px; /* Space between artist and preview link */
+}
+
+/* Styling for preview link */
+.songPreview {
+    font-size: 0.9rem;
+    color: #007bff; /* Default link color */
+    text-decoration: none; /* Remove underline from the link */
+}
+
+.songPreview:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Style the result boxes */
+.list-group-item {
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff8dc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    width: 100%;
+    display: flex; /* Align the button and song-info horizontally */
+    align-items: center; /* Vertically center the content */
 }
