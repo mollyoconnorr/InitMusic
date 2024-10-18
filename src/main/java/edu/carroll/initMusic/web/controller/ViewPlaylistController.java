@@ -2,6 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.DeleteSongFromPlaylistForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +30,12 @@ public class ViewPlaylistController {
         }
 
         model.addAttribute("playlist", playlist);
-
         model.addAttribute("playlistName", playlist.getPlaylistName());
         model.addAttribute("playlistSongs", playlist.getSongs());
         model.addAttribute("playlistAuthor", playlist.getAuthor().getUsername());
-
         model.addAttribute("playlistID",playlistID);
+
+        model.addAttribute("DeleteSongFromPlaylistForm", new DeleteSongFromPlaylistForm());
 
         return "viewPlaylist";
     }

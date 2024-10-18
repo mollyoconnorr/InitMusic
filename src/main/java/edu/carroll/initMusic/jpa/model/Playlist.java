@@ -140,6 +140,19 @@ public class Playlist {
         return removed;
     }
 
+    public boolean removeSong(Long songID){
+        for (Song song : this.songs) {
+            if (song.getSongID().equals(songID)) {
+                this.numberOfSongs--;
+                this.totalSongLength -= song.getLength();
+                this.songs.remove(song);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Checks if song is in playlist
      * @param song Song to check for
