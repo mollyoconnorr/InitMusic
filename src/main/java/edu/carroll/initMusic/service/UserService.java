@@ -323,6 +323,8 @@ public class UserService {
             return ResponseStatus.SONG_NOT_IN_PLAYLIST;
         }
 
+        playlistRepository.save(playlist);
+
         log.info("Song#{} successfully removed from playlist#{}", songID, playlistID);
 
         return ResponseStatus.SUCCESS;
