@@ -67,22 +67,29 @@
               <!-- Artist name -->
               <span class="artistText" th:text="${item.getArtistName()}"></span>
 
+              <span class="songTime" th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60)}"></span>
+
               <!-- Song preview as a link -->
               <a class="songPreview" th:href="${item.getSongPreview()}" target="_blank">Preview</a>
         </div>
       </div>
-          <!-- Add to Playlist button -->
           <button type="button" class="btn btn-primary"
                   data-bs-toggle="modal"
                   data-bs-target="#addToPlaylistModal"
                   th:data-song-id="${item.getSongID()}"
                   th:data-song-name="${item.getSongName()}"
+                  th:data-song-length="${item.getLength()}"
                   th:data-artist-name="${item.getArtistName()}"
                   th:data-artist-id="${item.getArtistID()}"
+                  th:data-album-name="${item.getAlbumName()}"
+                  th:data-album-id="${item.getAlbumID()}"
                   th:data-song-img="${item.getSongImg()}"
+                  th:data-song-pre="${item.getSongPreview()}"
                   onclick="populateModal(this)">
             Add to Playlist
           </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -91,50 +98,52 @@
     <p>"<span th:text="'No results found for '+${query}"></span>".</p>
   </div>
 
-  <!-- Modal for adding song to playlist -->
-  <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="addToPlaylistModalLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post">
-          <input type="hidden" id="songID" th:field="*{songID}" />
-          <input type="hidden" id="songName" th:field="*{songName}" />
-          <input type="hidden" id="artistName" th:field="*{artistName}" />
-          <input type="hidden" id="artistID" th:field="*{artistID}" />
-          <input type="hidden" id="albumName" th:field="*{albumName}" />
-          <input type="hidden" id="albumID" th:field="*{albumID}" />
-          <input type="hidden" id="songImg" th:field="*{songImg}" />
-          <input type="hidden" id="songPreview" th:field="*{songPreview}" />
-          <input type="hidden" id="songLength" th:field="*{songLength}" th:value="${item.getSongLength() ?: 0}" />
+      <!-- Modal for adding song to playlist -->
+      <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post">
+              <input type="hidden" id="songID" th:field="*{songID}" />
+              <input type="hidden" id="songName" th:field="*{songName}" />
+              <input type="hidden" id="artistName" th:field="*{artistName}" />
+              <input type="hidden" id="artistID" th:field="*{artistID}" />
+              <input type="hidden" id="albumName" th:field="*{albumName}" />
+              <input type="hidden" id="songImg" th:field="*{songImg}" />
+              <input type="hidden" id="songPreview" th:field="*{songPreview}" />
+              <input type="hidden" id="albumID" th:field="*{albumID}" />
+              <input type="hidden" id="songLength" th:field="*{songLength}" />
 
-          <div class="modal-body">
-            <ul class="list-group">
-              <th:block th:each="playlist : ${currentUser.getPlaylists()}">
-                <li class="list-group-item">
-                  <input class="form-check-input me-1"
-                         type="checkbox"
-                         th:value="${playlist.getPlaylistID()}"
-                         th:id="'checkbox-' + ${playlist.getPlaylistID()}"
-                         th:field="*{selectedPlaylists}"
-                         name="selectedPlaylists" />
-                  <label class="form-check-label stretched-link"
-                         th:for="'checkbox-' + ${playlist.getPlaylistID()}"
-                         th:text="${playlist.getPlaylistName()}"></label>
-                </li>
-              </th:block>
-            </ul>
+
+              <div class="modal-body">
+                <p>Select the playlists you want to add to:</p>
+                <ul class="list-group">
+                  <th:block th:each="playlist : ${currentUser.getPlaylists()}">
+                    <li class="list-group-item">
+                      <input class="form-check-input me-1"
+                             type="checkbox"
+                             th:value="${playlist.getPlaylistID()}"
+                             th:id="'checkbox-' + ${playlist.getPlaylistID()}"
+                             th:field="*{selectedPlaylists}"
+                             name="selectedPlaylists" />
+                      <label class="form-check-label stretched-link"
+                             th:for="'checkbox-' + ${playlist.getPlaylistID()}"
+                             th:text="${playlist.getPlaylistName()}"></label>
+                    </li>
+                  </th:block>
+                </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+            </form>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
-  </div>
 
   <script src="/js/searchPage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

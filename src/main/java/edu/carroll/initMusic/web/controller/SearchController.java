@@ -138,7 +138,6 @@ public class SearchController {
      */
     @PostMapping("/addSongToPlaylist")
     public String addSongToPlaylist(@ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
-        
         if (result.hasErrors()) {
             log.info("Adding song errors: {}", result.getAllErrors());
             return "redirect:/search";

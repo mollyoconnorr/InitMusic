@@ -65,8 +65,8 @@
 <div class="list-group playlistItem">
     <div class="list-group-item-container" th:each="playlist : ${currentUser.getPlaylists()}">
       <div class="list-group-item list-group-item-action">
-        <span th:text="${playlist.getPlaylistName()}"></span>
         <span th:text="' Number of songs: ' + ${playlist.getNumberOfSongs()}"></span>
+        <span th:text="${playlist.getPlaylistName()}"></span>
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Edit

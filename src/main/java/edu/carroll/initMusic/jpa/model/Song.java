@@ -101,9 +101,11 @@ public class Song {
     @Column(name = "song_img")
     private String songImg;
 
+
     /**
      * Link to a preview of song, approx 30 sec long
      */
+    @Column(name = "song_preview", columnDefinition = "TEXT") // Change to TEXT
     private String songPreview;
 
     /**
