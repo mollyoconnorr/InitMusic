@@ -159,53 +159,35 @@ public class SongService {
     public boolean addSongToPlaylist(Long playlistId, Song song) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
 
-        // Check if exactly one playlist was found
+        //Check if exactly one playlist was found
         if (playlistsFound.size() != 1) {
-            return false; // Or throw an exception if that suits your design better
+            return false;
         }
 
-        final Playlist playlist = playlistsFound.getFirst(); // Get the playlist from the list
+        final Playlist playlist = playlistsFound.getFirst();
 
-        // Check if the song is already in the playlist
+        //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
-            return false; // Song is already in the playlist
+            return false; //Song is already in the playlist
         }
 
-        // Attempt to find the song in the repository
+        //Attempt to find the song in the repository
         final Optional<Song> songFound = songRepository.findById(song.getSongID());
         if (songFound.isPresent()) {
-            // Add the managed song to the playlist
+            //Add the managed song to the playlist
             playlist.addSong(songFound.get());
             songFound.get().addPlaylist(playlist);
         } else {
-            // If the song does not exist, save it
+            //If the song does not exist, save it
             songRepository.save(song);
             playlist.addSong(song);
             song.addPlaylist(playlist);
         }
 
-        // Save only the playlist, which will cascade the updates
+        //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
 
         log.info("Song {} added to playlist {}", song.getSongID(), playlist.getPlaylistID());
         return true;
-    }
-
-    /**
-     * Main method used for testing, will get deleted eventually
-     * @param args Args
-     */
-    public static void main(String[] args) {
-        // Create the application context
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(InitMusicApplication.class)) {
-            SongService songService = context.getBean(SongService.class);
-
-            Set<Song> songsFound = songService.searchForSongs("Zach Bryan");
-            for(Song song : songsFound) {
-                System.out.println(song);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
