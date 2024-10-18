@@ -6,7 +6,7 @@
  */
 function populateRenamePlaylistModal(modal, playlistName, playlistID) {
     const modalTitle = modal.querySelector('.modal-title');
-    modalTitle.textContent = 'Rename Playlist: ' + playlistName;
+    modalTitle.textContent = 'Rename ' + playlistName;
 
     const modalInput = modal.querySelector('.modal-body input');
     if (modalInput) {
