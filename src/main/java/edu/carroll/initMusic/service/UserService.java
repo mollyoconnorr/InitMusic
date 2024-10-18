@@ -298,4 +298,29 @@ public class UserService {
 
         return playlistsFound.getFirst();
     }
+
+    /**
+     * Removes a song from a playlist based off their respective ID's
+     * @param playlistID ID of playlist
+     * @param songID ID of song
+     * @return ResponseStatus Enum which corresponds to outcome of function
+     */
+    public ResponseStatus removeSongFromPlaylist(Long playlistID, Long songID){
+        List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
+
+        //If there was 0 or more than 1 playlist found
+        if(playlistsFound.size() != 1){
+            return ResponseStatus.PLAYLIST_NOT_FOUND;
+        }
+        final Playlist playlist = playlistsFound.getFirst();
+
+        final boolean songRemoved = playlist.removeSong(songID);
+
+        //If song wasn't removed
+        if(!songRemoved){
+            return ResponseStatus.SONG_NOT_IN_PLAYLIST;
+        }
+
+        return ResponseStatus.SUCCESS;
+    }
 }
