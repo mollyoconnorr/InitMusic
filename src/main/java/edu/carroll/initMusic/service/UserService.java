@@ -36,6 +36,8 @@ public class UserService {
      * BCrypt password encoder used for hashing passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
+
+
     private final PlaylistRepository playlistRepository;
 
     /**
@@ -285,5 +287,15 @@ public class UserService {
         userRepository.save(user);
 
         return ResponseStatus.SUCCESS;
+    }
+
+    public Playlist getPlaylist(Long playlistID){
+        List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
+
+        if(playlistsFound.size() != 1){
+            return null;
+        }
+
+        return playlistsFound.getFirst();
     }
 }
