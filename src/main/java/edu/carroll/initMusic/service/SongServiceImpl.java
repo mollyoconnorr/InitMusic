@@ -7,10 +7,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import edu.carroll.initMusic.InitMusicApplication;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
-import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.SongRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
@@ -19,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -39,11 +36,11 @@ import java.util.Set;
  * @since September 30, 2024
  */
 @Service
-public class SongService {
+public class SongServiceImpl {
     /**
      * Logger object used for logging
      */
-    private static final Logger log = LoggerFactory.getLogger(SongService.class);
+    private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
     /**
      * Song repository
@@ -66,7 +63,7 @@ public class SongService {
      * @param playlistRepository Playlist Repo to inject
      * @param userRepository User repo to inject
      */
-    public SongService(SongRepository songRepository, PlaylistRepository playlistRepository, UserRepository userRepository) {
+    public SongServiceImpl(SongRepository songRepository, PlaylistRepository playlistRepository, UserRepository userRepository) {
         this.songRepository = songRepository;
         this.playlistRepository = playlistRepository;
         this.userRepository = userRepository;

@@ -2,7 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.SongServiceImpl;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewSongForm;
 import jakarta.servlet.http.HttpSession;
@@ -44,7 +44,7 @@ public class SearchController {
     /**
      * Song service for operations
      */
-    private final SongService songService;
+    private final SongServiceImpl songServiceImpl;
 
     /**
      * User service for operations with user objects
@@ -53,11 +53,11 @@ public class SearchController {
 
     /**
      * Constructor
-     * @param songService Injected song service
+     * @param songServiceImpl Injected song service
      * @param userService Injected user service
      */
-    public SearchController(SongService songService, UserService userService) {
-        this.songService = songService;
+    public SearchController(SongServiceImpl songServiceImpl, UserService userService) {
+        this.songServiceImpl = songServiceImpl;
         this.userService = userService;
     }
 
@@ -115,7 +115,7 @@ public class SearchController {
         //Initialize playlist so its loaded and we can perform actions with it if needed
         Hibernate.initialize(user.getPlaylists());
 
-        final Set<Song> results = songService.searchForSongs(query);
+        final Set<Song> results = songServiceImpl.searchForSongs(query);
 
         if(results.isEmpty()) {
             model.addAttribute("error", "No songs found.");
@@ -149,7 +149,7 @@ public class SearchController {
         // Handle the logic for adding the song to the selected playlists
         for (Long playlistId : selectedPlaylists) {
             log.info("Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
-            songService.addSongToPlaylist(playlistId, song);
+            songServiceImpl.addSongToPlaylist(playlistId, song);
         }
 
         return "redirect:/search";

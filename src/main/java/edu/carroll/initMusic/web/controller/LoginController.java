@@ -2,7 +2,6 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.LoginService;
-import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
