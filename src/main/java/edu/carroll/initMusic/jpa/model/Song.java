@@ -7,9 +7,8 @@ import java.util.Set;
 import jakarta.persistence.*;
 
 /**
- * <p>
- * This class is used to represent song objects, and maps to our database table.
- * </p>
+ * This class is used to represent songs, and
+ * stores several attributes about each song.
  *
  * @author Nick Clouse
  *
@@ -18,9 +17,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "song")
 public class Song {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 1L;
 
     /**
@@ -52,9 +49,7 @@ public class Song {
     @JoinColumn(name = "albumID")
     private Album album;
 
-    /**
-     * Name of song
-     */
+    /** Name of song */
     @Column(name = "name", nullable=false)
     private String songName;
 
@@ -65,52 +60,37 @@ public class Song {
     @Column(name = "release_date", length = 10)
     private String releaseDate;
 
-    /**
-     * Length of song in seconds
-     */
+    /** Length of song in seconds */
     @Column(name = "length", nullable=false)
     private int length;
 
-    /**
-     * Name of artist who produced the song
-     */
+    /** Name of artist who produced the song */
     @Column(name = "artist_name", nullable=false)
     private String artistName;
 
-    /**
-     * Deezer ID of artist
-     */
+    /** Deezer ID of artist */
     @Column(name = "artist_id", nullable=false)
     private long artistID;
 
-    /**
-     * Name of album this song is in
-     */
+    /** Name of album this song is in */
     @Column(name = "album_name", nullable=false)
     private String albumName;
 
-    /**
-     * Deezer ID of album
-     */
+    /** Deezer ID of album */
     @Column(name = "album_id", nullable=false)
     private long albumID;
 
-    /**
-     * Link to songs cover art
-     */
+    /** Link to songs cover art */
     @Column(name = "song_img")
     private String songImg;
 
 
-    /**
-     * Link to a preview of song, approx 30 sec long
-     */
+    /** Link to a preview of song, approx 30 sec long */
     @Column(name = "song_preview", columnDefinition = "TEXT") // Change to TEXT
     private String songPreview;
 
     /**
-    * JPA needs this constructor to instantiate entities when retrieving data from the database.
-    * Its protected so it can't be used to create new Album objects by other classes.
+    * JPA needs this default constructor to instantiate entities when retrieving data from the database.
     */
     public Song() {
         //Default Constructor
@@ -387,7 +367,15 @@ public class Song {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Song song = (Song) o;
-        return length == song.length && artistID == song.artistID && albumID == song.albumID && Objects.equals(songID, song.songID) && Objects.equals(songName, song.songName) && Objects.equals(artistName, song.artistName) && Objects.equals(albumName, song.albumName) && Objects.equals(songImg, song.songImg) && Objects.equals(songPreview, song.songPreview);
+        return length == song.length &&
+                artistID == song.artistID &&
+                albumID == song.albumID &&
+                Objects.equals(songID, song.songID) &&
+                Objects.equals(songName, song.songName) &&
+                Objects.equals(artistName, song.artistName) &&
+                Objects.equals(albumName, song.albumName) &&
+                Objects.equals(songImg, song.songImg) &&
+                Objects.equals(songPreview, song.songPreview);
     }
 
     /**
