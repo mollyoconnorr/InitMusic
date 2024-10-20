@@ -8,9 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- * <p>
- * Repository used for performing CRUD actions on the User Entity
- * </p>
+ * Repository used for managing and retrieving the User Entity
  *
  * @author Nick Clouse
  *
@@ -29,10 +27,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Searches for a user by email (case-insensitive)
      * @param email Email to search for
-     * @return Optional<User>, which is empty if no user is found
+     * @return List<User>, which is empty if no user is found
      */
     List<User> findByEmailIgnoreCase(String email);
 
+    /**
+     * This query retrieves a User entity by its userID and eagerly fetches its associated playlists.
+     * @param id User id to search for
+     * @return List of users found
+     */
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.playlists WHERE u.userID = :id")
     User findByIdWithPlaylists(@Param("id") Long id);
 }

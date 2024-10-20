@@ -8,9 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 /**
- * <p>
- * Repository used for performing CRUD actions on the Song Entity
- * </p>
+ * Repository used for managing and retrieving the Song Entity
  *
  * @author Nick Clouse
  *
