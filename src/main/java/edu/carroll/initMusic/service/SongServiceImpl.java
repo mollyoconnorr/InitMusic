@@ -26,10 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * <p>
  * This services handles everything related to songs, like
  * Searching for songs on Deezer and adding a song to a playlist
- * </p>
  *
  * @author Nick Clouse
  *
@@ -37,36 +35,23 @@ import java.util.Set;
  */
 @Service
 public class SongServiceImpl {
-    /**
-     * Logger object used for logging
-     */
+    /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
-    /**
-     * Song repository
-     */
+    /** Song repository */
     private final SongRepository songRepository;
 
-    /**
-     * Playlist repository
-     */
+    /** Playlist repository */
     private final PlaylistRepository playlistRepository;
-
-    /**
-     * User Repository
-     */
-    private final UserRepository userRepository;
-
+    
     /**
      * Constructor, injects several repositories
      * @param songRepository Song Repo to inject
      * @param playlistRepository Playlist Repo to inject
-     * @param userRepository User repo to inject
      */
-    public SongServiceImpl(SongRepository songRepository, PlaylistRepository playlistRepository, UserRepository userRepository) {
+    public SongServiceImpl(SongRepository songRepository, PlaylistRepository playlistRepository) {
         this.songRepository = songRepository;
         this.playlistRepository = playlistRepository;
-        this.userRepository = userRepository;
     }
 
     /**
