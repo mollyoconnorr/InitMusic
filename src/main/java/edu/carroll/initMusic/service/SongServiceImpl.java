@@ -143,7 +143,7 @@ public class SongServiceImpl implements SongService{
 
         //Check if exactly one playlist was found
         if (playlistsFound.size() != 1) {
-            log.info("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
+            log.warn("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
             return false;
         }
 
@@ -151,7 +151,7 @@ public class SongServiceImpl implements SongService{
 
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
-            log.info("Playlist id#{} already contains song#{}",playlistId,song.getSongID());
+            log.warn("Playlist id#{} by user id#{} already contains song#{}",playlistId,playlist.getAuthor().getuserID(),song.getSongID());
             return false; //Song is already in the playlist
         }
 
@@ -171,7 +171,7 @@ public class SongServiceImpl implements SongService{
         //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
 
-        log.info("Song {} added to playlist {}", song.getSongID(), playlist.getPlaylistID());
+        log.info("Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
         return true;
     }
 }
