@@ -1,6 +1,7 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
@@ -112,7 +113,7 @@ public class PlaylistController {
         }
 
         //Add flash attribute for success message for user
-        redirectAttributes.addFlashAttribute("successMsg", "Playlist '" + playlistName + "' created!");
+        redirectAttributes.addFlashAttribute("successMsg", playlistName + " created!");
 
         return "redirect:/playlists";
     }
@@ -148,6 +149,8 @@ public class PlaylistController {
         final User user = userService.getUser(sessionUser.getUsername());
         final String newPlaylistName = renamePlaylistForm.getNewPlaylistName();
         final Long playlistID = renamePlaylistForm.getPlaylistID();
+        final String oldPlaylistName = userService.getPlaylist(playlistID).getPlaylistName();
+
 
         log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
@@ -159,7 +162,7 @@ public class PlaylistController {
         }
 
         //Add flash attribute for success message for user
-        redirectAttributes.addFlashAttribute("successMsg", "Playlist renamed to "+newPlaylistName +"!");
+        redirectAttributes.addFlashAttribute("successMsg", oldPlaylistName + " renamed to "+newPlaylistName +"!");
 
         return "redirect:/playlists";
     }
@@ -201,7 +204,7 @@ public class PlaylistController {
         }
 
         //Add flash attribute for success message for user
-        redirectAttributes.addFlashAttribute("successMsg", "Playlist '"+playlistName+"' deleted!");
+        redirectAttributes.addFlashAttribute("successMsg", playlistName+" deleted!");
 
         return "redirect:/playlists";
     }
