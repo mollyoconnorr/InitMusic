@@ -25,20 +25,17 @@ import java.util.Objects;
 @Service
 public class UserServiceImpl implements UserService {
 
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    /**
-     * User repository for interacting with the user database.
-     */
+    /** User repository for interacting with the user database. */
     private final UserRepository userRepository;
 
-    /**
-     * BCrypt password encoder used for hashing passwords.
-     */
-    private final BCryptPasswordEncoder passwordEncoder;
-
-
+    /** Playlist repository for interacting with the playlist database. */
     private final PlaylistRepository playlistRepository;
+
+    /** BCrypt password encoder used for hashing passwords.*/
+    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * Constructor to initialize the UserService with the required dependencies.
@@ -98,11 +95,11 @@ public class UserServiceImpl implements UserService {
      */
     public User saveUser(RegistrationForm registrationForm) {
         log.info("Saving new user with username '{}'", registrationForm.getUsername());
-        User newUser = new User();  // Create a new User object inside the method
+        final User newUser = new User();  // Create a new User object inside the method
         newUser.setUsername(registrationForm.getUsername());
         newUser.setEmail(registrationForm.getEmail());
         // Validate that password is not null
-        String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
+        final String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
         newUser.setHashedPassword(hashedPassword);
         log.info("Password for user '{}' has been hashed", newUser.getUsername());
 
@@ -124,13 +121,13 @@ public class UserServiceImpl implements UserService {
      * @param questionForm the form containing the new security questions and answers
      */
     public void updateUser(User user, SecurityQuestionsForm questionForm) {
-        log.info("Updating security questions for user '{}'", user.getUsername());
+        log.info("Updating security questions for user id#{}", user.getuserID());
         user.setQuestion1(questionForm.getQuestion1());
         user.setAnswer1(questionForm.getAnswer1());
         user.setQuestion2(questionForm.getQuestion2());
         user.setAnswer2(questionForm.getAnswer2());
         userRepository.save(user); // Save the user with updated security questions to the database
-        log.info("Security questions updated for user '{}'", user.getUsername());
+        log.info("Security questions updated for user id#{}", user.getuserID());
     }
 
     /**
@@ -141,8 +138,8 @@ public class UserServiceImpl implements UserService {
      */
     public User findByEmail(String email) {
         log.info("Finding user by email '{}'", email);
-        List<User> users = userRepository.findByEmailIgnoreCase(email);
-        User foundUser = users.isEmpty() ? null : users.getFirst();  // Return the first user or null if none found
+        final List<User> users = userRepository.findByEmailIgnoreCase(email);
+        final User foundUser = users.isEmpty() ? null : users.getFirst();  // Return the first user or null if none found
 
         if (foundUser != null) {
             log.info("User found with email '{}'", email);
@@ -159,10 +156,10 @@ public class UserServiceImpl implements UserService {
      * @param newPassword the new password to be hashed and saved
      */
     public void updatePassword(User user, String newPassword) {
-        log.info("Updating password for user '{}'", user.getUsername());
+        log.info("Updating password for user id#{}", user.getuserID());
         user.setHashedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user); // Save the user with updated password to the database
-        log.info("Password updated for user '{}'", user.getUsername());
+        log.info("Password updated for user id#{}", user.getuserID());
     }
 
     /**
@@ -201,19 +198,19 @@ public class UserServiceImpl implements UserService {
     public ResponseStatus createPlaylist(String name, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
-            log.warn("Attempted to create a new playlist, but User {} doesn't exist", user.getuserID());
+            log.warn("Attempted to create a new playlist, but User id#{} doesn't exist", user.getuserID());
             return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If user already has a playlist with the same name
         if(user.getPlaylist(name) != null){
-            log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user {}", name, user.getuserID());
+            log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user id#{}", name, user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EXISTS;
         }
 
         //If string is empty or blank
         if(name.isBlank()){
-            log.warn("Attempted to create a new playlist, but User {} tried to make a playlist with a blank String", user.getuserID());
+            log.warn("Attempted to create a new playlist, but User id#{} tried to make a playlist with a blank String", user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EMPTY;
         }
 
@@ -238,19 +235,19 @@ public class UserServiceImpl implements UserService {
     public ResponseStatus renamePlaylist(String newName, Long playlistID, User user){
         //If user already has playlist with same name
         if(user.getPlaylist(newName) != null){
-            log.warn("Attempted to rename playlist, but a Playlist with name '{}' already exists for user '{}'", newName, user.getuserID());
+            log.warn("Attempted to rename playlist, but a Playlist with name '{}' already exists for user id#{}", newName, user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EXISTS;
         }
 
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
-            log.warn("Attempted to rename playlist, but User {} doesn't exist", user.getuserID());
+            log.warn("Attempted to rename playlist, but User id#{} doesn't exist", user.getuserID());
             return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If string is empty or blank
         if(newName.isBlank()){
-            log.warn("Attempted to rename playlist, but User {} tried to rename playlist with a blank String", user.getuserID());
+            log.warn("Attempted to rename playlist, but User id#{} tried to rename playlist with a blank String", user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EMPTY;
         }
 
@@ -277,19 +274,19 @@ public class UserServiceImpl implements UserService {
     public ResponseStatus deletePlaylist(String playlistName, Long playlistID, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
-            log.warn("Attempted to delete playlist, but User {} doesn't exist", user.getuserID());
+            log.warn("Attempted to delete playlist, but User id#{} doesn't exist", user.getuserID());
             return ResponseStatus.USER_NOT_FOUND;
         }
 
         //If playlist isn't found for given user.
         if(user.getPlaylist(playlistName) == null){
-            log.warn("Attempted to delete playlist, but User {} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
+            log.warn("Attempted to delete playlist, but User id#{} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
             return ResponseStatus.PLAYLIST_NOT_FOUND;
         }
 
         playlistRepository.delete(user.getPlaylist(playlistName));
         user.removePlaylist(user.getPlaylist(playlistName));
-        log.info("Playlist '{}' deleted for user '{}'", playlistName, user.getuserID());
+        log.info("Playlist '{}' deleted for user id#{}", playlistName, user.getuserID());
 
         userRepository.save(user);
 
@@ -302,7 +299,7 @@ public class UserServiceImpl implements UserService {
      * @return The playlist object found, if any
      */
     public Playlist getPlaylist(Long playlistID){
-        List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
+        final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         if(playlistsFound.size() != 1){
             return null;
@@ -318,11 +315,11 @@ public class UserServiceImpl implements UserService {
      * @return ResponseStatus Enum which corresponds to outcome of function
      */
     public ResponseStatus removeSongFromPlaylist(Long playlistID, Long songID){
-        List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
+        final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         //If there was 0 or more than 1 playlist found
         if(playlistsFound.size() != 1){
-            log.warn("Playlist#{} not found",playlistID);
+            log.warn("Playlist id#{} not found",playlistID);
             return ResponseStatus.PLAYLIST_NOT_FOUND;
         }
         final Playlist playlist = playlistsFound.getFirst();
@@ -331,13 +328,13 @@ public class UserServiceImpl implements UserService {
 
         //If song wasn't removed
         if(!songRemoved){
-            log.warn("Error when removing song#{} from playlist#{} using removeSong(songID)",songID,playlistID);
+            log.warn("Error when removing song id#{} from playlist id#{} using removeSong(songID)",songID,playlistID);
             return ResponseStatus.SONG_NOT_IN_PLAYLIST;
         }
 
         playlistRepository.save(playlist);
 
-        log.info("Song#{} successfully removed from playlist#{}", songID, playlistID);
+        log.info("Song id#{} successfully removed from playlist id#{}", songID, playlistID);
 
         return ResponseStatus.SUCCESS;
     }
