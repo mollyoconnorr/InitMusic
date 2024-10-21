@@ -132,6 +132,10 @@ public class PlaylistController {
                                  RedirectAttributes redirectAttributes){
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
+            //This is the only binding result for this form that would be caused by user
+            if(bindingResult.getFieldError("newPlaylistName") != null) {
+                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("newPlaylistName"));
+            }
             log.error("Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlists";  // Return the view with errors
         }
