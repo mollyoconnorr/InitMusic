@@ -1,5 +1,10 @@
 package edu.carroll.initMusic.web.form;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,36 +21,46 @@ public class NewSongForm {
     /**
      * Deezer id of the song
      */
+    @NotNull
+    @Positive
     private Long songID = 0L;
 
     /**
      * Name of song
      */
+    @NotBlank
     private String songName = "";
 
     /**
      * Length of song
      */
+    @PositiveOrZero
     private int songLength = 0;
 
     /**
      * Name of artist
      */
+    @NotBlank
     private String artistName = "";
 
     /**
      * Deezer id of artist who made the song
      */
+    @NotNull
+    @Positive
     private Long artistID = 0L;
 
     /**
      * Name of album song is in
      */
+    @NotBlank
     private String albumName = "";
 
     /**
      * Deezer id of album
      */
+    @NotNull
+    @Positive
     private Long albumID = 0L;
 
     /**

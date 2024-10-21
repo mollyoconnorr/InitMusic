@@ -6,6 +6,7 @@ import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewSongForm;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +130,7 @@ public class SearchController {
      * all the params needed for a song and create a new object.
      */
     @PostMapping("/addSongToPlaylist")
-    public String addSongToPlaylist(@ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
+    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
         if (result.hasErrors()) {
             log.info("Adding song errors: {}", result.getAllErrors());
             return "redirect:/search";
