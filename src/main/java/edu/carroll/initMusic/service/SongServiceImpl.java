@@ -34,7 +34,7 @@ import java.util.Set;
  * @since September 30, 2024
  */
 @Service
-public class SongServiceImpl {
+public class SongServiceImpl implements SongService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
