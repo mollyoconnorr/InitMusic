@@ -135,6 +135,9 @@ public class PlaylistController {
             //This is the only binding result for this form that would be caused by user
             if(bindingResult.getFieldError("newPlaylistName") != null) {
                 redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("newPlaylistName"));
+            }else{
+                //Error was not related to any user input
+                redirectAttributes.addFlashAttribute("error", "Error renaming playlist");
             }
             log.error("Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlists";  // Return the view with errors
@@ -177,6 +180,8 @@ public class PlaylistController {
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
             log.error("Binding errors found when attempting to delete a playlist: {}", bindingResult.getAllErrors());
+            //This error would not be caused by any user input
+            redirectAttributes.addFlashAttribute("error", "Error deleting playlist");
             return "redirect:/playlists";  // Return the view with errors
         }
 

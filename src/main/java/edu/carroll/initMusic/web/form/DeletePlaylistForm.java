@@ -1,5 +1,7 @@
 package edu.carroll.initMusic.web.form;
 
+import jakarta.validation.constraints.NotNull;
+
 /**
  * This form is used to help handle deleting a playlist
  *
@@ -9,9 +11,11 @@ package edu.carroll.initMusic.web.form;
  */
 public class DeletePlaylistForm {
     /** ID of playlist */
+    @NotNull
     private Long playlistID;
 
     /** Name of playlist */
+    @NotNull
     private String playlistName;
 
     /**
