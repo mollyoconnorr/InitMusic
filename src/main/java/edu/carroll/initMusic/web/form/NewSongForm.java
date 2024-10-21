@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
  * This form is used when a song is going to be added to a playlist.
  * We have to pass all the song attributes so we can make the song into
  * a object.
- * </p>
  *
  * @author Nick Clouse
  *

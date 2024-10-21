@@ -1,10 +1,8 @@
 package edu.carroll.initMusic.web.form;
 
 /**
- * <p>
  * This form is used to make a new playlist. It only
  * has one attribute: The name of the new playlist.
- * </p>
  *
  * @author Nick Clouse
  *

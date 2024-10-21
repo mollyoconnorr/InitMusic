@@ -1,9 +1,7 @@
 package edu.carroll.initMusic.web.form;
 
 /**
- * <p>
  * This form is used for renaming a playlist.
- * </p>
  *
  * @author Nick Clouse
  *
