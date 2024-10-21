@@ -6,7 +6,7 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.SongRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
-import edu.carroll.initMusic.service.SongServiceImpl;
+import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import java.util.Set;
 import static org.springframework.test.util.AssertionErrors.*;
 
 @SpringBootTest
-public class SongServiceImplTests {
+public class SongServiceTests {
 
     @Autowired
-    private SongServiceImpl songServiceImpl;
+    private SongService songService;
 
     @Autowired
     private UserService userService;
@@ -40,16 +40,16 @@ public class SongServiceImplTests {
      */
     @Test
     public void verifySearchForSongs(){
-        Set<Song> songs = songServiceImpl.searchForSongs("Zach Bryan");
+        Set<Song> songs = songService.searchForSongs("Zach Bryan");
         assertFalse("There should be at least one song found for query 'Zach Bryan'", songs.isEmpty());
 
-        songs = songServiceImpl.searchForSongs("");
+        songs = songService.searchForSongs("");
         assertTrue("A empty search should return an empty set of songs", songs.isEmpty());
 
-        songs = songServiceImpl.searchForSongs("  ");
+        songs = songService.searchForSongs("  ");
         assertTrue("A search of only whitespace should return an empty set of songs'", songs.isEmpty());
 
-        songs = songServiceImpl.searchForSongs("12");
+        songs = songService.searchForSongs("12");
         assertTrue("A search with length less than 3 should return an empty set of songs", songs.isEmpty());
     }
 
@@ -67,22 +67,22 @@ public class SongServiceImplTests {
         userRepository.save(user);
         playlistRepository.save(p);
 
-        final Object[] songs = songServiceImpl.searchForSongs("Zach Bryan").toArray();
+        final Object[] songs = songService.searchForSongs("Zach Bryan").toArray();
 
         //Checking that a song should've been added to the playlist
-        assertTrue("Song should've been added to the playlist", songServiceImpl.addSongToPlaylist(p.getPlaylistID(),(Song) songs[0]));
+        assertTrue("Song should've been added to the playlist", songService.addSongToPlaylist(p.getPlaylistID(),(Song) songs[0]));
 
         //Checking that a song won't be added twice
-        assertFalse("Song should not have been added to the playlist because it is already in the playlist", songServiceImpl.addSongToPlaylist(p.getPlaylistID(),(Song) songs[0]));
+        assertFalse("Song should not have been added to the playlist because it is already in the playlist", songService.addSongToPlaylist(p.getPlaylistID(),(Song) songs[0]));
 
         //Checking that song won't be added to an unknown playlist
-        assertFalse("Song should not have been added to the playlist because the playlist doesn't exist", songServiceImpl.addSongToPlaylist(123123L,(Song) songs[0]));
+        assertFalse("Song should not have been added to the playlist because the playlist doesn't exist", songService.addSongToPlaylist(123123L,(Song) songs[0]));
 
         //Create a song object without saving it to the repository
         final Song unsavedSong = new Song(123L,"name",100,"artist",1234L,"Album",23323L);
 
         //Call the method
-        final boolean result = songServiceImpl.addSongToPlaylist(p.getPlaylistID(), unsavedSong);
+        final boolean result = songService.addSongToPlaylist(p.getPlaylistID(), unsavedSong);
 
         //Verify the song was added and saved
         assertTrue("Song should've been added to the playlist",result);

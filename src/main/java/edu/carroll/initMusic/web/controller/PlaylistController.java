@@ -2,7 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.SongServiceImpl;
+import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeletePlaylistForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
@@ -34,18 +34,18 @@ public class PlaylistController {
     private static final Logger log = LoggerFactory.getLogger(PlaylistController.class);
 
     /** Song service for operations */
-    private final SongServiceImpl songServiceImpl;
+    private final SongService songService;
 
     /** User service for operations involving user objects */
     private final UserService userService;
 
     /**
      * Default constructor
-     * @param songServiceImpl Injected SongServiceImpl
+     * @param songService Injected SongServiceImpl
      * @param userService Injected userService
      */
-    public PlaylistController(SongServiceImpl songServiceImpl, UserService userService) {
-        this.songServiceImpl = songServiceImpl;
+    public PlaylistController(SongService songService, UserService userService) {
+        this.songService = songService;
         this.userService = userService;
     }
 

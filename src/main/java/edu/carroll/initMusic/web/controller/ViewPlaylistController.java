@@ -5,7 +5,6 @@ import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeleteSongFromPlaylistForm;
-import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

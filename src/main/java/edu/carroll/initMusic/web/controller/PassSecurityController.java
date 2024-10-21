@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -18,10 +17,13 @@ public class PassSecurityController {
     /**
      * Logger object used for logging actions within this controller.
      */
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(PassSecurityController.class);
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public PassSecurityController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     @GetMapping("/passSecurity")

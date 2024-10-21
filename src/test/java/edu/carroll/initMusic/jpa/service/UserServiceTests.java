@@ -4,7 +4,6 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.RegistrationForm;
-import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
