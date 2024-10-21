@@ -100,16 +100,25 @@ public class ViewPlaylistController {
         final String playlistName = deleteSongFromPlaylistForm.getPlaylistName();
         log.info("User id#{} wants to delete song from playlist id#{}", user.getuserID(),playlistID);
 
+        //If there are any binding errors, log errors and return back to viewPlaylist page
+        if (bindingResult.hasErrors()) {
+            log.error("Binding errors found when attempting to delete a song from a playlist: {}", bindingResult.getAllErrors());
+            //This error would not be caused by any user input
+            redirectAttributes.addFlashAttribute("error", "Error deleting "+ songName +" from " +playlistName);
+            return "redirect:/viewPlaylist/"+playlistID;
+        }
+
         final ResponseStatus songRemoved = userService.removeSongFromPlaylist(playlistID, songID);
 
+        //If song wasn't removed for some reason
         if(songRemoved.failed()){
             redirectAttributes.addFlashAttribute("error", songRemoved.getMessage());
             return "redirect:/viewPlaylist/"+playlistID;
         }
 
+        //Success message since song was removed
         redirectAttributes.addFlashAttribute("successMsg", "Removed " +
                 songName + " from " + playlistName);
-
 
         return "redirect:/viewPlaylist/"+playlistID;
     }
