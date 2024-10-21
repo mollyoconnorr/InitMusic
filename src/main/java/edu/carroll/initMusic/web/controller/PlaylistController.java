@@ -90,6 +90,9 @@ public class PlaylistController {
                                  RedirectAttributes redirectAttributes) {
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
+            if(bindingResult.getFieldError("playlistName") != null) {
+                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("playlistName"));
+            }
             log.error("Binding errors found when attempting to create a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlists";  // Return the view with errors
         }
