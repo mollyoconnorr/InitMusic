@@ -1,12 +1,8 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.RegistrationForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpSession;
@@ -22,10 +18,13 @@ public class ChangePasswordEmailController {
     /**
      * Logger object used for logging actions within this controller.
      */
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public ChangePasswordEmailController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/changePasswordEmail")
     public String showChangePasswordEmailPage() {

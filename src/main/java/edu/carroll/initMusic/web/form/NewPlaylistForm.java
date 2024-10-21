@@ -1,10 +1,10 @@
 package edu.carroll.initMusic.web.form;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
- * <p>
  * This form is used to make a new playlist. It only
  * has one attribute: The name of the new playlist.
- * </p>
  *
  * @author Nick Clouse
  *
@@ -14,6 +14,7 @@ public class NewPlaylistForm {
     /**
      * Name of new playlist
      */
+    @NotBlank(message="Playlist name can not be blank!")
     private String playlistName;
 
     /**

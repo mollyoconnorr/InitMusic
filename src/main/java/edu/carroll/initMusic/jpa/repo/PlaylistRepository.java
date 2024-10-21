@@ -8,9 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 /**
- * <p>
- * Repository used for performing CRUD actions on the Playlist Entity
- * </p>
+ * Repository used for managing and retrieving the Playlist Entity
  *
  * @author Nick Clouse
  *

@@ -34,14 +34,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 1L;
 
-    /**
-     * User's id number, used as primary key
-     */
+    /** User's id number, used as primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userID;
@@ -53,77 +49,56 @@ public class User {
     @OneToMany(mappedBy = "author")
     private final Set<Playlist> playlists = new HashSet<>();
 
-    /**
-     * User's username
-     */
+    /** User's username */
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    /**
-     * User's password
-     */
+    /** User's password */
     @Column(name = "password", nullable = false)
     private String hashedPassword;
 
-    /**
-     * User's first name
-     */
+    /** User's first name */
     @Column(name = "user_first_name", nullable = false)
     private String firstName;
 
-    /**
-     * User's last name
-     */
+    /** User's last name */
     @Column(name = "user_last_name", nullable = false)
     private String lastName;
 
-    /**
-     * User's email
-     */
+    /** User's email */
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    /**
-     * User's Security Question1
-     */
+    /* User's Security Question1 */
     @Column(name = "question1")
     private String question1;
 
-    /**
-     * User's Security Question2
-     */
+    /** User's Security Question2 */
     @Column(name = "question2")
     private String question2;
 
-    /**
-     * User's Security Answer1
-     */
+    /** User's Security Answer1 */
     @Column(name = "answer1")
     private String answer1;
 
-    /**
-     * User's Security Answer2
-     */
+    /** User's Security Answer2 */
     @Column(name = "answer2")
     private String answer2;
 
-    /**
-     * Date user account was created.
-     */
+    /** Date user account was created */
     @CreatedDate
     @Column(name = "account_creation_date", nullable = false)
     private LocalDateTime accountCreationDate;
 
     /**
-     * JPA needs this constructor to instantiate entities when retrieving data from the database.
-     * Its protected so it can't be used to create new Album objects by other classes.
+     * JPA needs this default constructor to instantiate entities when retrieving data from the database.
      */
     public User(){
         //Default Constructor
     }
 
     /**
-     * Creates a user user instance
+     * Creates a user instance
      * @param username User's username
      * @param hashedPassword User's password, hashed
      * @param firstName User's first name
@@ -156,7 +131,7 @@ public class User {
     }
 
     /**
-     * Get a playlist based off of string
+     * Get a playlist based off of its name
      * @param playlistName Name of playlist to search for
      * @return Playlist if found, null if not.
      */

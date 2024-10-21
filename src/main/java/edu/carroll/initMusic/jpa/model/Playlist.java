@@ -10,10 +10,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * <p>
  * This class is used to represent Playlist objects, and maps to our database table.
  * A playlist is a collection of songs created by a user.
- * </p>
  *
  * @author Nick Clouse
  *
@@ -23,26 +21,21 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "playlist")
 public class Playlist {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 1L;
 
-    /**
-     * Playlist's id number, used as primary key
-     */
+    /** Playlist's id number, used as primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long playlistID;
 
-    /**
-     * ID of author who made playlist. A Many to one relationship.
-     */
+    /** ID of author who made playlist. A Many-to-one relationship. */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    /** Set of songs each playlist contains, many-to-many relationship */
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "playlist_song",
             joinColumns = { @JoinColumn(name = "playlistID") },
@@ -50,15 +43,11 @@ public class Playlist {
     )
     private final Set<Song> songs = new HashSet<>();
 
-    /**
-     * Name of playlist
-     */
+    /** Name of playlist */
     @Column(name= "playlist_name",nullable = false, unique = true)
     private String playlistName;
 
-    /**
-     * Date playlist was created.
-     */
+    /** Date playlist was created */
     @CreatedDate
     @Column(name = "date_playlist_created", nullable = false)
     private LocalDateTime dateCreated;
@@ -126,7 +115,7 @@ public class Playlist {
     }
 
     /**
-     * Remove a song from playlist
+     * Remove a song from playlist using a song object
      * @param song Song to remove
      * @return If song was removed or not
      */
@@ -140,6 +129,11 @@ public class Playlist {
         return removed;
     }
 
+    /**
+     * Remove a song from playlist using a song object using the songs id
+     * @param songID ID of song to remove
+     * @return If song was removed or not
+     */
     public boolean removeSong(Long songID){
         for (Song song : this.songs) {
             if (song.getSongID().equals(songID)) {

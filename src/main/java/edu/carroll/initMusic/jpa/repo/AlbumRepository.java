@@ -8,7 +8,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 /**
- * Repository used for performing CRUD actions on the Album Entity
+ * Repository used for managing and retrieving the Album Entity
+ *
+ * @author Nick Clouse
+ *
+ * @since September 11, 2024
  */
 public interface AlbumRepository extends JpaRepository<Album, Long> {
     /**
@@ -18,6 +22,12 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
      */
     List<Album> findByAlbumNameContainingIgnoreCase(String name);
 
+    /**
+     * Finds album by artist name and album name
+     * @param artistName Name of artist
+     * @param albumName Name of album
+     * @return A list of albums found related to artist and album
+     */
     List<Album>  findByArtists_ArtistNameAndAlbumName(String artistName,String albumName);
 
 }

@@ -1,15 +1,13 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.LoginService;
+import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.RegistrationForm; // Ensure correct import
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import edu.carroll.initMusic.service.UserService; // Import UserService
-import org.springframework.beans.factory.annotation.Autowired; // Import Autowired
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpSession;
@@ -30,8 +28,11 @@ public class RegisterController {
      */
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @Autowired
-    private UserService userService; // Inject UserService
+    private final UserService userService; // Inject UserService
+
+    public RegisterController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Displays the registration form.

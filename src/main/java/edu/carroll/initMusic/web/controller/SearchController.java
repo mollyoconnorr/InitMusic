@@ -6,6 +6,7 @@ import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewSongForm;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * <p>
  * This Controller handles the search page, which is where users can
  * search for songs and add them to playlists
- * </p>
  *
  * @author Nick Clouse
  *
@@ -36,19 +35,13 @@ import java.util.Set;
 @Controller
 public class SearchController {
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
-    /**
-     * Song service for operations
-     */
+    /** Song service for operations */
     private final SongService songService;
 
-    /**
-     * User service for operations with user objects
-     */
+    /** User service for operations with user objects */
     private final UserService userService;
 
     /**
@@ -137,7 +130,7 @@ public class SearchController {
      * all the params needed for a song and create a new object.
      */
     @PostMapping("/addSongToPlaylist")
-    public String addSongToPlaylist(@ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
+    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
         if (result.hasErrors()) {
             log.info("Adding song errors: {}", result.getAllErrors());
             return "redirect:/search";
@@ -166,9 +159,9 @@ public class SearchController {
         final  String songName = addSongForm.getSongName();
         final int songLength = addSongForm.getSongLength();
         final String artistName = addSongForm.getArtistName();
-        final Long artistID = addSongForm.getArtistID();
+        final long artistID = addSongForm.getArtistID();
         final String albumName = addSongForm.getAlbumName();
-        final Long albumID = addSongForm.getAlbumID();
+        final long albumID = addSongForm.getAlbumID();
         final String songImg = addSongForm.getSongImg();
         final String songPreview = addSongForm.getSongPreview();
 

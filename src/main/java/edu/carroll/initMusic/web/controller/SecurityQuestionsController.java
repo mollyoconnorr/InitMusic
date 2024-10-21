@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -22,8 +21,11 @@ public class SecurityQuestionsController {
      */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
-    private UserService userService; // Inject UserService
+    private final UserService userService; // Inject UserService
+
+    public SecurityQuestionsController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     @GetMapping("/securityQuestions")

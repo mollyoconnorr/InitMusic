@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository used for performing CRUD actions on the Artist Entity
+ * Repository used for managing and retrieving the Artist Entity
+ *
+ * @author Nick Clouse
+ *
+ * @since September 11, 2024
  */
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
     /**
