@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * <p>
  * This Controller handles the search page, which is where users can
  * search for songs and add them to playlists
- * </p>
  *
  * @author Nick Clouse
  *
@@ -36,19 +34,13 @@ import java.util.Set;
 @Controller
 public class SearchController {
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
-    /**
-     * Song service for operations
-     */
+    /** Song service for operations */
     private final SongService songService;
 
-    /**
-     * User service for operations with user objects
-     */
+    /** User service for operations with user objects */
     private final UserService userService;
 
     /**
@@ -166,9 +158,9 @@ public class SearchController {
         final  String songName = addSongForm.getSongName();
         final int songLength = addSongForm.getSongLength();
         final String artistName = addSongForm.getArtistName();
-        final Long artistID = addSongForm.getArtistID();
+        final long artistID = addSongForm.getArtistID();
         final String albumName = addSongForm.getAlbumName();
-        final Long albumID = addSongForm.getAlbumID();
+        final long albumID = addSongForm.getAlbumID();
         final String songImg = addSongForm.getSongImg();
         final String songPreview = addSongForm.getSongPreview();
 
