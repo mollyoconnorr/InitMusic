@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import edu.carroll.initMusic.jpa.model.User; // Ensure you have the correct import for the User model
 import jakarta.servlet.http.HttpSession;
 import edu.carroll.initMusic.web.form.NewPasswordForm; // Adjust package as necessary
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Controller
 public class ChangePasswordAlreadyLoggedInController {
+    /** BCrypt password encoder used for hashing passwords.*/
+    private final BCryptPasswordEncoder passwordEncoder;
+
     /**
      * Logger object used for logging actions within this controller.
      */
@@ -21,8 +25,10 @@ public class ChangePasswordAlreadyLoggedInController {
 
     private final UserService userService;
 
-    public ChangePasswordAlreadyLoggedInController(UserService userService) {
+    public ChangePasswordAlreadyLoggedInController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     @GetMapping("/changePasswordLoggedIn")
@@ -34,9 +40,18 @@ public class ChangePasswordAlreadyLoggedInController {
     public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession httpSession, Model model) {
         User currentUser = (User) httpSession.getAttribute("currentUser"); // Ensure this attribute is set in the session
         if (currentUser != null) {
-            log.info("Password changed for {}", currentUser.getUsername());
-            userService.updatePassword(currentUser, passwordForm.getNewPassword());
-            return "passwordChangedLoggedIn"; // Redirect to the password changed page
+            String storedHashedPassword = currentUser.getHashedPassword(); // Assuming this retrieves the hashed password from the user
+            log.info(currentUser.getHashedPassword());
+            log.info(passwordForm.getOldPassword());
+
+            if (passwordEncoder.matches(passwordForm.getOldPassword(), storedHashedPassword)) {
+                log.info("Password changed for {}", currentUser.getUsername());
+                userService.updatePassword(currentUser, passwordForm.getNewPassword());
+                return "passwordChangedLoggedIn"; // Redirect to the password changed page
+            } else {
+                model.addAttribute("error", "Old password is incorrect.");
+                return "changePasswordLoggedIn"; // Reload the form with an error message
+            }
         } else {
             log.error("No user found in session.");
             return "redirect:/login"; // Redirect to login, user wasn't found
