@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/images/**","/js/**").permitAll() // Allow access to static resources
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions",
                                 "/changePasswordEmail", "/passSecurity", "/changePassword", "/emailTaken", "/userRegistered").permitAll()   // Allow access to login and registration pages
-                        .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword", "/changePasswordLoggedIn", "/passwordChangedLoggedIn").permitAll()   // Allow access to login and registration pages
                         .requestMatchers("/search","/playlists","/addSongToPlaylist","/createPlaylist","/renamePlaylist","/deletePlaylist","/viewPlaylist/**","/deleteSongFromPlaylist").permitAll()   // Allow access to login and registration pages
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
