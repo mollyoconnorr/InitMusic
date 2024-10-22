@@ -19,3 +19,7 @@ deleteSongModal.addEventListener('show.bs.modal', function (event) {
 
     populateDeleteSongModal(deleteSongModal, songID, songName, playlistID, playlistName);
 });
+
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}

@@ -26,7 +26,7 @@ function populateRenamePlaylistModal(modal, playlistName, playlistID) {
  * @param playlistName Name of playlist
  * @param playlistID ID of playlist to delete
  */
-function populateDeletePlaylistModal(modal, playlistName,playlistID){
+function populateDeletePlaylistModal(modal, playlistName, playlistID) {
     const modalBody = modal.querySelector('.modal-body');
     modalBody.textContent = 'Are you sure you want to delete ' + playlistName + '?';
 
@@ -56,7 +56,6 @@ function addCsrfTokenToForm(modal) {
 }
 
 
-
 // Use the modal's 'show.bs.modal' event
 const renamePlaylistModal = document.getElementById('renamePlaylistModal');
 renamePlaylistModal.addEventListener('show.bs.modal', function (event) {
@@ -76,7 +75,7 @@ deletePlaylistModal.addEventListener('show.bs.modal', function (event) {
 
 const playlistContainer = document.getElementsByClassName('list-group-item-container');
 for (let i = 0; i < playlistContainer.length; i++) {
-    playlistContainer[i].addEventListener('dblclick', function() {
+    playlistContainer[i].addEventListener('dblclick', function () {
         //Find the button inside this container
         const button = playlistContainer[i].querySelector('#renameBtn');
 
@@ -105,3 +104,8 @@ dropdown.addEventListener('mouseenter', function () {
 dropdown.addEventListener('mouseleave', function () {
     dropdown.querySelector('.dropdown-menu').classList.remove('show');
 });
+
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
+

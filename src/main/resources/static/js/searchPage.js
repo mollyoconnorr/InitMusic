@@ -28,3 +28,6 @@ function populateModal(button) {
     document.getElementById('songPreview').value = songPreview;
 
 }
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
