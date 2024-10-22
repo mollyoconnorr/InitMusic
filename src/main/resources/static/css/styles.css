@@ -85,3 +85,22 @@ html, body {
     margin: 0; /* Remove default margin */
     padding: 0; /* Remove default padding */
 }
+
+/* Style for the buttons */
+button.btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+button.btn-primary {
+    background-color: #F4A460; /*  primary buttons */
+    border-color: #F4A460;
+    color: white;
+}
+
+button.btn-primary:hover {
+    background-color: #C19A6B; /*  on hover */
+}
+
