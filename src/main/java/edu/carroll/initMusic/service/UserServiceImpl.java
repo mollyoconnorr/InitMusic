@@ -1,9 +1,6 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.ResponseStatus;
-import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
@@ -13,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Service class for handling user-related operations.
@@ -31,9 +27,6 @@ public class UserServiceImpl implements UserService {
     /** User repository for interacting with the user database. */
     private final UserRepository userRepository;
 
-    /** Playlist repository for interacting with the playlist database. */
-    private final PlaylistRepository playlistRepository;
-
     /** BCrypt password encoder used for hashing passwords.*/
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -43,10 +36,9 @@ public class UserServiceImpl implements UserService {
      * @param userRepository   the repository for interacting with the user data
      * @param passwordEncoder  the encoder used to hash passwords
      */
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PlaylistRepository playlistRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.playlistRepository = playlistRepository;
     }
 
     /**

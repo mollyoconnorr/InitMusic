@@ -33,7 +33,7 @@ public class PlaylistServiceImpl  implements PlaylistService{
         this.playlistRepository = playlistRepository;
         this.userRepository = userRepository;
     }
-    
+
     /**
      * Creates a new playlist for the given user with the given username. Returns true if the playlist
      * was created. It will false if the given user doesn't exist, the user already has a playlist

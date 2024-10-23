@@ -7,11 +7,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
-import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
-import edu.carroll.initMusic.jpa.repo.SongRepository;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -38,20 +32,10 @@ public class SongServiceImpl implements SongService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
-    /** Song repository */
-    private final SongRepository songRepository;
-
-    /** Playlist repository*/
-    private final PlaylistRepository playlistRepository;
-
     /**
-     * Constructor, injects several repositories
-     * @param songRepository Song Repo to inject
-     * @param playlistRepository Playlist Repo to inject
+     * Constructor
      */
-    public SongServiceImpl(SongRepository songRepository, PlaylistRepository playlistRepository) {
-        this.songRepository = songRepository;
-        this.playlistRepository = playlistRepository;
+    public SongServiceImpl() {
     }
 
     /**
