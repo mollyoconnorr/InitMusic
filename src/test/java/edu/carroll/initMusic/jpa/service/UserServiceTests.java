@@ -3,12 +3,16 @@ package edu.carroll.initMusic.jpa.service;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.service.UserServiceImpl;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collections;
@@ -18,38 +22,50 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 public class UserServiceTests {
 
-    @Mock
+    @MockBean
     private UserRepository userRepository;
 
-    @Mock
+    @MockBean
     private BCryptPasswordEncoder passwordEncoder;
 
-    @InjectMocks
-    private UserService userService;
+    @Autowired
+    private UserServiceImpl userService;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this); // Optional with @MockBean; kept for clarity
     }
 
+    /** Tests that when a unique username is given, userService should return true*/
     @Test
-    public void testUniqueUserName() {
-        when(userRepository.findByUsernameIgnoreCase("existingUser")).thenReturn(List.of(new User()));
+    public void checkUniqueUsernameTrue() {
         when(userRepository.findByUsernameIgnoreCase("newUser")).thenReturn(Collections.emptyList());
-
-        assertFalse(userService.uniqueUserName("existingUser"), "Username should already exist");
         assertTrue(userService.uniqueUserName("newUser"), "Username should be available");
     }
 
+    /**Tests that when a in use username is given, userService should return false*/
     @Test
-    public void testUniqueEmail() {
-        when(userRepository.findByEmailIgnoreCase("existing@example.com")).thenReturn(List.of(new User()));
-        when(userRepository.findByEmailIgnoreCase("new@example.com")).thenReturn(Collections.emptyList());
+    public void checkUniqueUsernameFalse() {
+        when(userRepository.findByUsernameIgnoreCase("existingUser")).thenReturn(List.of(new User()));
+        assertFalse(userService.uniqueUserName("existingUser"), "Username should already exist");
+    }
 
-        assertFalse(userService.uniqueEmail("existing@example.com"), "Email should already exist");
+
+
+
+    @Test
+    public void checkUniqueEmailTrue() {
+        when(userRepository.findByEmailIgnoreCase("new@example.com")).thenReturn(Collections.emptyList());
         assertTrue(userService.uniqueEmail("new@example.com"), "Email should be available");
+    }
+
+    @Test
+    public void checkUniqueEmailFalse() {
+        when(userRepository.findByEmailIgnoreCase("existing@example.com")).thenReturn(List.of(new User()));
+        assertFalse(userService.uniqueEmail("existing@example.com"), "Email should already exist");
     }
 
     @Test
