@@ -93,7 +93,7 @@ public class RegisterController {
             // Save the user
             User currentUser = userService.saveUser(registrationForm);
 
-            log.info("Storing current user in session: {}", currentUser.getID());
+            log.info("Storing current user in session");
             // Store user in session
             httpSession.setAttribute("currentUser", currentUser);
             return "redirect:/securityQuestions"; // Redirect to security questions page

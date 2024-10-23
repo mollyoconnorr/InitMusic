@@ -78,11 +78,11 @@ public class PassSecurityController {
         if (currentUser != null) {
             // Check if the answers provided match the user's stored answers
             if (currentUser.getAnswer1().equals(passSecurityForm.getAnswer1()) && currentUser.getAnswer2().equals(passSecurityForm.getAnswer2())) {
-                log.info("User with ID '{}' got security questions right. Redirect to change password", currentUser.getId());
+                log.info("User got security questions right. Redirect to change password");
                 return "changePassword";  // Redirect to the change password page
             } else {
                 // Provide feedback to the user
-                log.info("User with ID '{}' answered Security Questions Wrong", currentUser.getId());
+                log.info("User answered Security Questions Wrong");
                 model.addAttribute("question1", currentUser.getQuestion1());  // Assuming you have this method
                 model.addAttribute("question2", currentUser.getQuestion2());
                 model.addAttribute("errorMessage", "Incorrect answers. Please try again.");
