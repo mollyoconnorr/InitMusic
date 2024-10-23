@@ -2,6 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewSongForm;
@@ -44,14 +45,18 @@ public class SearchController {
     /** User service for operations with user objects */
     private final UserService userService;
 
+    /** Playlist service for operations with playlist objects */
+    private final PlaylistService playlistService;
+
     /**
      * Constructor
      * @param songService Injected song service
      * @param userService Injected user service
      */
-    public SearchController(SongService songService, UserService userService) {
+    public SearchController(SongService songService, UserService userService, PlaylistService playlistService) {
         this.songService = songService;
         this.userService = userService;
+        this.playlistService = playlistService;
     }
 
     /**
@@ -142,7 +147,7 @@ public class SearchController {
         // Handle the logic for adding the song to the selected playlists
         for (Long playlistId : selectedPlaylists) {
             log.info("Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
-            songService.addSongToPlaylist(playlistId, song);
+            playlistService.addSongToPlaylist(playlistId, song);
         }
 
         return "redirect:/search";
