@@ -5,6 +5,9 @@ import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Interface for PlaylistService, defines methods related to interacting with playlists.
  *
@@ -12,7 +15,7 @@ import edu.carroll.initMusic.jpa.model.User;
  *
  * @since October 23, 2024
  */
-public interface PlaylistService {
+public interface PlaylistService{
     /**
      * Adds a song to the given playlist.
      * @param playlistId ID of playlist to add song to

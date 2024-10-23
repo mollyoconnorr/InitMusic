@@ -129,49 +129,4 @@ public class SongServiceImpl implements SongService{
         log.info("Found {} songs for query '{}'",songsFound.size(),query);
         return songsFound;
     }
-
-    /**
-     * Adds a song to the given playlist. This first searches for the playlist by id. It
-     * should always find a playlist, because when used, it takes the playlist id directly from
-     * a playlist object that has already been created.
-     * @param playlistId ID of playlist to add song to
-     * @param song Song to add to playlist
-     * @return True if playlist was added, false if not
-     */
-    public boolean addSongToPlaylist(Long playlistId, Song song) {
-        final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
-
-        //Check if exactly one playlist was found
-        if (playlistsFound.size() != 1) {
-            log.warn("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
-            return false;
-        }
-
-        final Playlist playlist = playlistsFound.getFirst();
-
-        //Check if the song is already in the playlist
-        if (playlist.containsSong(song)) {
-            log.warn("Playlist id#{} by user id#{} already contains song#{}",playlistId,playlist.getAuthor().getuserID(),song.getSongID());
-            return false; //Song is already in the playlist
-        }
-
-        //Attempt to find the song in the repository
-        final Optional<Song> songFound = songRepository.findById(song.getSongID());
-        if (songFound.isPresent()) {
-            //Add the managed song to the playlist
-            playlist.addSong(songFound.get());
-            songFound.get().addPlaylist(playlist);
-        } else {
-            //If the song does not exist, save it
-            songRepository.save(song);
-            playlist.addSong(song);
-            song.addPlaylist(playlist);
-        }
-
-        //Save only the playlist, which will cascade the updates
-        playlistRepository.save(playlist);
-
-        log.info("Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
-        return true;
-    }
 }
