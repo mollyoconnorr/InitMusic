@@ -12,14 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpSession;
 
-
-
 /**
  * Controller for handling user registration.
- * <p>
  * This class manages the registration process, including displaying the
  * registration form and processing the submitted registration details.
- * </p>
+ *
+ * @author Molly O'Connor
+ *
+ * @since October 8, 2024
  */
 @Controller
 public class RegisterController {
@@ -30,6 +30,11 @@ public class RegisterController {
 
     private final UserService userService; // Inject UserService
 
+    /**
+     * Constructor for RegisterController.
+     *
+     * @param userService the service responsible for handling user-related operations.
+     */
     public RegisterController(UserService userService) {
         this.userService = userService;
     }
@@ -48,9 +53,17 @@ public class RegisterController {
 
     /**
      * Processes the registration form submission.
+     * <p>
+     * This method checks if the submitted username and email are unique. If not, it
+     * either redirects to an error page or shows an error message on the registration form.
+     * If both username and email are unique, the user is saved, and their details are stored
+     * in the session.
+     * </p>
      *
      * @param registrationForm the registration form submitted by the user.
-     * @return a redirect URL to the login page after successful registration.
+     * @param httpSession      the HTTP session used to store the user's details.
+     * @param model            the model to be used in the view.
+     * @return the name of the view or a redirect URL based on the registration result.
      */
     @PostMapping("/register")
     public String registerUser(@ModelAttribute RegistrationForm registrationForm, HttpSession httpSession, Model model) {
@@ -59,28 +72,34 @@ public class RegisterController {
 
         log.info("Attempting to register user with username: {} and email: {}", username, email);
 
+        // Check if the email already exists
         if (!userService.uniqueEmail(email)) {
-        log.info("Email already exists for {}", email);
-        // Redirect to a new page for users with existing emails
-        return "emailTaken"; // Redirect to email taken page
-        } else if (!userService.uniqueUserName(username)) {
+            log.info("Email already exists for {}", email);
+            // Redirect to a new page for users with existing emails
+            return "emailTaken"; // Redirect to email taken page
+        }
+        // Check if the username is already taken
+        else if (!userService.uniqueUserName(username)) {
             log.info("Username already exists for {}", username);
             // Set an error message
             model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
             // Return to the registration form with the error message
             model.addAttribute("registrationForm", registrationForm); // Preserve the submitted data
             return "register"; // Return to the registration view
-            // Check if the email is taken
-        } else if (userService.uniqueUserName(username) & userService.uniqueEmail(email)) {
+        }
+        // If both the username and email are unique
+        else if (userService.uniqueUserName(username) && userService.uniqueEmail(email)) {
             log.info("Unique user. Proceeding with registration for {}", username);
-            User currentUser = userService.saveUser(registrationForm); // Save the user
+            // Save the user
+            User currentUser = userService.saveUser(registrationForm);
 
-            log.info("Storing current user in session: {}", currentUser);
+            log.info("Storing current user in session: {}", currentUser.getID());
             // Store user in session
             httpSession.setAttribute("currentUser", currentUser);
-            return "redirect:/securityQuestions";
+            return "redirect:/securityQuestions"; // Redirect to security questions page
         }
+
         log.info("User did something very unexpected");
-        return "redirect:/login";
+        return "redirect:/login"; // Redirect to login in unexpected cases
     }
 }

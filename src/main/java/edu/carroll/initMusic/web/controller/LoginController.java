@@ -18,26 +18,32 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Controller for handling login-related requests.
- * <p>
  * This class manages the login process, including displaying the login form,
  * validating user credentials, and redirecting to success or failure pages.
- * </p>
+ *
+ * @author Molly O'Connor
+ *
+ * @since September 8, 2024
  */
 @Controller
 public class LoginController {
+
     /**
      * Logger object used for logging actions within this controller.
      */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    /** Service used for validating login credentials. */
     private final LoginService loginService;
 
+    /** Service for user-related operations, such as retrieving users. */
     private final UserService userService;
 
     /**
-     * Constructs a LoginController with the specified LoginService.
+     * Constructs a LoginController with the specified services.
      *
      * @param loginService the service used for validating user login attempts.
+     * @param userService the service for user operations, such as fetching user details.
      */
     public LoginController(LoginService loginService, UserService userService) {
         this.userService = userService;
@@ -46,9 +52,13 @@ public class LoginController {
 
     /**
      * Displays the login page.
+     * <p>
+     * This method is invoked when a user requests the login page. It initializes
+     * the login form and adds it to the model.
+     * </p>
      *
      * @param model the model to be used in the view.
-     * @return the name of the login view.
+     * @return the name of the login view (Thymeleaf template).
      */
     @GetMapping("/login")
     public String loginGet(Model model) {
@@ -59,39 +69,54 @@ public class LoginController {
 
     /**
      * Processes the login form submission.
+     * <p>
+     * This method handles POST requests when a user submits the login form. It checks
+     * the validity of the submitted form and validates the user's credentials.
+     * On success, it redirects to the search page; on failure, it reloads the login page with an error.
+     * </p>
      *
      * @param loginForm the login form submitted by the user.
-     * @param result    the result of the validation.
+     * @param result    the result of the form validation.
      * @param attrs     attributes to be passed to the redirect.
-     * @return the name of the view to render.
+     * @param httpSession the HTTP session for storing the authenticated user.
+     * @param model     the model to add error messages, if necessary.
+     * @return the name of the view to render (login page or redirect to search).
      */
     @PostMapping("/login")
-    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result, RedirectAttributes attrs, HttpSession httpSession,Model model) {
+    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result,
+                            RedirectAttributes attrs, HttpSession httpSession, Model model) {
         log.info("User '{}' attempted login", loginForm.getUsername());
 
+        // Check for validation errors in the form submission
         if (result.hasErrors()) {
             log.info("Validation errors: {}", result.getAllErrors());
             return "login";
         }
+
+        // Validate the username and password
         if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
             log.info("Username and password don't match for user '{}'", loginForm.getUsername());
-            // Add error message to the model
             model.addAttribute("errorMessage", "That username and password don't match.");
-            return "login";
+            return "login";  // Reload the form with an error message
         }
+
+        // If validation is successful, retrieve the user and set the session
         User foundUser = userService.getUser(loginForm.getUsername());
         attrs.addAttribute("username", foundUser.getUsername());
         httpSession.setAttribute("currentUser", foundUser);
-        log.info("User '{}' logged in, showing loginSuccess page", foundUser.getUsername());
+        log.info("User '{}' logged in, redirecting to search page", foundUser.getUsername());
 
-
-        return "redirect:/search";
+        return "redirect:/search";  // Redirect to the search page after successful login
     }
 
     /**
      * Displays the login success page.
+     * <p>
+     * This method is invoked when the user successfully logs in. It renders
+     * the login success view.
+     * </p>
      *
-     * @return the name of the login success view.
+     * @return the name of the login success view (Thymeleaf template).
      */
     @GetMapping("/loginSuccess")
     public String loginSuccess() {
@@ -100,8 +125,12 @@ public class LoginController {
 
     /**
      * Displays the login failure page.
+     * <p>
+     * This method is invoked when a login attempt fails. It renders the login
+     * failure view.
+     * </p>
      *
-     * @return the name of the login failure view.
+     * @return the name of the login failure view (Thymeleaf template).
      */
     @GetMapping("/loginFailure")
     public String loginFailure() {

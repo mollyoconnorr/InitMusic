@@ -8,46 +8,80 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import edu.carroll.initMusic.web.form.CheckUserEmailForm; // Adjust package as necessary
-import edu.carroll.initMusic.jpa.model.User; // Ensure you have the correct import for the User model
+import edu.carroll.initMusic.web.form.CheckUserEmailForm;
+import edu.carroll.initMusic.jpa.model.User;
 import org.springframework.stereotype.Controller;
 
-
+/**
+ * Controller for handling password changes via email verification.
+ * This controller manages the flow where users can input their email to change their password.
+ * If the email is valid, it redirects to the security question validation page.
+ *
+ * @author Molly O'Connor
+ *
+ * @since October 8, 2024
+ */
 @Controller
 public class ChangePasswordEmailController {
+
     /**
      * Logger object used for logging actions within this controller.
      */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
 
+    /** Service for user-related operations such as finding users by email. */
     private final UserService userService;
 
+    /**
+     * Constructs a new ChangePasswordEmailController.
+     *
+     * @param userService the service that handles user operations
+     */
     public ChangePasswordEmailController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Displays the email input form for changing the password.
+     *
+     * This method is invoked when the user requests the password reset page.
+     *
+     * @return the name of the Thymeleaf template for the email input page
+     */
     @GetMapping("/changePasswordEmail")
     public String showChangePasswordEmailPage() {
-        log.info("request mapping getting called");
+        log.info("Request mapping for /changePasswordEmail GET method is called.");
         return "changePasswordEmail"; // Thymeleaf template for the email input page
     }
 
+    /**
+     * Handles the email form submission for password change.
+     *
+     * This method checks if the email exists in the system. If the email is valid,
+     * it redirects the user to the security questions page. Otherwise, it shows an error.
+     *
+     * @param emailForm the form containing the email to check
+     * @param httpSession the session where the user's details will be stored temporarily
+     * @param model the model used to pass data back to the view
+     * @return the view to display next, either the security questions page or the email input page with an error
+     */
     @PostMapping("/changePasswordEmail")
     public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, HttpSession httpSession, Model model) {
         User user = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
         if (user != null) {
+            // Set the found user in session
             httpSession.setAttribute("currentUser", user);
 
-            // Email exists, redirect to the security questions page
-            // Pass the user's security questions to the model for rendering
+            // Pass user's security questions to the model for rendering on the next page
             model.addAttribute("question1", user.getQuestion1());
             model.addAttribute("question2", user.getQuestion2());
-            return "passSecurity"; // Change this to your Thymeleaf template for the security questions
+            return "passSecurity"; // Thymeleaf template for the security questions
         } else {
-            // Email does not exist, return an error message
-            log.info("When trying to change password, no user found with this email.");
-            model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again."); // Add error message to model
-            return "changePasswordEmail";
+            // Log the situation and show an error message if the email isn't found
+            log.info("No user found with email: {}", emailForm.getEmail());
+            model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again.");
+            return "changePasswordEmail"; // Reload the form with an error message
         }
     }
 }
+
