@@ -5,10 +5,8 @@ import org.springframework.stereotype.Controller;
 
 /**
  * MainController handles requests for the root URL of the application.
- * <p>
  * This controller is responsible for serving the index page when
  * users navigate to the root URL ("/") of the application.
- * </p>
  */
 @Controller
 public class MainController {

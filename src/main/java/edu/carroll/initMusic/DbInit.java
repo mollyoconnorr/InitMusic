@@ -10,44 +10,80 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-// This class optionally pre-populates the database with login data.  In
-// a real application, this would be done with a completely different
-// method.
+/**
+ * This class is responsible for optionally pre-populating the database with
+ * initial user and playlist data upon application startup.
+ * In a real-world scenario, this would likely be handled differently,
+ * such as through migration tools.
+ */
 @Component
 public class DbInit {
+
     /**
-     * Bcrypt password encoder, used for hashing passwords.
+     * BCryptPasswordEncoder used for hashing user passwords.
      */
     private final BCryptPasswordEncoder passwordEncoder;
-    // XXX - This is wrong on so many levels....
+
+    /**
+     * Default username used for pre-populating the database.
+     */
     private static final String defaultUsername = "cs341user";
+
+    /**
+     * Default password used for pre-populating the database.
+     */
     private static final String defaultPass = "supersecret";
 
+    /**
+     * User repository to perform CRUD operations on the User entity.
+     */
     private final UserRepository loginRepo;
 
+    /**
+     * Playlist repository to perform CRUD operations on the Playlist entity.
+     */
     private final PlaylistRepository playlistRepo;
 
+    /**
+     * Constructor for DbInit class.
+     *
+     * @param loginRepo       the UserRepository for interacting with User data
+     * @param playlistRepo    the PlaylistRepository for interacting with Playlist data
+     * @param passwordEncoder the BCryptPasswordEncoder for password hashing
+     */
     public DbInit(UserRepository loginRepo, PlaylistRepository playlistRepo, BCryptPasswordEncoder passwordEncoder) {
         this.loginRepo = loginRepo;
         this.passwordEncoder = passwordEncoder;
         this.playlistRepo = playlistRepo;
     }
 
-    // invoked during application startup
+    /**
+     * This method is called after the application starts and checks whether the
+     * default user exists. If not, it creates a new user with associated playlists.
+     */
     @PostConstruct
     public void loadData() {
-        // If the user doesn't exist in the database, populate it
+        // Check if the default user already exists in the database
         final List<User> defaultUsers = loginRepo.findByUsernameIgnoreCase(defaultUsername);
+
+        // If the default user doesn't exist, create the user and associated playlists
         if (defaultUsers.isEmpty()) {
-            User defaultUser = new User(defaultUsername,passwordEncoder.encode(defaultPass), "cs341","user","cs341User@gmail.com","null", "null", "null", "null");
+            User defaultUser = new User(defaultUsername, passwordEncoder.encode(defaultPass),
+                    "cs341", "user", "cs341User@gmail.com",
+                    "null", "null", "null", "null");
             loginRepo.save(defaultUser);
-            Playlist p = new Playlist(defaultUser,"Playlist 1");
-            playlistRepo.save(p);
-            defaultUser.addPlaylist(p);
-            Playlist p2 = new Playlist(defaultUser,"Playlist 2");
+
+            // Create and save the first playlist
+            Playlist p1 = new Playlist(defaultUser, "Playlist 1");
+            playlistRepo.save(p1);
+            defaultUser.addPlaylist(p1);
+
+            // Create and save the second playlist
+            Playlist p2 = new Playlist(defaultUser, "Playlist 2");
             playlistRepo.save(p2);
             defaultUser.addPlaylist(p2);
 
+            // Save the user with the playlists added
             loginRepo.save(defaultUser);
         }
     }
