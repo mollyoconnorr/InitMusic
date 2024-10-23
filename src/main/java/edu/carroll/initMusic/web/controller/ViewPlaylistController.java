@@ -3,6 +3,7 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeleteSongFromPlaylistForm;
 import jakarta.servlet.http.HttpSession;
@@ -32,15 +33,19 @@ public class ViewPlaylistController {
     /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(ViewPlaylistController.class);
 
-    /** User service for operations involving the user and their playlists */
+    /** User service for operations involving user objects */
     final UserService userService;
+
+    /** playlist service for operations involving playlist objects*/
+    final PlaylistService playlistService;
 
     /**
      * Constructor, injects dependencies
      * @param userService Injected UserService
      */
-    public ViewPlaylistController(UserService userService) {
+    public ViewPlaylistController(UserService userService, PlaylistService playlistService) {
         this.userService = userService;
+        this.playlistService = playlistService;
     }
 
     /**
@@ -58,7 +63,7 @@ public class ViewPlaylistController {
         final User user = userService.getUser(sessionUser.getUsername());
         log.info("User id#{} went to view playlist id#{}", user.getuserID(), playlistID);
 
-        final Playlist playlist = userService.getPlaylist(playlistID);
+        final Playlist playlist = playlistService.getPlaylist(playlistID);
 
         if(playlist == null) {
             model.addAttribute("error", "Playlist not found");
@@ -108,7 +113,7 @@ public class ViewPlaylistController {
             return "redirect:/viewPlaylist/"+playlistID;
         }
 
-        final ResponseStatus songRemoved = userService.removeSongFromPlaylist(playlistID, songID);
+        final ResponseStatus songRemoved = playlistService.removeSongFromPlaylist(playlistID, songID);
 
         //If song wasn't removed for some reason
         if(songRemoved.failed()){

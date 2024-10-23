@@ -1,9 +1,8 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
-import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.SongService;
+import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeletePlaylistForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
@@ -34,20 +33,19 @@ public class PlaylistController {
     /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(PlaylistController.class);
 
-    /** Song service for operations */
-    private final SongService songService;
-
     /** User service for operations involving user objects */
     private final UserService userService;
 
+    /** Playlist service for operations involving playlist objects */
+    private final PlaylistService playlistService;
+
     /**
      * Default constructor
-     * @param songService Injected SongServiceImpl
      * @param userService Injected userService
      */
-    public PlaylistController(SongService songService, UserService userService) {
-        this.songService = songService;
+    public PlaylistController(UserService userService, PlaylistService playlistService) {
         this.userService = userService;
+        this.playlistService = playlistService;
     }
 
     /**
@@ -106,7 +104,7 @@ public class PlaylistController {
         log.info("User {} wants to make a new playlist with name {}",user.getuserID(),playlistName);
 
         //Create new playlist
-        final ResponseStatus playlistCreated = userService.createPlaylist(playlistName,user);
+        final ResponseStatus playlistCreated = playlistService.createPlaylist(playlistName,user);
         if(playlistCreated.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
             return "redirect:/playlists";
@@ -149,13 +147,13 @@ public class PlaylistController {
         final User user = userService.getUser(sessionUser.getUsername());
         final String newPlaylistName = renamePlaylistForm.getNewPlaylistName();
         final Long playlistID = renamePlaylistForm.getPlaylistID();
-        final String oldPlaylistName = userService.getPlaylist(playlistID).getPlaylistName();
+        final String oldPlaylistName = playlistService.getPlaylist(playlistID).getPlaylistName();
 
 
         log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
         //Check if playlist was successfully renamed
-        final ResponseStatus playlistRenamed = userService.renamePlaylist(newPlaylistName,playlistID,user);
+        final ResponseStatus playlistRenamed = playlistService.renamePlaylist(newPlaylistName,playlistID,user);
 
         if (playlistRenamed.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
@@ -198,7 +196,7 @@ public class PlaylistController {
         log.info("User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
 
         //If there was an error deleting a playlist, add error attr to model and return it
-        final ResponseStatus playlistDeleted = userService.deletePlaylist(playlistName,playlistID,user);
+        final ResponseStatus playlistDeleted = playlistService.deletePlaylist(playlistName,playlistID,user);
         if(playlistDeleted.failed()){
             redirectAttributes.addFlashAttribute("error", playlistDeleted.getMessage());
             return "redirect:/playlists";
