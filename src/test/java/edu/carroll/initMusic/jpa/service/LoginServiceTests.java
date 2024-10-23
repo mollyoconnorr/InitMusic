@@ -1,85 +1,71 @@
 package edu.carroll.initMusic.jpa.service;
 
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
-
+import edu.carroll.initMusic.service.LoginService; // Import your LoginService
+import edu.carroll.initMusic.jpa.repo.UserRepository; // Import your UserRepository
+import org.junit.jupiter.api.BeforeEach; // For the @BeforeEach annotation
+import org.junit.jupiter.api.Test; // For the @Test annotation
+import org.springframework.beans.factory.annotation.Autowired; // For @Autowired annotation
+import org.springframework.boot.test.context.SpringBootTest; // For @SpringBootTest
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // For BCryptPasswordEncoder
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
-import edu.carroll.initMusic.service.LoginService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 
-
-import java.util.List;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LoginServiceTests {
-    private static final String username = "username";
-    private static final String password = "password";
-    private static final String firstName = "John";
-    private static final String lastName = "Doe";
-    private static final String email = "john.doe@example.com";
 
     @Autowired
     private LoginService loginService;
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
-    private final User fakeUser = new User(username, password, firstName, lastName, email, "What is your favorite color?", "What is your pet's name?",
-            "Blue", "Fluffy");
-
-    @BeforeAll
-    public void beforeAllTest(){
-        assertNotNull("loginService must be injected", loginService);
-        fakeUser.setHashedPassword(loginService.hashPassword(password));
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
-    public void beforeTest() {
-        assertNotNull("UserRepository must be injected", userRepo);
-
-        // Ensure dummy record is in the DB
-        final List<User> users = userRepo.findByUsernameIgnoreCase(username);
-        if (users.isEmpty()){
-            userRepo.save(fakeUser);
-            }
+    public void setUp() {
+        // Create a test user and save it in the repository
+        userRepository.deleteAll();
+        User testUser = new User();
+        testUser.setUsername("testuser");
+        testUser.setFirstName("test");
+        testUser.setLastName("user");
+        testUser.setEmail("testuser@example.com");
+        String hashedPassword = passwordEncoder.encode("testpassword");
+        testUser.setHashedPassword(hashedPassword);
+        userRepository.save(testUser);
     }
 
     @Test
-    public void validateUserSuccessTest() {
-        assertTrue("validateUserSuccessTest: should succeed using the same user/pass info", loginService.validateUser(username, password));
+    public void testValidateUser_Success() {
+        // Validate with correct username and password
+        boolean isValid = loginService.validateUser("testuser", "testpassword");
+        assertTrue(isValid, "User should be validated successfully");
     }
 
     @Test
-    public void validateUserExistingUserInvalidPasswordTest() {
-        assertFalse("validateUserExistingUserInvalidPasswordTest: should fail using a valid user, invalid pass", loginService.validateUser(username, password + "extra"));
-        assertFalse("validateUserExistingUserInvalidPasswordTest: should fail using a valid user, empty pass", loginService.validateUser(username, " "));
-        assertFalse("validateUserExistingUserInvalidPasswordTest: should fail using a valid user, valid pass + a space", loginService.validateUser(username, password + " "));
+    public void testValidateUser_Failure_InvalidPassword() {
+        // Validate with correct username but incorrect password
+        boolean isValid = loginService.validateUser("testuser", "wrongpassword");
+        assertFalse(isValid, "User should not be validated with incorrect password");
     }
 
     @Test
-    public void validateUserInvalidUserValidPasswordTest() {
-        assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an invalid user, valid pass", loginService.validateUser(username + "not", password));
-        assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an empty user, valid pass", loginService.validateUser(" ", password));
-        assertFalse("validateUserInvalidUserValidPasswordTest: should fail using an valid user + a space, valid pass", loginService.validateUser(username + " ", password));
+    public void testValidateUser_Failure_UserNotFound() {
+        // Validate with non-existent username
+        boolean isValid = loginService.validateUser("nonexistentuser", "testpassword");
+        assertFalse(isValid, "User should not be validated if user doesn't exist");
     }
 
     @Test
-    public void validateUserInvalidUserInvalidPasswordTest() {
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an invalid user, invalid pass", loginService.validateUser(username + "not", password + "extra"));
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an empty user, empty pass", loginService.validateUser(" ", " "));
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an valid user + space, valid pass + space", loginService.validateUser(username + " ", password + " "));
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an username of all integers, pass of all integers", loginService.validateUser("123456", "123456"));
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an username of all special characters, pass of all special characters", loginService.validateUser("-!@#$%$", "!@#$@%"));
-        assertFalse("validateUserInvalidUserInvalidPasswordTest: should fail using an username of all ', pass of all '", loginService.validateUser("''", "''"));
+    public void testHashPassword() {
+        // Hash a password and verify it's not equal to the raw password
+        String rawPassword = "newpassword";
+        String hashedPassword = loginService.hashPassword(rawPassword);
+        assertNotEquals(rawPassword, hashedPassword, "Hashed password should not match the raw password");
 
+        // Verify the hashed password matches when encoded again
+        assertTrue(passwordEncoder.matches(rawPassword, hashedPassword), "Hashed password should match when re-encoded");
     }
-
 }

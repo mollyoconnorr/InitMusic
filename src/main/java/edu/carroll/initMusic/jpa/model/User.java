@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jakarta.persistence.CascadeType;
 
 
 /**
@@ -46,7 +47,7 @@ public class User {
      * User's playlists, has a one-to-many relationship
      * with the playlist class.
      */
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final Set<Playlist> playlists = new HashSet<>();
 
     /** User's username */
