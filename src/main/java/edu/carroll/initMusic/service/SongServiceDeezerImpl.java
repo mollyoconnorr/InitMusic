@@ -7,11 +7,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
-import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
-import edu.carroll.initMusic.jpa.repo.SongRepository;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -34,24 +28,14 @@ import java.util.Set;
  * @since September 30, 2024
  */
 @Service
-public class SongServiceImpl implements SongService{
+public class SongServiceDeezerImpl implements SongService{
     /** Logger object used for logging */
-    private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
-
-    /** Song repository */
-    private final SongRepository songRepository;
-
-    /** Playlist repository*/
-    private final PlaylistRepository playlistRepository;
+    private static final Logger log = LoggerFactory.getLogger(SongServiceDeezerImpl.class);
 
     /**
-     * Constructor, injects several repositories
-     * @param songRepository Song Repo to inject
-     * @param playlistRepository Playlist Repo to inject
+     * Constructor
      */
-    public SongServiceImpl(SongRepository songRepository, PlaylistRepository playlistRepository) {
-        this.songRepository = songRepository;
-        this.playlistRepository = playlistRepository;
+    public SongServiceDeezerImpl() {
     }
 
     /**
@@ -128,50 +112,5 @@ public class SongServiceImpl implements SongService{
 
         log.info("Found {} songs for query '{}'",songsFound.size(),query);
         return songsFound;
-    }
-
-    /**
-     * Adds a song to the given playlist. This first searches for the playlist by id. It
-     * should always find a playlist, because when used, it takes the playlist id directly from
-     * a playlist object that has already been created.
-     * @param playlistId ID of playlist to add song to
-     * @param song Song to add to playlist
-     * @return True if playlist was added, false if not
-     */
-    public boolean addSongToPlaylist(Long playlistId, Song song) {
-        final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
-
-        //Check if exactly one playlist was found
-        if (playlistsFound.size() != 1) {
-            log.warn("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
-            return false;
-        }
-
-        final Playlist playlist = playlistsFound.getFirst();
-
-        //Check if the song is already in the playlist
-        if (playlist.containsSong(song)) {
-            log.warn("Playlist id#{} by user id#{} already contains song#{}",playlistId,playlist.getAuthor().getuserID(),song.getSongID());
-            return false; //Song is already in the playlist
-        }
-
-        //Attempt to find the song in the repository
-        final Optional<Song> songFound = songRepository.findById(song.getSongID());
-        if (songFound.isPresent()) {
-            //Add the managed song to the playlist
-            playlist.addSong(songFound.get());
-            songFound.get().addPlaylist(playlist);
-        } else {
-            //If the song does not exist, save it
-            songRepository.save(song);
-            playlist.addSong(song);
-            song.addPlaylist(playlist);
-        }
-
-        //Save only the playlist, which will cascade the updates
-        playlistRepository.save(playlist);
-
-        log.info("Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
-        return true;
     }
 }
