@@ -9,12 +9,14 @@ import edu.carroll.initMusic.jpa.repo.SongRepository;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PlaylistServiceImpl  implements PlaylistService{
+@Service
+public class PlaylistServiceImpl implements PlaylistService{
 
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(PlaylistServiceImpl.class);
