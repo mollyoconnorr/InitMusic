@@ -20,12 +20,4 @@ public interface SongService {
      * @return Set of songs related to query
      */
     Set<Song> searchForSongs(String query);
-
-    /**
-     * Adds a song to the given playlist.
-     * @param playlistId ID of playlist to add song to
-     * @param song Song to add to playlist
-     * @return True if playlist was added, false if not
-     */
-    boolean addSongToPlaylist(Long playlistId, Song song);
 }
