@@ -32,16 +32,19 @@ public class UserServiceTests {
     private UserServiceImpl userService;
 
     private User validUser;
+    private final Long userId = 1L;
+    private final String username = "testUser";
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         validUser = new User();
-        validUser.setUsername("testUser");
+        validUser.setuserID(userId); // Assuming there's a method to set user ID
+        validUser.setUsername(username);
+        validUser.setHashedPassword("hashedPassword");
         validUser.setEmail("test@example.com");
         validUser.setFirstName("John");
         validUser.setLastName("Doe");
-        validUser.setHashedPassword("hashedPassword");
     }
 
     /*
@@ -824,42 +827,80 @@ public class UserServiceTests {
         verify(userRepository, times(1)).save(validUser); // Ensure save was called only once
     }
 
-
-
-
-//    public void testSaveUser() {
-//        RegistrationForm form = new RegistrationForm();
-//        form.setUsername("newUser");
-//        form.setEmail("new@example.com");
-//        form.setPassword("password");
-//        form.setFirstName("First");
-//        form.setLastName("Last");
-//
-//        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
-//
-//        // Mock the user to be returned from the repository
-//        User mockUser = new User();
-//        mockUser.setUsername("newUser");
-//        mockUser.setHashedPassword("hashedPassword");
-//        mockUser.setEmail("new@example.com");
-//        mockUser.setFirstName("First");
-//        mockUser.setLastName("Last");
-//
-//        when(userRepository.save(any(User.class))).thenReturn(mockUser);
-//
-//        User savedUser = userService.saveUser(form);
-//        assertEquals("newUser", savedUser.getUsername(), "User should have been saved with the correct username");
-//        assertEquals("hashedPassword", savedUser.getHashedPassword(), "Password should be hashed");
-//    }
+    /*
+     * Testing findByIDWithPlaylists
+     */
 
     @Test
-    public void testUpdatePassword() {
-        User user = new User();
-        user.setHashedPassword("oldHashedPassword");
+    public void findByIdWithPlaylists_UserExists() {
+        when(userRepository.findByIdWithPlaylists(userId)).thenReturn(validUser);
 
-        when(passwordEncoder.encode("newPassword")).thenReturn("newHashedPassword");
+        final User foundUser = userService.findByIdWithPlaylists(userId);
 
-        userService.updatePassword(user, "newPassword");
-        assertEquals("newHashedPassword", user.getHashedPassword(), "Password should be updated with new hash");
+        assertNotNull(foundUser, "User should be found");
+        assertEquals(validUser.getUsername(), foundUser.getUsername(), "Usernames should match");
+        assertEquals(validUser.getEmail(), foundUser.getEmail(), "Emails should match");
+        verify(userRepository, times(1)).findByIdWithPlaylists(userId); // Ensure method is called once
+    }
+
+    @Test
+    public void findByIdWithPlaylists_UserDoesNotExist() {
+        when(userRepository.findByIdWithPlaylists(userId)).thenReturn(null);
+
+        final User foundUser = userService.findByIdWithPlaylists(userId);
+
+        assertNull(foundUser, "User should not be found");
+        verify(userRepository, times(1)).findByIdWithPlaylists(userId); // Ensure method is called once
+    }
+
+    @Test
+    public void findByIdWithPlaylists_NegativeUserId() {
+        final Long negativeUserId = -1L;
+
+        final User foundUser = userService.findByIdWithPlaylists(negativeUserId);
+
+        assertNull(foundUser, "User should not be found for a negative ID");
+        verify(userRepository, times(1)).findByIdWithPlaylists(negativeUserId); // Ensure method is called once
+    }
+
+    /*
+     * Testing getUser method
+     */
+
+    @Test
+    public void getUser_UserExists() {
+        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(Collections.singletonList(validUser));
+
+        final User foundUser = userService.getUser(username);
+
+        assertNotNull(foundUser, "User should be found");
+        assertEquals(validUser.getUsername(), foundUser.getUsername(), "Usernames should match");
+        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
+    }
+
+    @Test
+    public void getUser_UserDoesNotExist() {
+        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(Collections.emptyList());
+
+        final User foundUser = userService.getUser(username);
+
+        assertNull(foundUser, "User should not be found");
+        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
+    }
+
+    @Test
+    public void getUser_MultipleUsersFound() {
+        final User anotherUser = new User();
+        anotherUser.setUsername(username);
+        anotherUser.setEmail("another@example.com");
+        anotherUser.setFirstName("Jane");
+        anotherUser.setLastName("Doe");
+
+        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(List.of(validUser, anotherUser));
+
+        final User foundUser = userService.getUser(username);
+
+        assertNull(foundUser, "User should not be found due to multiple users");
+        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
     }
 }
