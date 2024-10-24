@@ -19,14 +19,14 @@ public interface UserService {
     /**
      * Checks if given username is unique
      * @param username Username to check
-     * @return True if username is unique, false otherwise
+     * @return ResponseStatus Enum that tells outcome of method.
      */
     ResponseStatus uniqueUserName(String username);
 
     /**
      * Checks if given email is unique
      * @param email Email to check
-     * @return True if username is unique, false otherwise
+     * @return ResponseStatus Enum that tells outcome of method.
      */
     ResponseStatus uniqueEmail(String email);
 
