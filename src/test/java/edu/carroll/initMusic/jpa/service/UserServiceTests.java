@@ -753,7 +753,76 @@ public class UserServiceTests {
      * Testing updatePassword
      */
 
+    @Test
+    public void updatePasswordSuccessfully() {
+        final String newPassword = "newPassword123";
+        final String hashedPassword = "newHashedPassword";
 
+        when(passwordEncoder.encode(newPassword)).thenReturn(hashedPassword);
+        when(userRepository.save(validUser)).thenReturn(validUser); // Simulate saving the user
+
+        final boolean result = userService.updatePassword(validUser, newPassword);
+
+        assertTrue(result, "Password should be updated successfully");
+        assertEquals(hashedPassword, validUser.getHashedPassword(), "User's hashed password should be updated");
+        verify(passwordEncoder, times(1)).encode(newPassword); // Ensure password was encoded
+        verify(userRepository, times(1)).save(validUser); // Ensure user was saved
+    }
+
+    @Test
+    public void updatePasswordWithNullUser() {
+        final String newPassword = "newPassword123";
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> userService.updatePassword(null, newPassword), "Updating password for a null user should throw NullPointerException");
+    }
+
+    @Test
+    public void updatePasswordWithNullNewPassword() {
+        final boolean result = userService.updatePassword(validUser, null);
+
+        assertFalse(result, "Updating password with null should return false");
+        assertEquals("hashedPassword", validUser.getHashedPassword(), "User's hashed password should not change");
+        verify(passwordEncoder, times(0)).encode(null); // Ensure encode was not called
+        verify(userRepository, times(0)).save(validUser); // Ensure save was not called
+    }
+
+    @Test
+    public void updatePasswordWithShortNewPassword() {
+        final String newPassword = "short"; // Less than 8 characters
+
+        final boolean result = userService.updatePassword(validUser, newPassword);
+
+        assertFalse(result, "Updating password with a short password should return false");
+        assertEquals("hashedPassword", validUser.getHashedPassword(), "User's hashed password should not change");
+        verify(passwordEncoder, times(0)).encode(newPassword); // Ensure encode was not called
+        verify(userRepository, times(0)).save(validUser); // Ensure save was not called
+    }
+
+    @Test
+    public void updatePasswordWithValidNewPasswordAfterShortPassword() {
+        final String newPassword = "validPassword123"; // Valid password
+        final String hashedPassword = "newHashedPassword";
+
+        when(passwordEncoder.encode(newPassword)).thenReturn(hashedPassword);
+
+        final boolean result = userService.updatePassword(validUser, newPassword);
+
+        assertTrue(result, "Password should be updated successfully");
+        assertEquals(hashedPassword, validUser.getHashedPassword(), "User's hashed password should be updated");
+        verify(passwordEncoder, times(1)).encode(newPassword); // Ensure password was encoded
+        verify(userRepository, times(1)).save(validUser); // Ensure user was saved
+    }
+
+    @Test
+    public void updatePasswordCallsRepositoryOnce() {
+        final String newPassword = "validPassword123";
+        when(passwordEncoder.encode(newPassword)).thenReturn("hashedPassword");
+
+        userService.updatePassword(validUser, newPassword);
+
+        verify(userRepository, times(1)).save(validUser); // Ensure save was called only once
+    }
 
 
 
