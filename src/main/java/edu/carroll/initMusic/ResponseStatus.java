@@ -18,6 +18,8 @@ public enum ResponseStatus {
     USER_TOO_SHORT("Username must be at least 5 characters!"),
     USER_TOO_LONG("Username must be less than 50 characters!"),
     USER_HAS_SPACES("Username can't contain any spaces!"),
+    EMAIL_INVALID_FORMAT("Email address is not a valid email address!"),
+    EMAIL_ALREADY_EXISTS("Email address already exists!"),
     SONG_NOT_FOUND("Song not found!"),
     PLAYLIST_NOT_FOUND("Playlist not found!"),
     PLAYLIST_ALREADY_EXISTS("Playlist already exists!"),

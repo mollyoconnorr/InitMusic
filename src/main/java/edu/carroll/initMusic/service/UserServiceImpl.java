@@ -5,12 +5,13 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Service class for handling user-related operations.
@@ -30,6 +31,12 @@ public class UserServiceImpl implements UserService {
 
     /** BCrypt password encoder used for hashing passwords.*/
     private final BCryptPasswordEncoder passwordEncoder;
+
+    //Define a regular expression for a valid email format
+    private final String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+    //Compile the regex pattern
+    private final Pattern pattern = Pattern.compile(emailRegex);
 
     /**
      * Constructor to initialize the UserService with the required dependencies.
@@ -77,16 +84,23 @@ public class UserServiceImpl implements UserService {
      * @param email the email to check for uniqueness
      * @return true if the email is unique, false otherwise
      */
-    public boolean uniqueEmail(String email) {
+    public ResponseStatus uniqueEmail(String email) {
         log.info("Checking if email '{}' is unique", email);
-        List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
+
+        // Check if the email matches the regex
+        if (!pattern.matcher(email).matches()) {
+            log.warn("Email '{}' is not a valid format", email);
+            return ResponseStatus.EMAIL_INVALID_FORMAT;
+        }
+
+        final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
 
         if (!usersByEmail.isEmpty()) {
             log.info("Email '{}' already exists", email);
-            return false;
+            return ResponseStatus.EMAIL_ALREADY_EXISTS;
         } else {
             log.info("Email '{}' is available", email);
-            return true;
+            return ResponseStatus.SUCCESS;
         }
     }
 

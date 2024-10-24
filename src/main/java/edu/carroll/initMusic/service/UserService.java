@@ -28,7 +28,7 @@ public interface UserService {
      * @param email Email to check
      * @return True if username is unique, false otherwise
      */
-    boolean uniqueEmail(String email);
+    ResponseStatus uniqueEmail(String email);
 
     /**
      * Saves a user and their information to the database

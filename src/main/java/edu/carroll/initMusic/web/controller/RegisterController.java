@@ -73,14 +73,20 @@ public class RegisterController {
 
         log.info("Attempting to register user with username: {} and email: {}", username, email);
 
-        final boolean emailUnique = userService.uniqueEmail(email);
+        final ResponseStatus emailUnique = userService.uniqueEmail(email);
         final ResponseStatus usernameUnique = userService.uniqueUserName(username);
 
         // Check if the email already exists
-        if (!emailUnique) {
-            log.info("Email already exists for {}", email);
+        if (emailUnique.equals(ResponseStatus.EMAIL_ALREADY_EXISTS)) {
             // Redirect to a new page for users with existing emails
             return "emailTaken"; // Redirect to email taken page
+        }
+        //UniqueEmail failed for some other reason
+        if(emailUnique.failed()){
+            log.info("Error checking for unique email {}, {}", email,emailUnique.getMessage());
+            model.addAttribute("errorMessage", emailUnique.getMessage());
+            model.addAttribute("registrationForm", new RegistrationForm());
+            return "register";
         }
         // Check if the username is already taken
         if (usernameUnique.failed()) {

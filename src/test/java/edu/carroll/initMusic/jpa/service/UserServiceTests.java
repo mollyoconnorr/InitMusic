@@ -38,7 +38,7 @@ public class UserServiceTests {
     }
 
     /*
-     * First testing invalid usernames
+     * Basic tests
      */
 
     @Test
@@ -62,6 +62,10 @@ public class UserServiceTests {
     public void checkUniqueUsernameNullUsername(){
         assertNotEquals(userService.uniqueUserName(null), ResponseStatus.SUCCESS, "Null username should not be available");
     }
+
+    /*
+     * First testing invalid usernames
+     */
 
     @Test
     public void checkUniqueUsername4NumbersTooShortUsername(){
@@ -346,6 +350,9 @@ public class UserServiceTests {
         assertSame(userService.uniqueUserName("user456"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
     }
 
+    /*
+     * Testing uniqueEmail method
+     */
 
 
 
