@@ -354,38 +354,155 @@ public class UserServiceTests {
      * Testing uniqueEmail method
      */
 
-
-
-
-
-
-
-
-
-
-
-    @Test
-    public void checkUniqueUsernameSpecialCharacter(){
-        when(userRepository.findByUsernameIgnoreCase("!!!!!")).thenReturn(Collections.emptyList());
-        assertEquals(userService.uniqueUserName("!!!!!"), ResponseStatus.SUCCESS, "Username should be available regardless of it its special character");
-    }
-
-
-
-
-
+    /*
+     * Basic Tests of uniqueEmail
+     */
 
     @Test
     public void checkUniqueEmailTrue() {
         when(userRepository.findByEmailIgnoreCase("new@example.com")).thenReturn(Collections.emptyList());
-        assertTrue(userService.uniqueEmail("new@example.com"), "Email should be available");
+        assertFalse(userService.uniqueEmail("new@example.com").failed(), "Email should be available");
     }
 
     @Test
     public void checkUniqueEmailFalse() {
         when(userRepository.findByEmailIgnoreCase("existing@example.com")).thenReturn(List.of(new User()));
-        assertFalse(userService.uniqueEmail("existing@example.com"), "Email should already exist");
+        assertTrue(userService.uniqueEmail("existing@example.com").failed(), "Email should already exist");
     }
+
+    /*
+     * Testing cases where email is invalid
+     */
+
+    @Test
+    public void checkInvalidEmailEmpty() {
+        assertTrue(userService.uniqueEmail("").failed(), "Email should be invalid when empty");
+    }
+
+    @Test
+    public void checkInvalidEmailMissingAtSymbol() {
+        assertTrue(userService.uniqueEmail("invalidemail.com").failed(), "Email should be invalid without @ symbol");
+    }
+
+    @Test
+    public void checkInvalidEmailMissingDomain() {
+        assertTrue(userService.uniqueEmail("invalid@").failed(), "Email should be invalid without a domain");
+    }
+
+    @Test
+    public void checkInvalidEmailMultipleAtSymbols() {
+        assertTrue(userService.uniqueEmail("invalid@@example.com").failed(), "Email should be invalid with multiple @ symbols");
+    }
+
+    @Test
+    public void checkInvalidEmailInvalidDomain() {
+        assertTrue(userService.uniqueEmail("user@domain_without_dot").failed(), "Email should be invalid with an incorrect domain");
+    }
+
+    @Test
+    public void checkInvalidEmailNoTLD() {
+        assertTrue(userService.uniqueEmail("user@example").failed(), "Email should be invalid without a top-level domain");
+    }
+
+    @Test
+    public void checkInvalidEmailNull() {
+        assertTrue(userService.uniqueEmail(null).failed(), "Email should be invalid when null");
+    }
+
+    @Test
+    public void checkInvalidEmailOnlySpaces() {
+        assertTrue(userService.uniqueEmail("   ").failed(), "Email should be invalid when it only contains spaces");
+    }
+
+    @Test
+    public void checkInvalidEmailLeadingTrailingSpaces() {
+        assertTrue(userService.uniqueEmail("  email@example.com  ").failed(), "Email should be invalid with leading/trailing spaces");
+    }
+
+    @Test
+    public void checkInvalidEmailSpacesWithin() {
+        assertTrue(userService.uniqueEmail("user name@example.com").failed(), "Email should be invalid when it contains spaces");
+    }
+
+
+    /*
+     * Testing where email is valid
+     */
+
+    @Test
+    public void checkValidEmailSimple() {
+        assertFalse(userService.uniqueEmail("user@example.com").failed(), "Email should be valid");
+    }
+
+    @Test
+    public void checkValidEmailWithNumbers() {
+        assertFalse(userService.uniqueEmail("user123@example.com").failed(), "Email should be valid with numbers");
+    }
+
+    @Test
+    public void checkValidEmailWithDotsBeforeAt() {
+        assertFalse(userService.uniqueEmail("first.last@example.com").failed(), "Email should be valid with dots before the @ symbol");
+    }
+
+    @Test
+    public void checkValidEmailWithPlusSigns() {
+        assertFalse(userService.uniqueEmail("user+alias@example.com").failed(), "Email should be valid with a plus sign");
+    }
+
+    @Test
+    public void checkValidEmailWithUnderscores() {
+        assertFalse(userService.uniqueEmail("first_last@example.com").failed(), "Email should be valid with underscores");
+    }
+
+    @Test
+    public void checkValidEmailWithHyphens() {
+        assertFalse(userService.uniqueEmail("user@sub-domain.com").failed(), "Email should be valid with hyphens in the domain");
+    }
+
+    @Test
+    public void checkValidEmailWithMultipleDotsInDomain() {
+        assertFalse(userService.uniqueEmail("user@mail.example.com").failed(), "Email should be valid with multiple dots in the domain");
+    }
+
+    @Test
+    public void checkValidEmailWithTwoLetterTLD() {
+        assertFalse(userService.uniqueEmail("user@example.io").failed(), "Email should be valid with a two-letter TLD");
+    }
+
+    @Test
+    public void checkValidEmailWithThreeOrMoreLetterTLD() {
+        assertFalse(userService.uniqueEmail("user@example.com").failed(), "Email should be valid with a three-letter TLD");
+    }
+
+    @Test
+    public void checkValidEmailWithSpecialCharacters() {
+        assertFalse(userService.uniqueEmail("user!name@example.com").failed(), "Email should be valid with allowed special characters");
+    }
+
+    @Test
+    public void checkValidEmailWithMixedCase() {
+        assertFalse(userService.uniqueEmail("User@Example.com").failed(), "Email should be valid with mixed case");
+    }
+
+    @Test
+    public void checkValidEmailWithHyphenInDomain() {
+        assertFalse(userService.uniqueEmail("user@-example.com").failed(), "Email should be valid with a hyphen at the start of the domain");
+    }
+
+    @Test
+    public void checkValidEmailWithHyphenAtEndOfDomain() {
+        assertFalse(userService.uniqueEmail("user@example-.com").failed(), "Email should be valid with a hyphen at the end of the domain");
+    }
+
+    @Test
+    public void checkValidEmailAllNumeric() {
+        assertFalse(userService.uniqueEmail("12345@domain.com").failed(), "Email should be valid with all numeric characters");
+    }
+
+
+
+
+
 
     @Test
     public void testSaveUser() {
