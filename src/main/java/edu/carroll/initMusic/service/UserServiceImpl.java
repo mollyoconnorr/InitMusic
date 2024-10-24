@@ -3,7 +3,6 @@ package edu.carroll.initMusic.service;
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
-import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,21 +144,20 @@ public class UserServiceImpl implements UserService {
     /**
      * Saves a new user based on the provided registration form data.
      *
-     * @param registrationForm the form containing user registration details
      * @return the saved {@link User} object
      */
-    public User saveUser(RegistrationForm registrationForm) {
-        log.info("Saving new user with username '{}'", registrationForm.getUsername());
+    public User saveUser(String username,String email,String firstName,String lastName,String password) {
+        log.info("Saving new user with username '{}'", username);
         final User newUser = new User();  // Create a new User object inside the method
-        newUser.setUsername(registrationForm.getUsername());
-        newUser.setEmail(registrationForm.getEmail());
+        newUser.setUsername(username);
+        newUser.setEmail(email);
         // Validate that password is not null
-        final String hashedPassword = passwordEncoder.encode(registrationForm.getPassword());
+        final String hashedPassword = passwordEncoder.encode(password);
         newUser.setHashedPassword(hashedPassword);
         log.info("Password for user '{}' has been hashed", newUser.getUsername());
 
-        newUser.setFirstName(registrationForm.getFirstName());
-        newUser.setLastName(registrationForm.getLastName());
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
         newUser.setQuestion1("null");
         newUser.setAnswer1("null");
         newUser.setQuestion2("null");

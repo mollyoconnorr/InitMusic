@@ -103,8 +103,13 @@ public class RegisterController {
         }
         // If both the username and email are unique
         log.info("Unique user. Proceeding with registration for {}", username);
+
+        final String firstName = registrationForm.getFirstName();
+        final String lastName = registrationForm.getLastName();
+        final String password = registrationForm.getPassword();
+
         // Save the user
-        final User currentUser = userService.saveUser(registrationForm);
+        final User currentUser = userService.saveUser(username,email,firstName,lastName,password);
 
         log.info("Storing current user in session");
         // Store user in session

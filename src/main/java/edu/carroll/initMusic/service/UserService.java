@@ -2,7 +2,6 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
 
 /**
@@ -32,10 +31,9 @@ public interface UserService {
 
     /**
      * Saves a user and their information to the database
-     * @param registrationForm Form
      * @return User object, which contains all the users information
      */
-    User saveUser(RegistrationForm registrationForm);
+    User saveUser(String username,String email,String firstName,String lastName,String password);
 
     /**
      * Updates users security questions
