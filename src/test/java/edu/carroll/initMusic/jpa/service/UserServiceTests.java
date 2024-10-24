@@ -4,7 +4,6 @@ import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.service.UserServiceImpl;
-import edu.carroll.initMusic.web.form.RegistrationForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -17,8 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTests {
@@ -32,9 +31,17 @@ public class UserServiceTests {
     @Autowired
     private UserServiceImpl userService;
 
+    private User validUser;
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this); // Optional with @MockBean; kept for clarity
+        MockitoAnnotations.openMocks(this);
+        validUser = new User();
+        validUser.setUsername("testUser");
+        validUser.setEmail("test@example.com");
+        validUser.setFirstName("John");
+        validUser.setLastName("Doe");
+        validUser.setHashedPassword("hashedPassword");
     }
 
     /*
@@ -499,36 +506,138 @@ public class UserServiceTests {
         assertFalse(userService.uniqueEmail("12345@domain.com").failed(), "Email should be valid with all numeric characters");
     }
 
+    /*
+     * Now testing saveUser method
+     */
 
-
-
-
-
+    // Saving a valid user
     @Test
-    public void testSaveUser() {
-        RegistrationForm form = new RegistrationForm();
-        form.setUsername("newUser");
-        form.setEmail("new@example.com");
-        form.setPassword("password");
-        form.setFirstName("First");
-        form.setLastName("Last");
+    public void saveValidUser() {
+        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(validUser);
 
-        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
+        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "password123");
 
-        // Mock the user to be returned from the repository
-        User mockUser = new User();
-        mockUser.setUsername("newUser");
-        mockUser.setHashedPassword("hashedPassword");
-        mockUser.setEmail("new@example.com");
-        mockUser.setFirstName("First");
-        mockUser.setLastName("Last");
-
-        when(userRepository.save(any(User.class))).thenReturn(mockUser);
-
-        User savedUser = userService.saveUser(form);
-        assertEquals("newUser", savedUser.getUsername(), "User should have been saved with the correct username");
-        assertEquals("hashedPassword", savedUser.getHashedPassword(), "Password should be hashed");
+        assertEquals("testUser", savedUser.getUsername());
+        assertEquals("test@example.com", savedUser.getEmail());
+        assertEquals("hashedPassword", savedUser.getHashedPassword());
+        assertEquals("John", savedUser.getFirstName());
+        assertEquals("Doe", savedUser.getLastName());
+        assertNull(savedUser.getQuestion1());
+        assertNull(savedUser.getAnswer1());
+        assertNull(savedUser.getQuestion2());
+        assertNull(savedUser.getAnswer2());
+        verify(userRepository, times(1)).save(any(User.class));
     }
+
+    // Saving a user with a blank username
+    @Test
+    public void saveUserWithBlankUsername() {
+        User savedUser = userService.saveUser("", "test@example.com", "John", "Doe", "password123");
+
+        assertNull(savedUser, "Expected null when username is blank");
+    }
+
+    // Saving a user with a blank email
+    @Test
+    public void saveUserWithBlankEmail() {
+        User savedUser = userService.saveUser("testUser", "", "John", "Doe", "password123");
+
+        assertNull(savedUser, "Expected null when email is blank");
+    }
+
+    // Saving a user with a blank first name
+    @Test
+    public void saveUserWithBlankFirstName() {
+        User savedUser = userService.saveUser("testUser", "test@example.com", "", "Doe", "password123");
+
+        assertNull(savedUser, "Expected null when first name is blank");
+    }
+
+    // Saving a user with a blank last name
+    @Test
+    public void saveUserWithBlankLastName() {
+        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "", "password123");
+
+        assertNull(savedUser, "Expected null when last name is blank");
+    }
+
+    // Saving a user with a blank password
+    @Test
+    public void saveUserWithBlankPassword() {
+        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "");
+
+        assertNull(savedUser, "Expected null when password is blank");
+    }
+
+    // Saving a user with valid special characters in username
+    @Test
+    public void saveUserWithValidSpecialCharacterUsername() {
+        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
+        validUser.setUsername("user.name");
+        when(userRepository.save(any(User.class))).thenReturn(validUser);
+
+        User savedUser = userService.saveUser("user.name", "test@example.com", "John", "Doe", "password123");
+
+        assertEquals("user.name", savedUser.getUsername());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    // Saving a user with trailing spaces in username
+    @Test
+    public void saveUserWithTrailingSpacesInUsername() {
+        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(validUser);
+
+        User savedUser = userService.saveUser(" testUser ", "test@example.com", "John", "Doe", "password123");
+
+        assertEquals("testUser", savedUser.getUsername());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    // Saving a user with spaces in first name and last name
+    @Test
+    public void saveUserWithSpacesInNames() {
+        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(validUser);
+
+        User savedUser = userService.saveUser("testUser", "test@example.com", "John ", "Doe ", "password123");
+
+        assertEquals("John", savedUser.getFirstName());
+        assertEquals("Doe", savedUser.getLastName());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+
+
+
+
+
+
+//    public void testSaveUser() {
+//        RegistrationForm form = new RegistrationForm();
+//        form.setUsername("newUser");
+//        form.setEmail("new@example.com");
+//        form.setPassword("password");
+//        form.setFirstName("First");
+//        form.setLastName("Last");
+//
+//        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
+//
+//        // Mock the user to be returned from the repository
+//        User mockUser = new User();
+//        mockUser.setUsername("newUser");
+//        mockUser.setHashedPassword("hashedPassword");
+//        mockUser.setEmail("new@example.com");
+//        mockUser.setFirstName("First");
+//        mockUser.setLastName("Last");
+//
+//        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+//
+//        User savedUser = userService.saveUser(form);
+//        assertEquals("newUser", savedUser.getUsername(), "User should have been saved with the correct username");
+//        assertEquals("hashedPassword", savedUser.getHashedPassword(), "Password should be hashed");
+//    }
 
     @Test
     public void testUpdatePassword() {
