@@ -111,6 +111,8 @@ public class PlaylistServiceTests {
         playlistService.createPlaylist("Delete Me", testUser);
 
         Playlist playlist = testUser.getPlaylists().iterator().next();
+        playlist.setPlaylistID(1L); // Manually set the ID for testing purposes
+
         ResponseStatus status = playlistService.deletePlaylist("Delete Me", playlist.getPlaylistID(), testUser);
         assertEquals(ResponseStatus.SUCCESS, status);
 
