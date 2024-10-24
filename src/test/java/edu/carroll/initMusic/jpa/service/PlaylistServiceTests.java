@@ -108,14 +108,22 @@ public class PlaylistServiceTests {
      */
     @Test
     void testDeletePlaylist_Success() {
-        playlistService.createPlaylist("Delete Me", testUser);
-
-        Playlist playlist = testUser.getPlaylists().iterator().next();
-        playlist.setPlaylistID(1L); // Manually set the ID for testing purposes
-
-        ResponseStatus status = playlistService.deletePlaylist("Delete Me", playlist.getPlaylistID(), testUser);
+        // Create and save the playlist in the database
+        ResponseStatus status = playlistService.createPlaylist("Delete Me", testUser);
         assertEquals(ResponseStatus.SUCCESS, status);
 
+        // Retrieve the playlist from the user's list or directly from the repository
+        Playlist playlist = testUser.getPlaylists().stream()
+                .filter(p -> "Delete Me".equals(p.getPlaylistName()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(playlist, "Playlist should not be null after creation");
+
+        // Perform the delete operation using the actual persisted playlist ID
+        status = playlistService.deletePlaylist("Delete Me", playlist.getPlaylistID(), testUser);
+        assertEquals(ResponseStatus.SUCCESS, status);
+
+        // Assert that the playlist is no longer found in the repository
         assertTrue(playlistRepository.findById(playlist.getPlaylistID()).isEmpty());
     }
 
