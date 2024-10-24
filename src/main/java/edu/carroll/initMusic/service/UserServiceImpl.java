@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         String localPart = parts[0];
         String domainPart = parts[1];
 
-        //Local part (Before @) has to be less than 64 characters)
+        //Local part (Before @) has to be less than 64 characters
         if (localPart.length() > 64) {
             log.warn("Local part of email '{}' exceeds maximum length of 64 characters", email);
             return ResponseStatus.EMAIL_LOCAL_PART_TOO_LONG;
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        //Find email to see if its already in database
+        //Find email to see if It's already in database
         final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
         if (!usersByEmail.isEmpty()) {
             log.info("Email '{}' already exists", email);
@@ -151,6 +151,19 @@ public class UserServiceImpl implements UserService {
      */
     public User saveUser(String username,String email,String firstName,String lastName,String password) {
         log.info("Saving new user with username '{}'", username);
+
+        if(username.isBlank() ||  email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()){
+            log.warn("Failed to save user, information is missing: " +
+                    "Username: {} | Email: {} | Password: {} | firstName: {} | lastName: {}", username.isBlank(),
+                    email.isBlank(),password.isBlank(),firstName.isBlank(),lastName.isBlank());
+            return null;
+        }
+
+        username = username.strip();
+        email = email.strip();
+        firstName = firstName.strip();
+        lastName = lastName.strip();
+
         final User newUser = new User();  // Create a new User object inside the method
         newUser.setUsername(username);
         newUser.setEmail(email);
