@@ -516,7 +516,7 @@ public class UserServiceTests {
         when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(validUser);
 
-        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "password123");
 
         assertEquals("testUser", savedUser.getUsername());
         assertEquals("test@example.com", savedUser.getEmail());
@@ -533,7 +533,7 @@ public class UserServiceTests {
     // Saving a user with a blank username
     @Test
     public void saveUserWithBlankUsername() {
-        User savedUser = userService.saveUser("", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("", "test@example.com", "John", "Doe", "password123");
 
         assertNull(savedUser, "Expected null when username is blank");
     }
@@ -541,7 +541,7 @@ public class UserServiceTests {
     // Saving a user with a blank email
     @Test
     public void saveUserWithBlankEmail() {
-        User savedUser = userService.saveUser("testUser", "", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser", "", "John", "Doe", "password123");
 
         assertNull(savedUser, "Expected null when email is blank");
     }
@@ -549,7 +549,7 @@ public class UserServiceTests {
     // Saving a user with a blank first name
     @Test
     public void saveUserWithBlankFirstName() {
-        User savedUser = userService.saveUser("testUser", "test@example.com", "", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser", "test@example.com", "", "Doe", "password123");
 
         assertNull(savedUser, "Expected null when first name is blank");
     }
@@ -557,7 +557,7 @@ public class UserServiceTests {
     // Saving a user with a blank last name
     @Test
     public void saveUserWithBlankLastName() {
-        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "", "password123");
+        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "", "password123");
 
         assertNull(savedUser, "Expected null when last name is blank");
     }
@@ -565,7 +565,7 @@ public class UserServiceTests {
     // Saving a user with a blank password
     @Test
     public void saveUserWithBlankPassword() {
-        User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "");
+        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "");
 
         assertNull(savedUser, "Expected null when password is blank");
     }
@@ -577,7 +577,7 @@ public class UserServiceTests {
         validUser.setUsername("user.name");
         when(userRepository.save(any(User.class))).thenReturn(validUser);
 
-        User savedUser = userService.saveUser("user.name", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("user.name", "test@example.com", "John", "Doe", "password123");
 
         assertEquals("user.name", savedUser.getUsername());
         verify(userRepository, times(1)).save(any(User.class));
@@ -589,7 +589,7 @@ public class UserServiceTests {
         when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(validUser);
 
-        User savedUser = userService.saveUser(" testUser ", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser(" testUser ", "test@example.com", "John", "Doe", "password123");
 
         assertEquals("testUser", savedUser.getUsername());
         verify(userRepository, times(1)).save(any(User.class));
@@ -601,7 +601,7 @@ public class UserServiceTests {
         when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(validUser);
 
-        User savedUser = userService.saveUser("testUser", "test@example.com", "John ", "Doe ", "password123");
+        final User savedUser = userService.saveUser("testUser", "test@example.com", "John ", "Doe ", "password123");
 
         assertEquals("John", savedUser.getFirstName());
         assertEquals("Doe", savedUser.getLastName());
@@ -614,15 +614,12 @@ public class UserServiceTests {
 
     @Test
     public void updateUserSecurityQuestionsSuccessfully() {
-        
-        String question1 = "What is your pet's name?";
-        String answer1 = "Fluffy";
-        String question2 = "What is your hometown?";
-        String answer2 = "Springfield";
+        final String question1 = "What is your pet's name?";
+        final String answer1 = "Fluffy";
+        final String question2 = "What is your hometown?";
+        final String answer2 = "Springfield";
 
-        
-        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
-
+        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
         
         assertTrue(result, "Security questions should be updated successfully");
         assertEquals(question1, validUser.getQuestion1());
@@ -634,15 +631,12 @@ public class UserServiceTests {
 
     @Test
     public void updateUserSecurityQuestionsWithBlankQuestion1() {
-        
-        String question1 = "";
-        String answer1 = "Fluffy";
-        String question2 = "What is your hometown?";
-        String answer2 = "Springfield";
+        final String question1 = "";
+        final String answer1 = "Fluffy";
+        final String question2 = "What is your hometown?";
+        final String answer2 = "Springfield";
 
-        
-        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
-
+        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question1");
         verify(userRepository, never()).save(validUser);
@@ -650,15 +644,12 @@ public class UserServiceTests {
 
     @Test
     public void updateUserSecurityQuestionsWithBlankAnswer1() {
-        
-        String question1 = "What is your pet's name?";
-        String answer1 = "";
-        String question2 = "What is your hometown?";
-        String answer2 = "Springfield";
+        final String question1 = "What is your pet's name?";
+        final String answer1 = "";
+        final String question2 = "What is your hometown?";
+        final String answer2 = "Springfield";
 
-        
-        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
-
+        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank answer1");
         verify(userRepository, never()).save(validUser);
@@ -666,15 +657,12 @@ public class UserServiceTests {
 
     @Test
     public void updateUserSecurityQuestionsWithBlankQuestion2() {
-        
-        String question1 = "What is your pet's name?";
-        String answer1 = "Fluffy";
-        String question2 = "";
-        String answer2 = "Springfield";
+        final String question1 = "What is your pet's name?";
+        final String answer1 = "Fluffy";
+        final String question2 = "";
+        final String answer2 = "Springfield";
 
-        
-        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
-
+        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question2");
         verify(userRepository, never()).save(validUser);
@@ -682,10 +670,10 @@ public class UserServiceTests {
 
     @Test
     public void updateUserSecurityQuestionsWithBlankAnswer2() {
-        String question1 = "What is your pet's name?";
-        String answer1 = "Fluffy";
-        String question2 = "What is your hometown?";
-        String answer2 = "";
+        final String question1 = "What is your pet's name?";
+        final String answer1 = "Fluffy";
+        final String question2 = "What is your hometown?";
+        final String answer2 = "";
         
         boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
         
@@ -693,6 +681,73 @@ public class UserServiceTests {
         verify(userRepository, never()).save(validUser);
     }
 
+    /*
+     * Testing findUserByEmail
+     */
+
+    @Test
+    public void findByEmailSuccessfully() {
+        when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(List.of(validUser));
+
+        final User foundUser = userService.findByEmail("test@example.com");
+
+        assertNotNull(foundUser, "User should be found");
+        assertEquals(validUser.getEmail(), foundUser.getEmail());
+        verify(userRepository, times(1)).findByEmailIgnoreCase("test@example.com");
+    }
+
+    @Test
+    public void findByEmailIgnoringCase() {
+        when(userRepository.findByEmailIgnoreCase("TEST@EXAMPLE.COM")).thenReturn(List.of(validUser));
+        
+        final User foundUser = userService.findByEmail("TEST@EXAMPLE.COM");
+
+        assertNotNull(foundUser, "User should be found");
+        assertEquals(validUser.getEmail(), foundUser.getEmail());
+        verify(userRepository, times(1)).findByEmailIgnoreCase("TEST@EXAMPLE.COM");
+    }
+
+    @Test
+    public void findByEmailWhenNoUserFound() {
+        when(userRepository.findByEmailIgnoreCase("nonexistent@example.com")).thenReturn(Collections.emptyList());
+
+        final User foundUser = userService.findByEmail("nonexistent@example.com");
+
+        assertNull(foundUser, "User should not be found");
+        verify(userRepository, times(1)).findByEmailIgnoreCase("nonexistent@example.com");
+    }
+
+    @Test
+    public void findByEmailWithNullEmail() {
+        final User foundUser = userService.findByEmail(null);
+
+        assertNull(foundUser, "User should not be found for null email");
+        verify(userRepository, never()).findByEmailIgnoreCase(anyString()); // Should not call the repository
+    }
+
+    @Test
+    public void findByEmailWithEmptyEmail() {
+        when(userRepository.findByEmailIgnoreCase("")).thenReturn(Collections.emptyList());
+        
+        final User foundUser = userService.findByEmail("");
+        
+        assertNull(foundUser, "User should not be found for empty email");
+        verify(userRepository, times(1)).findByEmailIgnoreCase(anyString()); // Should not call the repository
+    }
+
+    @Test
+    public void findByEmailWhenMultipleUsersFound() {
+        final User anotherUser = new User();
+        anotherUser.setUsername("anotherUser");
+        anotherUser.setEmail("test@example.com");
+        when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(List.of(validUser, anotherUser));
+        
+        final User foundUser = userService.findByEmail("test@example.com");
+
+        assertNotNull(foundUser, "User should be found");
+        assertEquals(validUser.getEmail(), foundUser.getEmail()); // Check that the first user is returned
+        verify(userRepository, times(1)).findByEmailIgnoreCase("test@example.com");
+    }
 
 
 
