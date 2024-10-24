@@ -2,7 +2,6 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
 
 /**
  * Interface for UserService, defines methods related to user transactions like
@@ -43,9 +42,8 @@ public interface UserService {
     /**
      * Updates users security questions
      * @param user User object to update
-     * @param questionForm Form
      */
-    void updateUser(User user, SecurityQuestionsForm questionForm);
+    void updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2);
 
     /**
      * Updates the users password

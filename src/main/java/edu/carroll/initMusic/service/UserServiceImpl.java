@@ -187,14 +187,13 @@ public class UserServiceImpl implements UserService {
      * Updates the security questions and answers for the specified user.
      *
      * @param user         the user whose security questions are being updated
-     * @param questionForm the form containing the new security questions and answers
      */
-    public void updateUser(User user, SecurityQuestionsForm questionForm) {
+    public void updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2) {
         log.info("Updating security questions for user id#{}", user.getuserID());
-        user.setQuestion1(questionForm.getQuestion1());
-        user.setAnswer1(questionForm.getAnswer1());
-        user.setQuestion2(questionForm.getQuestion2());
-        user.setAnswer2(questionForm.getAnswer2());
+        user.setQuestion1(question1);
+        user.setAnswer1(answer1);
+        user.setQuestion2(question2);
+        user.setAnswer2(answer2);
         userRepository.save(user); // Save the user with updated security questions to the database
         log.info("Security questions updated for user id#{}", user.getuserID());
     }
