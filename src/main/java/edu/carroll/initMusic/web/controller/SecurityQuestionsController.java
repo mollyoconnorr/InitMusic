@@ -72,13 +72,22 @@ public class SecurityQuestionsController {
         if (currentUser != null) {
             log.info("Security questions submitted for user: {}", currentUser.getUsername());
             // Call the updated updateUser method, passing the user and the form
-            userService.updateUser(currentUser, securityQuestionsForm);
-            model.addAttribute("username", currentUser.getUsername());
-            return "userRegistered";  // Redirect to the user registered confirmation page
+            final String question1 = securityQuestionsForm.getQuestion1();
+            final String question2 = securityQuestionsForm.getQuestion2();
+            final String answer1 = securityQuestionsForm.getAnswer1();
+            final String answer2 = securityQuestionsForm.getAnswer2();
+            final boolean questionsUpdated = userService.updateUserSecurityQuestions(currentUser,question1,answer1,question2,answer2);
+            if(questionsUpdated){
+                model.addAttribute("username", currentUser.getUsername());
+                return "userRegistered";  // Redirect to the user registered confirmation page
+            }else{
+                model.addAttribute("errorMessage","One of the security question fields is blank");
+                return "userRegistered";  // Redirect to the user registered confirmation page
+            }
         } else {
-            log.warn("Security questions answered incorrectly for user: {}", currentUser.getUsername());
+            log.warn("submitSecurityQuestions: No user found in current httpSession");
             // Add an error message to the model
-            model.addAttribute("errorMessage", "Your answers to the security questions were incorrect. Please try again.");
+            model.addAttribute("errorMessage", "No user found in current httpSession");
         }
 
         // Add security questions to the model to display them again

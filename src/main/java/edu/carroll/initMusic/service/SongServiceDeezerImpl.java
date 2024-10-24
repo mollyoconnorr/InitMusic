@@ -1,12 +1,5 @@
 package edu.carroll.initMusic.service;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 import edu.carroll.initMusic.jpa.model.Song;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,10 +31,23 @@ public class SongServiceDeezerImpl implements SongService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceDeezerImpl.class);
 
+    private HttpClient httpClient = HttpClient.newHttpClient();
+
     /**
      * Constructor
      */
     public SongServiceDeezerImpl() {
+
+    }
+
+    /**
+     * This method sets the httpClient to the given client. This is
+     * currently only used in testing so a httpClient can be
+     * mocked.
+     * @param httpClient HttpClient to set
+     */
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     /**
@@ -69,7 +81,7 @@ public class SongServiceDeezerImpl implements SongService{
 
         try {
             // Send the HTTP request and get the response
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             // Check if the response status code is 200 (OK)
             if (response.statusCode() == 200) {
