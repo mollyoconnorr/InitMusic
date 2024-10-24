@@ -11,6 +11,11 @@ import edu.carroll.initMusic.jpa.model.User;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+
+/**
+ * Unit tests for the LoginService class.
+ * This class tests the user validation and password hashing functionalities.
+ */
 @SpringBootTest
 public class LoginServiceTests {
 
@@ -23,6 +28,10 @@ public class LoginServiceTests {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    /**
+     * Sets up a test user in the repository before each test.
+     * This method is executed before each test case to ensure a clean state.
+     */
     @BeforeEach
     public void setUp() {
         // Create a test user and save it in the repository
@@ -37,6 +46,10 @@ public class LoginServiceTests {
         userRepository.save(testUser);
     }
 
+    /**
+     * Tests successful user validation with correct credentials.
+     * Asserts that the user is validated successfully.
+     */
     @Test
     public void testValidateUser_Success() {
         // Validate with correct username and password
@@ -44,6 +57,10 @@ public class LoginServiceTests {
         assertTrue(isValid, "User should be validated successfully");
     }
 
+    /**
+     * Tests user validation failure with an incorrect password.
+     * Asserts that the validation fails when the password is incorrect.
+     */
     @Test
     public void testValidateUser_Failure_InvalidPassword() {
         // Validate with correct username but incorrect password
@@ -51,6 +68,10 @@ public class LoginServiceTests {
         assertFalse(isValid, "User should not be validated with incorrect password");
     }
 
+    /**
+     * Tests user validation failure with a non-existent username.
+     * Asserts that the validation fails when the user does not exist.
+     */
     @Test
     public void testValidateUser_Failure_UserNotFound() {
         // Validate with non-existent username
@@ -58,6 +79,11 @@ public class LoginServiceTests {
         assertFalse(isValid, "User should not be validated if user doesn't exist");
     }
 
+    /**
+     * Tests the password hashing functionality.
+     * Asserts that the hashed password does not match the raw password
+     * and that the hashed password matches when re-encoded.
+     */
     @Test
     public void testHashPassword() {
         // Hash a password and verify it's not equal to the raw password
