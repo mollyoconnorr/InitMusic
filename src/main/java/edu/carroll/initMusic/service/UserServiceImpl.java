@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     //Define a regular expression for a valid email format
-    private final String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    private final String emailRegex = "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     //Compile the regex pattern
     private final Pattern pattern = Pattern.compile(emailRegex);
@@ -82,10 +82,16 @@ public class UserServiceImpl implements UserService {
      * Checks whether the provided email is unique (i.e., not already present in the database).
      *
      * @param email the email to check for uniqueness
-     * @return true if the email is unique, false otherwise
+     * @return ResponseStatus Enum that tells outcome of method.
      */
     public ResponseStatus uniqueEmail(String email) {
         log.info("Checking if email '{}' is unique", email);
+
+        // Check for null or empty email
+        if (email == null || email.trim().isEmpty()) {
+            log.warn("Email is null or empty");
+            return ResponseStatus.EMAIL_INVALID_FORMAT;
+        }
 
         // Check if the email matches the regex
         if (!pattern.matcher(email).matches()) {
@@ -93,8 +99,39 @@ public class UserServiceImpl implements UserService {
             return ResponseStatus.EMAIL_INVALID_FORMAT;
         }
 
-        final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
+        // Check for length restrictions
+        if (email.length() > 254) {
+            log.warn("Email '{}' exceeds maximum length of 254 characters", email);
+            return ResponseStatus.EMAIL_TOO_LONG;
+        }
 
+        //Check if email split into two parts using @ sign
+        String[] parts = email.split("@");
+        if (parts.length != 2) {
+            log.warn("Email '{}' is not in a valid format", email);
+            return ResponseStatus.EMAIL_INVALID_FORMAT;
+        }
+
+        String localPart = parts[0];
+        String domainPart = parts[1];
+
+        //Local part (Before @) has to be less than 64 characters)
+        if (localPart.length() > 64) {
+            log.warn("Local part of email '{}' exceeds maximum length of 64 characters", email);
+            return ResponseStatus.EMAIL_LOCAL_PART_TOO_LONG;
+        }
+
+        // Check if the domain part (After @) has any labels exceeding 63 characters
+        String[] domainLabels = domainPart.split("\\.");
+        for (String label : domainLabels) {
+            if (label.length() > 63) {
+                log.warn("Domain label '{}' exceeds maximum length of 63 characters", label);
+                return ResponseStatus.EMAIL_DOMAIN_LABEL_TOO_LONG;
+            }
+        }
+
+        //Find email to see if its already in database
+        final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
         if (!usersByEmail.isEmpty()) {
             log.info("Email '{}' already exists", email);
             return ResponseStatus.EMAIL_ALREADY_EXISTS;
@@ -103,6 +140,7 @@ public class UserServiceImpl implements UserService {
             return ResponseStatus.SUCCESS;
         }
     }
+
 
     /**
      * Saves a new user based on the provided registration form data.
