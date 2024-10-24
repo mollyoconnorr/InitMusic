@@ -1,12 +1,12 @@
 package edu.carroll.initMusic.jpa.service;
 
-import edu.carroll.initMusic.service.LoginService; // Import your LoginService
-import edu.carroll.initMusic.jpa.repo.UserRepository; // Import your UserRepository
-import org.junit.jupiter.api.BeforeEach; // For the @BeforeEach annotation
-import org.junit.jupiter.api.Test; // For the @Test annotation
-import org.springframework.beans.factory.annotation.Autowired; // For @Autowired annotation
-import org.springframework.boot.test.context.SpringBootTest; // For @SpringBootTest
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // For BCryptPasswordEncoder
+import edu.carroll.initMusic.service.LoginService;
+import edu.carroll.initMusic.jpa.repo.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.carroll.initMusic.jpa.model.User;
 import static org.junit.jupiter.api.Assertions.*;
 
