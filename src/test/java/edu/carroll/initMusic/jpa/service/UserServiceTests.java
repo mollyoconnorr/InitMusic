@@ -608,7 +608,90 @@ public class UserServiceTests {
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+    /*
+     * Testing updateUserSecurityQuestions
+     */
 
+    @Test
+    public void updateUserSecurityQuestionsSuccessfully() {
+        
+        String question1 = "What is your pet's name?";
+        String answer1 = "Fluffy";
+        String question2 = "What is your hometown?";
+        String answer2 = "Springfield";
+
+        
+        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+
+        
+        assertTrue(result, "Security questions should be updated successfully");
+        assertEquals(question1, validUser.getQuestion1());
+        assertEquals(answer1, validUser.getAnswer1());
+        assertEquals(question2, validUser.getQuestion2());
+        assertEquals(answer2, validUser.getAnswer2());
+        verify(userRepository, times(1)).save(validUser);
+    }
+
+    @Test
+    public void updateUserSecurityQuestionsWithBlankQuestion1() {
+        
+        String question1 = "";
+        String answer1 = "Fluffy";
+        String question2 = "What is your hometown?";
+        String answer2 = "Springfield";
+
+        
+        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+
+        
+        assertFalse(result, "Security questions update should fail due to blank question1");
+        verify(userRepository, never()).save(validUser);
+    }
+
+    @Test
+    public void updateUserSecurityQuestionsWithBlankAnswer1() {
+        
+        String question1 = "What is your pet's name?";
+        String answer1 = "";
+        String question2 = "What is your hometown?";
+        String answer2 = "Springfield";
+
+        
+        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+
+        
+        assertFalse(result, "Security questions update should fail due to blank answer1");
+        verify(userRepository, never()).save(validUser);
+    }
+
+    @Test
+    public void updateUserSecurityQuestionsWithBlankQuestion2() {
+        
+        String question1 = "What is your pet's name?";
+        String answer1 = "Fluffy";
+        String question2 = "";
+        String answer2 = "Springfield";
+
+        
+        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+
+        
+        assertFalse(result, "Security questions update should fail due to blank question2");
+        verify(userRepository, never()).save(validUser);
+    }
+
+    @Test
+    public void updateUserSecurityQuestionsWithBlankAnswer2() {
+        String question1 = "What is your pet's name?";
+        String answer1 = "Fluffy";
+        String question2 = "What is your hometown?";
+        String answer2 = "";
+        
+        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+        
+        assertFalse(result, "Security questions update should fail due to blank answer2");
+        verify(userRepository, never()).save(validUser);
+    }
 
 
 
