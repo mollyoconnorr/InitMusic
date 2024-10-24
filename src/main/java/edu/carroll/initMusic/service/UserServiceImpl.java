@@ -140,10 +140,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     /**
      * Saves a new user based on the provided registration form data.
-     *
+     * @param username Username of user
+     * @param email Email of user
+     * @param firstName First name of user
+     * @param lastName Last name of user
+     * @param password Password of user
      * @return the saved {@link User} object
      */
     public User saveUser(String username,String email,String firstName,String lastName,String password) {

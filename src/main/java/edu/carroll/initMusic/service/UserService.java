@@ -31,6 +31,11 @@ public interface UserService {
 
     /**
      * Saves a user and their information to the database
+     * @param username Username of user
+     * @param email Email of user
+     * @param firstName First name of user
+     * @param lastName Last name of user
+     * @param password Password of user
      * @return User object, which contains all the users information
      */
     User saveUser(String username,String email,String firstName,String lastName,String password);
