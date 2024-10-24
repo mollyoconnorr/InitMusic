@@ -1,7 +1,6 @@
 package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.ResponseStatus;
-import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.web.form.RegistrationForm;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
@@ -22,7 +21,7 @@ public interface UserService {
      * @param username Username to check
      * @return True if username is unique, false otherwise
      */
-    boolean uniqueUserName(String username);
+    ResponseStatus uniqueUserName(String username);
 
     /**
      * Checks if given email is unique

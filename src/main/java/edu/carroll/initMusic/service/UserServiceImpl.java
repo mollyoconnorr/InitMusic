@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.web.form.RegistrationForm;
@@ -45,18 +46,28 @@ public class UserServiceImpl implements UserService {
      * Checks whether the provided username is unique (i.e., not already present in the database).
      *
      * @param username the username to check for uniqueness
-     * @return true if the username is unique, false otherwise
+     * @return ResponseStatus Enum that tells outcome of method.
      */
-    public boolean uniqueUserName(String username) {
+    public ResponseStatus uniqueUserName(String username) {
         log.info("Checking if username '{}' is unique", username);
         List<User> usersByName = userRepository.findByUsernameIgnoreCase(username);
 
+        if(username == null || username.length() < 5 || username.isBlank()){
+            return ResponseStatus.USER_TOO_SHORT;
+        }
+        if(username.length() >= 50){
+            return ResponseStatus.USER_TOO_LONG;
+        }
+        if(username.contains(" ")){
+            return ResponseStatus.USER_HAS_SPACES;
+        }
+
         if (!usersByName.isEmpty()) {
             log.info("Username '{}' already exists", username);
-            return false;
+            return ResponseStatus.USER_ALREADY_EXISTS;
         } else {
             log.info("Username '{}' is available", username);
-            return true;
+            return ResponseStatus.SUCCESS;
         }
     }
 
