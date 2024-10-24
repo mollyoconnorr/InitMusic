@@ -40,10 +40,15 @@ public interface UserService {
     User saveUser(String username,String email,String firstName,String lastName,String password);
 
     /**
-     * Updates users security questions
+     * Updates the security questions and answers for the specified user.
      * @param user User object to update
+     * @param question1 First security question
+     * @param answer1 First answer
+     * @param question2 Second security question
+     * @param answer2 Second answer
+     * @return true if security questions were updated, false otherwise
      */
-    void updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2);
+    boolean updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2);
 
     /**
      * Updates the users password

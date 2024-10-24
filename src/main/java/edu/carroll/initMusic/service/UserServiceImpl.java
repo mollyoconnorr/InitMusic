@@ -3,7 +3,6 @@ package edu.carroll.initMusic.service;
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
-import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -188,7 +187,21 @@ public class UserServiceImpl implements UserService {
      *
      * @param user         the user whose security questions are being updated
      */
-    public void updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2) {
+
+    /**
+     * Updates the security questions and answers for the specified user.
+     * @param user User object to update
+     * @param question1 First security question
+     * @param answer1 First answer
+     * @param question2 Second security question
+     * @param answer2 Second answer
+     * @return true if security questions were updated, false otherwise
+     */
+    public boolean updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2) {
+        if(question1.isBlank() | question2.isBlank() | answer1.isBlank() | answer2.isBlank()){
+            return false;
+        }
+
         log.info("Updating security questions for user id#{}", user.getuserID());
         user.setQuestion1(question1);
         user.setAnswer1(answer1);
@@ -196,6 +209,7 @@ public class UserServiceImpl implements UserService {
         user.setAnswer2(answer2);
         userRepository.save(user); // Save the user with updated security questions to the database
         log.info("Security questions updated for user id#{}", user.getuserID());
+        return true;
     }
 
     /**
