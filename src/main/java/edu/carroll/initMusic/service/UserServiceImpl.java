@@ -184,12 +184,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Updates the security questions and answers for the specified user.
-     *
-     * @param user         the user whose security questions are being updated
-     */
-
-    /**
-     * Updates the security questions and answers for the specified user.
      * @param user User object to update
      * @param question1 First security question
      * @param answer1 First answer
@@ -237,11 +231,15 @@ public class UserServiceImpl implements UserService {
      * @param user        the user whose password is being updated
      * @param newPassword the new password to be hashed and saved
      */
-    public void updatePassword(User user, String newPassword) {
+    public boolean updatePassword(User user, String newPassword) {
+        if(newPassword == null || newPassword.length() < 8){
+            return false;
+        }
         log.info("Updating password for user id#{}", user.getuserID());
         user.setHashedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user); // Save the user with updated password to the database
         log.info("Password updated for user id#{}", user.getuserID());
+        return true;
     }
 
     /**

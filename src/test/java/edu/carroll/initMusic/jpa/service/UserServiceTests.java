@@ -749,6 +749,12 @@ public class UserServiceTests {
         verify(userRepository, times(1)).findByEmailIgnoreCase("test@example.com");
     }
 
+    /*
+     * Testing updatePassword
+     */
+
+
+
 
 
 

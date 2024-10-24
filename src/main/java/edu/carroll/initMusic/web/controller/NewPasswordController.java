@@ -73,7 +73,10 @@ public class NewPasswordController {
 
         if (currentUser != null) {
             log.info("Password changed for {}", currentUser.getUsername());
-            userService.updatePassword(currentUser, passwordForm.getNewPassword());  // Update the user's password
+            final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
+            if(!passwordUpdated) {
+                model.addAttribute("errorMessage", "Password update failed");
+            }
             return "passwordChanged";  // Redirect to the password changed confirmation page
         } else {
             log.error("No user found in session.");

@@ -78,7 +78,10 @@ public class ChangePasswordAlreadyLoggedInController {
 
             // Check if the old password matches the stored hashed password
             if (passwordEncoder.matches(passwordForm.getOldPassword(), storedHashedPassword)) {
-                userService.updatePassword(currentUser, passwordForm.getNewPassword());
+                final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
+                if(!passwordUpdated) {
+                    model.addAttribute("errorMessage", "Password update failed");
+                }
                 return "passwordChangedLoggedIn"; // Redirect to the password changed confirmation page
             } else {
                 // Password mismatch, show error

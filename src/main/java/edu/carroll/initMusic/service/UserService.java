@@ -55,7 +55,7 @@ public interface UserService {
      * @param user User to update
      * @param newPassword New password to use
      */
-    void updatePassword(User user, String newPassword);
+    boolean updatePassword(User user, String newPassword);
 
     /**
      * Finds user by email address
