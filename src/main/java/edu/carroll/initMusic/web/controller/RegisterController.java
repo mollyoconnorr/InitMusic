@@ -109,7 +109,7 @@ public class RegisterController {
         final String password = registrationForm.getPassword();
 
         // Save the user
-        final User currentUser = userService.saveUser(username,email,firstName,lastName,password);
+        final User currentUser = userService.saveUser(username,password,email,firstName,lastName);
 
         log.info("Storing current user in session");
         // Store user in session

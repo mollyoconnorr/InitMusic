@@ -142,13 +142,13 @@ public class UserServiceImpl implements UserService {
     /**
      * Saves a new user based on the provided registration form data.
      * @param username Username of user
+     * @param password Password of user
      * @param email Email of user
      * @param firstName First name of user
      * @param lastName Last name of user
-     * @param password Password of user
      * @return the saved {@link User} object
      */
-    public User saveUser(String username,String email,String firstName,String lastName,String password) {
+    public User saveUser(String username,String password,String email,String firstName,String lastName) {
         log.info("Saving new user with username '{}'", username);
 
         if(username.isBlank() ||  email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()){
@@ -173,10 +173,10 @@ public class UserServiceImpl implements UserService {
 
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setQuestion1("null");
-        newUser.setAnswer1("null");
-        newUser.setQuestion2("null");
-        newUser.setAnswer2("null");
+        newUser.setQuestion1(null);
+        newUser.setAnswer1(null);
+        newUser.setQuestion2(null);
+        newUser.setAnswer2(null);
 
         log.info("User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
         return userRepository.save(newUser);
