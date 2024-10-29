@@ -51,11 +51,13 @@ public class SecurityConfig {
                                 "/changePasswordEmail", "/passSecurity", "/changePassword", "/emailTaken", "/userRegistered").permitAll()   // Allow access to login and registration pages
                         .requestMatchers("/","/login", "/register","/loginSuccess", "/securityQuestions", "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity", "/changePassword", "/changePasswordLoggedIn", "/passwordChangedLoggedIn").permitAll()   // Allow access to login and registration pages
                         .requestMatchers("/search","/playlists","/addSongToPlaylist","/createPlaylist","/renamePlaylist","/deletePlaylist","/viewPlaylist/**","/deleteSongFromPlaylist").permitAll()   // Allow access to login and registration pages
+                        .requestMatchers("/viewSongPreview/**").permitAll()
                         .anyRequest().authenticated()                         // Require authentication for all other requests
                 )
-                .logout(LogoutConfigurer::permitAll // Allow everyone to access the logout endpoint
+                .logout(LogoutConfigurer::permitAll) // Allow everyone to access the logout endpoint
+                .headers(headers -> headers
+                        .frameOptions().sameOrigin() // Allow iframe embedding from the same origin
                 );
-
         return http.build();
     }
 }
