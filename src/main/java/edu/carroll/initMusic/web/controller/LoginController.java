@@ -1,6 +1,5 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.LoginService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.LoginForm;
@@ -88,28 +87,6 @@ public class LoginController {
     @PostMapping("/login")
     public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result,
                             RedirectAttributes attrs, HttpSession httpSession, Model model) {
-        log.info("loginPost: User '{}' attempted login", loginForm.getUsername());
-
-        // Check for validation errors in the form submission
-        if (result.hasErrors()) {
-            log.info("loginPost: Validation errors: {}", result.getAllErrors());
-            return "login";
-        }
-
-        // Validate the username and password
-        if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
-            log.info("loginPost: Username and password don't match for user '{}'", loginForm.getUsername());
-            model.addAttribute("errorMessage", "That username and password don't match.");
-            return "login";  // Reload the form with an error message
-        }
-
-        // If validation is successful, retrieve the user and set the session
-        User foundUser = userService.getUser(loginForm.getUsername());
-        attrs.addAttribute("username", foundUser.getUsername());
-        httpSession.setAttribute("currentUser", foundUser);
-
-        log.info("loginPost: User '{}' logged in", foundUser.getUsername());
-
         return "redirect:/search";  // Redirect to the search page after successful login
     }
 
