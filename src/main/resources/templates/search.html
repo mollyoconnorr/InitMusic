@@ -67,7 +67,9 @@
               <!-- Artist name -->
               <span class="artistText" th:text="${item.getArtistName()}"></span>
 
-              <span class="songTime" th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60)}"></span>
+              <span class="songTime"
+                    th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60 < 10 ? '0' + (item.getLength() % 60) : item.getLength() % 60)}"></span>
+
 
               <!-- Song preview as a link -->
               <a th:href="${item.getSongPreview()}" title="Preview"
