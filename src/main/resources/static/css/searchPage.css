@@ -95,7 +95,7 @@ button.btn-primary {
     border-color: #F4A460;
     color: white;
     margin-left: auto; /* Push the button to the far right */
-    margin-right: 30px; /* Add space between button and right edge */
+    margin-right: auto; /* Add space between button and right edge */
 }
 
 button.btn-primary:hover {
@@ -235,4 +235,27 @@ button.btn-primary:hover {
 
 .successMsg {
     color: green;
+}
+
+.addToPlaylistModal{
+    max-width: 500px;
+}
+
+.addPlaylistForm{
+    flex-direction: column;
+    margin-top: 0;
+}
+.addPlaylistModelBody{
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+.createPlaylistBtn{
+    align-self: center;
+    margin: 20px;
+    background-color: #007bff;
+}
+
+.createPlaylistBtn:hover{
+    background-color: #0056b3;
 }
