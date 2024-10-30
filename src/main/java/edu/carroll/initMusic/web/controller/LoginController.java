@@ -3,11 +3,14 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.LoginService;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.LoginForm;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.carroll.initMusic.web.form.LoginForm;
-import jakarta.validation.Valid;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+
 
 /**
  * Controller for handling login-related requests.
@@ -104,6 +110,11 @@ public class LoginController {
         User foundUser = userService.getUser(loginForm.getUsername());
         attrs.addAttribute("username", foundUser.getUsername());
         httpSession.setAttribute("currentUser", foundUser);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(foundUser, foundUser.getHashedPassword(), new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info(SecurityContextHolder.getContext().toString());
+
         log.info("User '{}' logged in, redirecting to search page", foundUser.getUsername());
 
         return "redirect:/search";  // Redirect to the search page after successful login
