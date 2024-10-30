@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
 
 
 /**
@@ -32,6 +28,7 @@ import java.util.ArrayList;
  * @since September 8, 2024
  */
 @Controller
+@EnableWebSecurity
 public class LoginController {
 
     /**
@@ -68,7 +65,7 @@ public class LoginController {
      */
     @GetMapping("/login")
     public String loginGet(Model model) {
-        log.info("Get login page");
+        log.info("loginGet: Get login page");
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
@@ -86,22 +83,22 @@ public class LoginController {
      * @param attrs     attributes to be passed to the redirect.
      * @param httpSession the HTTP session for storing the authenticated user.
      * @param model     the model to add error messages, if necessary.
-     * @return the name of the view to render (login page or redirect to search).
+     * @return the name of the view to render.
      */
     @PostMapping("/login")
     public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result,
                             RedirectAttributes attrs, HttpSession httpSession, Model model) {
-        log.info("User '{}' attempted login", loginForm.getUsername());
+        log.info("loginPost: User '{}' attempted login", loginForm.getUsername());
 
         // Check for validation errors in the form submission
         if (result.hasErrors()) {
-            log.info("Validation errors: {}", result.getAllErrors());
+            log.info("loginPost: Validation errors: {}", result.getAllErrors());
             return "login";
         }
 
         // Validate the username and password
         if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
-            log.info("Username and password don't match for user '{}'", loginForm.getUsername());
+            log.info("loginPost: Username and password don't match for user '{}'", loginForm.getUsername());
             model.addAttribute("errorMessage", "That username and password don't match.");
             return "login";  // Reload the form with an error message
         }
@@ -111,11 +108,7 @@ public class LoginController {
         attrs.addAttribute("username", foundUser.getUsername());
         httpSession.setAttribute("currentUser", foundUser);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foundUser, foundUser.getHashedPassword(), new ArrayList<>());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info(SecurityContextHolder.getContext().toString());
-
-        log.info("User '{}' logged in, redirecting to search page", foundUser.getUsername());
+        log.info("loginPost: User '{}' logged in", foundUser.getUsername());
 
         return "redirect:/search";  // Redirect to the search page after successful login
     }
