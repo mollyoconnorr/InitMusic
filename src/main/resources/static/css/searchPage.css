@@ -71,11 +71,10 @@ button[type="submit"]:hover {
 
 /* Style the results section */
 .list-group {
-    width: 100%; /* Set the parent container to take full width */
-    padding-left: 0;
-    padding-right: 0;
-    margin: 0; /* Remove any automatic margins */
-    height: 30px;
+    max-width: 90vw;
+    margin-top: 20px;
+    margin-left: auto; /* Center it horizontally */
+    margin-right: auto;
 }
 
 /* Style the results section */
@@ -252,7 +251,6 @@ button.btn-primary:hover {
 
 .createPlaylistBtn{
     align-self: center;
-    margin: 20px;
     background-color: #007bff;
 }
 
