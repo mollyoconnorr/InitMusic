@@ -70,7 +70,10 @@
             <span class="songTime" th:text="${(song.getLength() / 60) + ':' + (song.getLength() % 60)}"></span>
 
             <!-- Song preview as a link -->
-            <a class="songPreview" th:href="${song.getSongPreview()}" target="_blank">Preview</a>
+            <a th:href="${song.getSongPreview()}" title="Preview"
+               th:data-url="${song.getSongPreview()}" class="preview-link">
+              Preview
+            </a>
           </div>
 
           <!-- Button trigger modal for deleting a song from playlist -->
