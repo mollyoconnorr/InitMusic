@@ -94,9 +94,8 @@ public class LoginController {
         }
 
         // Validate the username and password
-        if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword())) {
+        if (!loginService.validateUser(loginForm.getUsername(), loginForm.getPassword(), model)) {
             log.info("Username and password don't match for user '{}'", loginForm.getUsername());
-            model.addAttribute("errorMessage", "That username and password don't match.");
             return "login";  // Reload the form with an error message
         }
 

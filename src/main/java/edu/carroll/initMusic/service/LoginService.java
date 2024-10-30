@@ -1,5 +1,7 @@
 package edu.carroll.initMusic.service;
 
+import org.springframework.ui.Model;
+
 /**
  * Interface for LoginService, defines methods related to logging in and creating accounts.
  */
@@ -10,7 +12,7 @@ public interface LoginService {
      * @param password Users password
      * @return true if data exists and matches what's on record, false otherwise
      */
-    boolean validateUser(String username, String password);
+    boolean validateUser(String username, String password, Model model);
 
     /**
      * Hashes given password

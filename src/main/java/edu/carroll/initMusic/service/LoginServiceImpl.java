@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+
 
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class LoginServiceImpl implements LoginService {
      * @return true if the user exists and the password matches; false otherwise
      */
     @Override
-    public boolean validateUser(String username, String password) {
+    public boolean validateUser(String username, String password, Model model) {
         log.info("validateUser: Attempting to validate user '{}' for login", username);
 
         // Perform a case-insensitive search for the user in the repository.
@@ -62,6 +64,7 @@ public class LoginServiceImpl implements LoginService {
         // Check if exactly one user is found. If zero or more than one are found, return false.
         if (users.size() != 1) {
             log.info("validateUser: Found {} users with username '{}'", users.size(), username);
+            model.addAttribute("errorMessage", "No users exist with that username. Do you need to register?");
             return false;
         }
 
@@ -71,6 +74,7 @@ public class LoginServiceImpl implements LoginService {
         // Check if the provided password matches the hashed password stored in the database.
         if (!passwordEncoder.matches(password, u.getHashedPassword())) {
             log.info("validateUser: Password does not match for user '{}'", username);
+            model.addAttribute("errorMessage", "That username and password don't match.");
             return false;
         }
 
