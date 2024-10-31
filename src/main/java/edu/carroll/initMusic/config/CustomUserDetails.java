@@ -23,6 +23,10 @@ public record CustomUserDetails(User user) implements UserDetails {
         return user.getUsername();
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -41,5 +45,10 @@ public record CustomUserDetails(User user) implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User id#" + user.getuserID();
     }
 }
