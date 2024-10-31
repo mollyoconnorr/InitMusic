@@ -3,18 +3,12 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.service.LoginService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.LoginForm;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 /**
@@ -67,27 +61,6 @@ public class LoginController {
         log.info("loginGet: Get login page");
         model.addAttribute("loginForm", new LoginForm());
         return "login";
-    }
-
-    /**
-     * Processes the login form submission.
-     * <p>
-     * This method handles POST requests when a user submits the login form. It checks
-     * the validity of the submitted form and validates the user's credentials.
-     * On success, it redirects to the search page; on failure, it reloads the login page with an error.
-     * </p>
-     *
-     * @param loginForm the login form submitted by the user.
-     * @param result    the result of the form validation.
-     * @param attrs     attributes to be passed to the redirect.
-     * @param httpSession the HTTP session for storing the authenticated user.
-     * @param model     the model to add error messages, if necessary.
-     * @return the name of the view to render.
-     */
-    @PostMapping("/login")
-    public String loginPost(@Valid @ModelAttribute LoginForm loginForm, BindingResult result,
-                            RedirectAttributes attrs, HttpSession httpSession, Model model) {
-        return "redirect:/search";  // Redirect to the search page after successful login
     }
 
     /**
