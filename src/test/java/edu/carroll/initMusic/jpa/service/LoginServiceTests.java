@@ -15,6 +15,11 @@ import org.springframework.ui.Model;
 /**
  * Unit tests for the LoginService class.
  * This class tests the user validation and password hashing functionalities.
+ *
+ *  @author Molly O'Connor
+ *
+ *  @since October 18, 2024
+ *
  */
 @SpringBootTest
 public class LoginServiceTests {
@@ -226,64 +231,59 @@ public class LoginServiceTests {
     }
 
     /**
-     * Tests the password hashing functionality.
-     * Asserts that the hashed password does not match the raw password
-     * and that the hashed password matches when re-encoded.
+     * Tests that the hashed password does not match the raw password.
      */
     @Test
     public void testHashPassword() {
-        // Hash a password and verify it's not equal to the raw password
         String rawPassword = "newpassword";
         String hashedPassword = loginService.hashPassword(rawPassword);
         assertNotEquals(rawPassword, hashedPassword, "Hashed password should not match the raw password");
     }
 
+    /**
+     * Tests that hashing the same password multiple times produces different hashes.
+     */
     @Test
     public void testHashSamePasswordMultipleTimes() {
         String rawPassword = "samesecurepassword";
-
-        // Hash the password multiple times
         String hashedPassword1 = loginService.hashPassword(rawPassword);
         String hashedPassword2 = loginService.hashPassword(rawPassword);
-
-        // Assert that both hashed passwords are not equal (due to salting)
         assertNotEquals(hashedPassword1, hashedPassword2, "Hashing the same password should yield different results.");
     }
 
+    /**
+     * Tests the handling of an empty password during hashing.
+     */
     @Test
     public void testHashEmptyPassword() {
-        // Attempt to hash an empty password and expect an exception
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             loginService.hashPassword(""); // Test with empty string
         });
-
         String expectedMessage = "Password cannot be null or empty";
         String actualMessage = exception.getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage), "Expected exception message for empty password.");
     }
 
+    /**
+     * Tests the handling of a null password during hashing.
+     */
     @Test
     public void testHashNullPassword() {
-        // Attempt to hash a null password and expect an exception
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             loginService.hashPassword(null); // Test with null
         });
-
         String expectedMessage = "Password cannot be null or empty";
         String actualMessage = exception.getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage), "Expected exception message for null password.");
     }
 
+    /**
+     * Tests the accuracy of hashed passwords against the original raw password.
+     */
     @Test
-    public void testConsistencyOfHashedPasswords() {
-        String rawPassword = "consistentsafe";
-
-        // Hash the password
+    public void testAccuracyOfHashedPasswords() {
+        String rawPassword = "stupidpassword";
         String hashedPassword = loginService.hashPassword(rawPassword);
-
-        // Verify that the hashed password matches when using the raw password
         assertTrue(passwordEncoder.matches(rawPassword, hashedPassword), "Hashed password should match the original raw password.");
     }
 
