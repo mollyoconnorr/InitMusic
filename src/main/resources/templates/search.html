@@ -110,8 +110,16 @@
               <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div th:if="${results != null and #lists.size(results) > 0}">
-                <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" class="addPlaylistForm">
+            <div class="modal-body addPlaylistModelBody">
+              <p>Select the playlists you want to add to:</p>
+              <form id="createPlaylistForm">
+                <label for="playlistName">Create playlist</label>
+                <input type="text" id="playlistName" placeholder="New playlist name">
+                <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save changes</button>
+              </form>
+
+              <div th:if="${results != null and #lists.size(results) > 0}">
+                <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" id="addSongToPlaylistForm">
                   <input type="hidden" id="songID" th:field="*{songID}" />
                   <input type="hidden" id="songName" th:field="*{songName}" />
                   <input type="hidden" id="artistName" th:field="*{artistName}" />
@@ -122,9 +130,6 @@
                   <input type="hidden" id="albumID" th:field="*{albumID}" />
                   <input type="hidden" id="songLength" th:field="*{songLength}" />
 
-
-                <div class="modal-body addPlaylistModelBody">
-                  <p>Select the playlists you want to add to:</p>
                   <ul class="list-group">
                     <th:block th:each="playlist : ${currentUser.getPlaylists()}">
                       <li class="list-group-item">
@@ -140,19 +145,19 @@
                       </li>
                     </th:block>
                   </ul>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
-                  <button type="button" class="btn btn-secondary createPlaylistBtn">Create playlist</button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
+              <div class="modal-footer" id="CreatePlaylistModalFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addSongToPlaylistForm" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                <button type="button" class="btn btn-secondary createPlaylistBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">Create playlist</button>
+              </div>
           </div>
         </div>
       </div>
 
-  <script src="/js/searchPage.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+    <script src="/js/searchPage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
 </html>

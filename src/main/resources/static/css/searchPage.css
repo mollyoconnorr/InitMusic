@@ -240,13 +240,16 @@ button.btn-primary:hover {
     max-width: 500px;
 }
 
-.addPlaylistForm{
+.addSongToPlaylistForm{
     flex-direction: column;
     margin-top: 0;
 }
 .addPlaylistModelBody{
     min-height: 300px;
+    max-width: 400px;
     overflow-y: auto;
+    display: flow;
+    align-items: center;
 }
 
 .createPlaylistBtn{
@@ -256,4 +259,13 @@ button.btn-primary:hover {
 
 .createPlaylistBtn:hover{
     background-color: #0056b3;
+}
+
+#CreatePlaylistModalFooter{
+    justify-content: center;
+}
+
+#saveChangesBtn{
+    margin-left: 0;
+    margin-right: 0;
 }
