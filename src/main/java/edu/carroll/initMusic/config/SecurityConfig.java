@@ -57,11 +57,19 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/",
                         "/login",
+                        "/login?error",
                         "/register",
                         "/js/**",
                         "/css/**",
                         "/images/**").permitAll()
                 .anyRequest().authenticated());
+        http.formLogin(formLogin ->
+                formLogin
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/search")
+                        .failureUrl("/login?error")
+                        .permitAll()
+        );
         http.logout(lOut -> {
             lOut.invalidateHttpSession(true)
                     .clearAuthentication(true)
