@@ -82,7 +82,7 @@
             <span class="artistText" th:text="${song.getArtistName()}"></span>
 
             <span class="songTime"
-                  th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60 < 10 ? '0' + (item.getLength() % 60) : item.getLength() % 60)}"></span>
+                  th:text="${(song.getLength() / 60) + ':' + (song.getLength() % 60 < 10 ? '0' + (song.getLength() % 60) : song.getLength() % 60)}"></span>
 
             <!-- Song preview as a link -->
             <a th:href="${song.getSongPreview()}" title="Preview"
@@ -92,7 +92,7 @@
           </div>
 
           <!-- Button trigger modal for deleting a song from playlist -->
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+          <button type="button" class="btn btn-primary" id="deleteSongBtn" data-bs-toggle="modal"
                   data-bs-target="#deleteSongModal"
                   th:data-playlist-name="${playlistName}"
                   th:data-playlist-id="${playlistID}"

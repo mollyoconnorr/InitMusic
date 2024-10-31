@@ -13,3 +13,7 @@ h1{
 .addSongBtn:hover{
     background-color: #0056b3 !important;
 }
+
+#deleteSongBtn{
+    margin-right: 0;
+}
