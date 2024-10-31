@@ -1,16 +1,17 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.config.CustomUserDetails;
+import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.NewPasswordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import edu.carroll.initMusic.jpa.model.User; // Ensure you have the correct import for the User model
-import jakarta.servlet.http.HttpSession;
-import edu.carroll.initMusic.web.form.NewPasswordForm; // Adjust package as necessary
 
 /**
  * Controller for handling password change requests for users who have successfully
@@ -63,15 +64,17 @@ public class NewPasswordController {
      * </p>
      *
      * @param passwordForm the form containing the user's new password.
-     * @param httpSession  the HTTP session for retrieving the current user.
+     * @param authentication  the current authentication token, if any
      * @param model        the model to store attributes for the view.
      * @return the name of the view to render (either the success page or a redirect).
      */
     @PostMapping("/changePassword")
-    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession httpSession, Model model) {
-        User currentUser = (User) httpSession.getAttribute("currentUser");  // Retrieve the current user from the session
+    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, Authentication authentication, Model model) {
 
-        if (currentUser != null) {
+        if (authentication.getPrincipal()!= null) {
+            //Retrieve the current user
+            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            final User currentUser = userDetails.getUser();
             log.info("Password changed for {}", currentUser.getUsername());
             final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
             if(!passwordUpdated) {

@@ -1,16 +1,17 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.PassSQuestionsForm; // Ensure correct import
+import edu.carroll.initMusic.web.form.PassSQuestionsForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling user security questions validation.
@@ -66,16 +67,17 @@ public class PassSecurityController {
      * </p>
      *
      * @param passSecurityForm the form containing the user's answers to the security questions.
-     * @param httpSession      the HTTP session for retrieving the current user.
+     * @param authentication      the  current authentication token, if any
      * @param model            the model to store attributes for the view.
      * @return the name of the view to render (either the password change page or the security questions page with errors).
      */
     @PostMapping("/passSecurity")
-    public String handleSecuritySubmission(@ModelAttribute PassSQuestionsForm passSecurityForm, HttpSession httpSession, Model model) {
-        User currentUser = (User) httpSession.getAttribute("currentUser");  // Retrieve the current user from the session
-
+    public String handleSecuritySubmission(@ModelAttribute PassSQuestionsForm passSecurityForm, Authentication authentication, Model model) {
         // Ensure that currentUser is not null to avoid NullPointerException
-        if (currentUser != null) {
+        if (authentication.getPrincipal() != null) {
+            //Retrieve the current user
+            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            final User currentUser = userDetails.getUser();
             // Check if the answers provided match the user's stored answers
             if (currentUser.getAnswer1().equals(passSecurityForm.getAnswer1()) && currentUser.getAnswer2().equals(passSecurityForm.getAnswer2())) {
                 log.info("User got security questions right. Redirect to change password");

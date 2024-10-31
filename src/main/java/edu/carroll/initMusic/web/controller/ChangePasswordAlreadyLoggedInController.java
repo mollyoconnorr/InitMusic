@@ -1,17 +1,18 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.config.CustomUserDetails;
+import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.NewPasswordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import edu.carroll.initMusic.jpa.model.User;
-import jakarta.servlet.http.HttpSession;
-import edu.carroll.initMusic.web.form.NewPasswordForm;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * Controller for handling password changes for users who are already logged in.
@@ -66,14 +67,17 @@ public class ChangePasswordAlreadyLoggedInController {
      * it displays an error message.
      *
      * @param passwordForm the form containing the old and new passwords
-     * @param httpSession the current session, used to retrieve the logged-in user
+     * @param authentication the current authentication token, used to retrieve the logged-in user
      * @param model the model used to pass data back to the view
      * @return the view to display next, either a success page or the form with an error
      */
     @PostMapping("/changePasswordLoggedIn")
-    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession httpSession, Model model) {
-        User currentUser = (User) httpSession.getAttribute("currentUser"); // Ensure this attribute is set in the session
-        if (currentUser != null) {
+    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, Authentication authentication, Model model) {
+        if (authentication.getPrincipal() != null) {
+            //Retrieve the current user
+            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            final User currentUser = userDetails.getUser();
+
             String storedHashedPassword = currentUser.getHashedPassword(); // Retrieves the hashed password from the user
 
             // Check if the old password matches the stored hashed password

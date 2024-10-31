@@ -1,6 +1,7 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.UserService;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,14 +53,14 @@ public class PlaylistController {
     /**
      * This shows the default playlist page
      * @param model Model to use
-     * @param httpSession httpSession of user
+     * @param authentication Current authentication token, if any
      * @return Page to go to
      */
     @GetMapping("/playlists")
-    public String showPlaylistPage(Model model, HttpSession httpSession) {
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+    public String showPlaylistPage(Model model, Authentication authentication) {
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
         log.info("{} went to playlist page", user.getuserID());
 
@@ -79,14 +81,19 @@ public class PlaylistController {
      * Handles creating a new playlist with name inputted by user
      * @param newPlaylistForm Form to get name from
      * @param bindingResult Result of validation
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token, if any
      * @return Redirect to playlist
      */
     @PostMapping("/createPlaylist")
     public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm,
                                  BindingResult bindingResult,
-                                 HttpSession httpSession,
+                                 Authentication authentication,
                                  RedirectAttributes redirectAttributes) {
+
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userDetails.getUser();
+
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
             if(bindingResult.getFieldError("playlistName") != null) {
@@ -95,10 +102,6 @@ public class PlaylistController {
             log.error("Binding errors found when attempting to create a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlists";  // Return the view with errors
         }
-
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
         final String playlistName = newPlaylistForm.getPlaylistName();
 
         log.info("User {} wants to make a new playlist with name {}",user.getuserID(),playlistName);
