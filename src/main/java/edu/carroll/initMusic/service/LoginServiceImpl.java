@@ -58,6 +58,12 @@ public class LoginServiceImpl implements LoginService {
     public boolean validateUser(String username, String password, Model model) {
         log.info("validateUser: Attempting to validate user '{}' for login", username);
 
+        if (username == null || password == null) {
+            model.addAttribute("errorMessage", "Username and password must be provided.");
+            log.info("validateUser: Null username or password provided");
+            return false;
+        }
+
         // Perform a case-insensitive search for the user in the repository.
         List<User> users = userRepo.findByUsernameIgnoreCase(username);
 
@@ -69,7 +75,6 @@ public class LoginServiceImpl implements LoginService {
         }
 
         User u = users.get(0);
-        log.info("validateUser: User '{}' found with hashed password: {}", u.getUsername(), u.getHashedPassword());
 
         // Check if the provided password matches the hashed password stored in the database.
         if (!passwordEncoder.matches(password, u.getHashedPassword())) {
@@ -92,6 +97,12 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String hashPassword(String password) {
         log.info("hashPassword: Hashing password using BCrypt");
+
+        // Check for null or empty password and throw an exception
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+
         String hashedPassword = passwordEncoder.encode(password);
         log.info("hashPassword: Password successfully hashed");
         return hashedPassword;
