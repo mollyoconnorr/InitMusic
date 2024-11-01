@@ -7,6 +7,7 @@
 </head>
 <body class="body2"> <!-- Change to body1 if needed -->
 <div class="centered-box">
+  <button type="button" class="btn btn-primary" onclick="window.location.href='/login'">Back to Login</button>
   <p>Please answer the security questions to verify your identity.</p>
 
   <!-- Display error message if applicable -->
@@ -21,7 +22,7 @@
     <label for="question2">Question 2: <span th:text="${question2}"></span></label>
     <input type="text" id="answer2" name="answer2" required>
 
-    <button type="submit">Submit Answers</button>
+    <button class= "btn btn-primary" type="submit">Submit Answers</button>
   </form>
 </div>
 </body>

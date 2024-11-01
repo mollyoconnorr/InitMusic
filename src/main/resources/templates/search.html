@@ -29,9 +29,7 @@
           <ul class="dropdown-menu" id="dropdown-menu">
             <li><a class="dropdown-item" id="logoutButton">Log Out</a></li>
             <li><a class="dropdown-item" href="/changePasswordLoggedIn">Change Password</a></li>
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="/updateSecurityQuestions">Change Security Questions</a></li>
           </ul>
         </li>
       </ul>
@@ -72,8 +70,11 @@
               <span class="songTime" th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60)}"></span>
 
               <!-- Song preview as a link -->
-              <a class="songPreview" th:href="${item.getSongPreview()}" target="_blank">Preview</a>
-        </div>
+              <a th:href="${item.getSongPreview()}" title="Preview"
+                 th:data-url="${item.getSongPreview()}" class="preview-link">
+                Preview
+              </a>
+            </div>
       </div>
           <button type="button" class="btn btn-primary"
                   data-bs-toggle="modal"
@@ -99,7 +100,6 @@
   <div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
     <p>"<span th:text="'No results found for '+${query}"></span>".</p>
   </div>
-
       <!-- Modal for adding song to playlist -->
       <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">

@@ -108,7 +108,6 @@ public class Playlist {
      * @param song Song to add
      */
     public void addSong(Song song) {
-
         this.songs.add(song);
         this.numberOfSongs++;
         this.totalSongLength += song.getLength();
