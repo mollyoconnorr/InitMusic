@@ -5,6 +5,7 @@ import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.NewSongForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -83,6 +84,7 @@ public class SearchController {
         model.addAttribute("results", new HashSet<>()); // Initialize results as empty
         model.addAttribute("query", null); // Initialize query as empty
         model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
         return "search"; // Return to the search page
     }
@@ -125,6 +127,7 @@ public class SearchController {
         model.addAttribute("currentUser", user);
         model.addAttribute("playlists",user.getPlaylists());
         model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
         return "search"; // Return the search template
     }
