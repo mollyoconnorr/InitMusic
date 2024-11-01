@@ -97,7 +97,7 @@ public class PlaylistController {
 
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        final User user = userDetails.getUser();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
         //If there are any binding errors, log errors and return back to playlists page
 
