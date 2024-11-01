@@ -27,7 +27,7 @@ public enum ResponseStatus {
     PLAYLIST_NOT_FOUND("Playlist not found!"),
     PLAYLIST_ALREADY_EXISTS("Playlist already exists!"),
     PLAYLIST_NAME_EXISTS("Playlist with given name already exists!"),
-    PLAYLIST_NAME_EMPTY("Playlist name cannot be empty!"),
+    PLAYLIST_NAME_INVALID("Playlist name is invalid!"),
     PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),
     SONG_NOT_IN_PLAYLIST("Song not found in playlist!");
 
