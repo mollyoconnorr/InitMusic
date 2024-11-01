@@ -1,0 +1,19 @@
+.btnCol{
+    align-self: center;
+    text-align: left;
+}
+
+h1{
+    font-weight: bold;
+}
+.addSongBtn{
+    background-color: #007bff !important;
+}
+
+.addSongBtn:hover{
+    background-color: #0056b3 !important;
+}
+
+#deleteSongBtn{
+    margin-right: 0;
+}

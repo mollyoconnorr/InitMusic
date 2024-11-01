@@ -108,7 +108,7 @@
           <form th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
 
             <label> Playlist Name:
-              <input type="text" name="playlistName" th:value="*{playlistName}" />
+              <input type="text" name="playlistName" th:field="*{playlistName}" />
             </label>
 
             <div class="modal-footer">

@@ -17,7 +17,7 @@ h1 {
     text-align: center;
     font-size: 2.5rem;
     color: black;
-    padding: 40px 0px 20px 0px; /* top, right, bottom, left */
+    padding: 40px 0 20px 0; /* top, right, bottom, left */
 }
 
 /* Center the search result heading */
@@ -41,8 +41,7 @@ h3 {
 /* Style the search form */
 form {
     max-width: 600px;
-    margin: 20px auto;
-    margin-top: 70px;
+    margin: 70px auto 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -71,11 +70,10 @@ button[type="submit"]:hover {
 
 /* Style the results section */
 .list-group {
-    width: 100%; /* Set the parent container to take full width */
-    padding-left: 0;
-    padding-right: 0;
-    margin: 0; /* Remove any automatic margins */
-    height: 30px;
+    max-width: 90vw;
+    margin-top: 20px;
+    margin-left: auto; /* Center it horizontally */
+    margin-right: auto;
 }
 
 /* Style the results section */
@@ -95,7 +93,7 @@ button.btn-primary {
     border-color: #F4A460;
     color: white;
     margin-left: auto; /* Push the button to the far right */
-    margin-right: 30px; /* Add space between button and right edge */
+    margin-right: auto; /* Add space between button and right edge */
 }
 
 button.btn-primary:hover {
@@ -235,4 +233,51 @@ button.btn-primary:hover {
 
 .successMsg {
     color: green;
+}
+
+.addToPlaylistModal{
+    max-width: 500px;
+}
+
+#addSongToPlaylistForm{
+    flex-direction: column;
+    margin-top: 0;
+    display: flow;
+    align-items: center;
+}
+.addPlaylistModelBody{
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+.createPlaylistBtn{
+    background-color: #007bff;
+    max-height: 40px;
+    max-width: 75px;
+}
+
+.createPlaylistBtn:hover{
+    background-color: #0056b3;
+}
+
+#CreatePlaylistModalFooter{
+    justify-content: center;
+}
+
+#saveChangesBtn{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.addPlaylistModelBody p{
+    text-align: center;
+    font-weight: bold;
+}
+
+#createPlaylistForm{
+    margin-top: 20px;
+}
+
+#createPlaylistLbl{
+    max-width: 60px;
 }
