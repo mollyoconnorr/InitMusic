@@ -8,7 +8,6 @@ import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeletePlaylistForm;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.RenamePlaylistForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,14 +145,14 @@ public class PlaylistController {
      * Handles renaming a playlist using data from user
      * @param renamePlaylistForm Form to get data from
      * @param bindingResult Binding result
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token
      * @param redirectAttributes Attributes to show once redirecting, if any
      * @return Redirect to playlist page
      */
     @PostMapping("/renamePlaylist")
     public String renamePlaylist(@Valid @ModelAttribute RenamePlaylistForm renamePlaylistForm,
                                  BindingResult bindingResult,
-                                 HttpSession httpSession,
+                                 Authentication authentication,
                                  RedirectAttributes redirectAttributes){
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
@@ -168,9 +167,9 @@ public class PlaylistController {
             return "redirect:/playlists";  // Return the view with errors
         }
 
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
         final String newPlaylistName = renamePlaylistForm.getNewPlaylistName();
         final Long playlistID = renamePlaylistForm.getPlaylistID();
         final String oldPlaylistName = playlistService.getPlaylist(playlistID).getPlaylistName();
@@ -196,14 +195,14 @@ public class PlaylistController {
      * Handles deleting a playlist
      * @param deletePlaylistForm Form to get data from
      * @param bindingResult Binding result
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token
      * @param redirectAttributes Attributes to show once redirecting, if any
      * @return Redirect to playlist page
      */
     @PostMapping("/deletePlaylist")
     public String deletePlaylist(@Valid @ModelAttribute DeletePlaylistForm deletePlaylistForm,
                                  BindingResult bindingResult,
-                                 HttpSession httpSession,
+                                 Authentication authentication,
                                  RedirectAttributes redirectAttributes){
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
@@ -213,9 +212,9 @@ public class PlaylistController {
             return "redirect:/playlists";  // Return the view with errors
         }
 
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
         final Long playlistID = deletePlaylistForm.getPlaylistID();
         final String playlistName = deletePlaylistForm.getPlaylistName();
 
