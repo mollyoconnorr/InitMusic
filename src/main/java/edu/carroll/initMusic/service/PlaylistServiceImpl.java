@@ -51,19 +51,22 @@ public class PlaylistServiceImpl implements PlaylistService{
             return ResponseStatus.USER_NOT_FOUND;
         }
 
-        //If user already has a playlist with the same name
-        if(user.getPlaylist(name) != null){
-            log.warn("Attempted to create a new playlist, but Playlist '{}' already exists for user id#{}", name, user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_EXISTS;
+        if (name == null || name.trim().isEmpty()) {
+            return ResponseStatus.PLAYLIST_NAME_INVALID;
         }
 
         //If string is empty or blank
         if(name.isBlank()){
             log.warn("Attempted to create a new playlist, but User id#{} tried to make a playlist with a blank String", user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_EMPTY;
+            return ResponseStatus.PLAYLIST_NAME_INVALID;
         }
 
         name = name.strip();
+
+        if (!playlistRepository.findByPlaylistNameContainingIgnoreCase(name).isEmpty()) {
+            log.warn("Attempted to create a duplicate playlist name '{}' for User id#{}", name, user.getuserID());
+            return ResponseStatus.PLAYLIST_NAME_EXISTS;
+        }
 
         final Playlist newPlaylist = new Playlist(user,name);
         playlistRepository.save(newPlaylist);
@@ -82,7 +85,6 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @return ResponseStatus Enum which corresponds to outcome of function
      */
     public ResponseStatus renamePlaylist(String newName, Long playlistID, User user){
-        //If user already has playlist with same name
         if(user.getPlaylist(newName) != null){
             log.warn("Attempted to rename playlist, but a Playlist with name '{}' already exists for user id#{}", newName, user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EXISTS;
@@ -94,10 +96,15 @@ public class PlaylistServiceImpl implements PlaylistService{
             return ResponseStatus.USER_NOT_FOUND;
         }
 
+        if(newName == null) {
+            log.warn("Attempted to rename playlist, but User id#{} tried to rename playlist null", user.getuserID());
+            return ResponseStatus.PLAYLIST_NAME_INVALID;
+        }
+
         //If string is empty or blank
         if(newName.isBlank()){
             log.warn("Attempted to rename playlist, but User id#{} tried to rename playlist with a blank String", user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_EMPTY;
+            return ResponseStatus.PLAYLIST_NAME_INVALID;
         }
 
         //Look through each playlist, faster to do in-memory then pull playlist from repository
@@ -192,17 +199,17 @@ public class PlaylistServiceImpl implements PlaylistService{
      * Adds a song to the given playlist. This first searches for the playlist by id. It
      * should always find a playlist, because when used, it takes the playlist id directly from
      * a playlist object that has already been created.
+     *
      * @param playlistId ID of playlist to add song to
-     * @param song Song to add to playlist
-     * @return True if playlist was added, false if not
+     * @param song       Song to add to playlist
      */
-    public boolean addSongToPlaylist(Long playlistId, Song song) {
+    public void addSongToPlaylist(Long playlistId, Song song) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
 
         //Check if exactly one playlist was found
         if (playlistsFound.size() != 1) {
             log.warn("Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
-            return false;
+            return;
         }
 
         final Playlist playlist = playlistsFound.getFirst();
@@ -210,7 +217,7 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
             log.warn("Playlist id#{} by user id#{} already contains song#{}",playlistId,playlist.getAuthor().getuserID(),song.getSongID());
-            return false; //Song is already in the playlist
+            return; //Song is already in the playlist
         }
 
         //Attempt to find the song in the repository
@@ -230,6 +237,5 @@ public class PlaylistServiceImpl implements PlaylistService{
         playlistRepository.save(playlist);
 
         log.info("Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
-        return true;
     }
 }
