@@ -1,6 +1,7 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.UserService;
@@ -11,13 +12,18 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * This controller handles the playlist page, which is where users can do things like
@@ -51,14 +57,14 @@ public class PlaylistController {
     /**
      * This shows the default playlist page
      * @param model Model to use
-     * @param httpSession httpSession of user
+     * @param authentication Current authentication token, if any
      * @return Page to go to
      */
     @GetMapping("/playlists")
-    public String showPlaylistPage(Model model, HttpSession httpSession) {
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+    public String showPlaylistPage(Model model, Authentication authentication) {
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
         log.info("{} went to playlist page", user.getuserID());
 
@@ -79,41 +85,61 @@ public class PlaylistController {
      * Handles creating a new playlist with name inputted by user
      * @param newPlaylistForm Form to get name from
      * @param bindingResult Result of validation
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token, if any
      * @return Redirect to playlist
      */
     @PostMapping("/createPlaylist")
-    public String createPlaylist(@Valid @ModelAttribute NewPlaylistForm newPlaylistForm,
+    public String createPlaylist(@RequestHeader(value = "referer", required = false) String referer,
+                                 @Valid @ModelAttribute NewPlaylistForm newPlaylistForm,
                                  BindingResult bindingResult,
-                                 HttpSession httpSession,
+                                 Authentication authentication,
                                  RedirectAttributes redirectAttributes) {
+
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
+
         //If there are any binding errors, log errors and return back to playlists page
-        if (bindingResult.hasErrors()) {
-            if(bindingResult.getFieldError("playlistName") != null) {
-                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("playlistName"));
+
+        //Check if there was a referer page user just came from, if so, we'll return user back to that page
+        final String defaultRedirect = "redirect:/playlists";
+        String redirectPage = defaultRedirect;
+        if (referer != null) {
+            //Extract the uri (/page part) so user get redirected back to page they were just on.
+            try {
+                final URI uri = new URI(referer);
+                redirectPage = "redirect:" + uri.getPath();
+                //Catch URI syntax exception
+            } catch (URISyntaxException e) {
+                log.warn("createPlaylist: Tried to redirect to {} after playlist was created but got: {}", referer, e.getMessage());
+                redirectPage = defaultRedirect;
             }
-            log.error("Binding errors found when attempting to create a playlist: {}", bindingResult.getAllErrors());
-            return "redirect:/playlists";  // Return the view with errors
         }
 
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+        //If there are any binding errors, log errors and return back to page
+        if (bindingResult.hasErrors()) {
+            if(bindingResult.getFieldError("playlistName") != null) {
+                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("playlistName").getDefaultMessage());
+            }
+            log.error("createPlaylist: Binding errors found when attempting to create a playlist: {}", bindingResult.getAllErrors());
+
+            return redirectPage;
+        }
         final String playlistName = newPlaylistForm.getPlaylistName();
 
-        log.info("User {} wants to make a new playlist with name {}",user.getuserID(),playlistName);
+        log.info("createPlaylist: User id#{} wants to make a new playlist with name {}",user.getuserID(),playlistName);
 
         //Create new playlist
         final ResponseStatus playlistCreated = playlistService.createPlaylist(playlistName,user);
         if(playlistCreated.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
-            return "redirect:/playlists";
+            return redirectPage;
         }
 
         //Add flash attribute for success message for user
         redirectAttributes.addFlashAttribute("successMsg", playlistName + " created!");
 
-        return "redirect:/playlists";
+        return redirectPage;
     }
 
     /**

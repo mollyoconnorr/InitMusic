@@ -1,16 +1,17 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.NewSongForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -62,13 +63,15 @@ public class SearchController {
     /**
      * This shows the search page and adds several important attributes to the model for the oage
      * @param model Model to use
-     * @param httpSession HttpSessions of user
+     * @param authentication Current authenticated user token, if any
      * @return Search page
      */
     @GetMapping("/search")
-    public String showSearchPage(Model model, HttpSession httpSession) {
+    public String showSearchPage(Model model, Authentication authentication) {
         //Retrieve the current user from the session
-        final User user = (User) httpSession.getAttribute("currentUser");
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userDetails.getUser();
+
 
         //Fetch user with playlists
         final User fullUser = userService.findByIdWithPlaylists(user.getuserID());
@@ -83,6 +86,7 @@ public class SearchController {
         model.addAttribute("results", new HashSet<>()); // Initialize results as empty
         model.addAttribute("query", null); // Initialize query as empty
         model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
         return "search"; // Return to the search page
     }
@@ -92,15 +96,15 @@ public class SearchController {
      * on the page. Sets up the model so the user can add songs to a playlist if they wish
      * @param query Query to search for
      * @param model Model to use
-     * @param httpSession httpSession of user
+     * @param authentication Current authenticated user token, if any
      * @return Updated search page
      */
     @PostMapping("/search")
     @Transactional
-    public String search(@RequestParam(value = "query") String query, Model model, HttpSession httpSession) {
-        //Reload user
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication) {
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
         log.info("{} searched for songs with query '{}'", user.getUsername(), query);
 
@@ -109,9 +113,6 @@ public class SearchController {
             model.addAttribute("error", "Search term must be at least 3 characters long.");
             return "search"; // Return to the search page with error message
         }
-
-        //Initialize playlist so its loaded and we can perform actions with it if needed
-        Hibernate.initialize(user.getPlaylists());
 
         final Set<Song> results = songService.searchForSongs(query);
 
@@ -125,6 +126,7 @@ public class SearchController {
         model.addAttribute("currentUser", user);
         model.addAttribute("playlists",user.getPlaylists());
         model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
         return "search"; // Return the search template
     }
@@ -138,6 +140,7 @@ public class SearchController {
     public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
         if (result.hasErrors()) {
             log.info("Adding song errors: {}", result.getAllErrors());
+            attrs.addFlashAttribute("error", result.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/search";
         }
         final List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();

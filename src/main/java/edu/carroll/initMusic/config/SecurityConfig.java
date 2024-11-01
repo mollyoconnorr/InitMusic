@@ -1,14 +1,17 @@
 package edu.carroll.initMusic.config;
 
+import edu.carroll.initMusic.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 /**
  * Security configuration for the application.
@@ -24,6 +27,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(final CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     /**
      * Bean for password encoding using BCrypt.
@@ -44,26 +53,46 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/images/**", "/js/**").permitAll() // Allow access to static resources
-                        .requestMatchers("/", "/login", "/register", "/loginSuccess", "/securityQuestions",
-                                "/answerSecurityQuestions", "/changePasswordEmail", "/passSecurity",
-                                "/changePassword", "/emailTaken", "/userRegistered",
-                                "/changePasswordLoggedIn", "/passwordChangedLoggedIn",
-                                "/search", "/playlists", "/addSongToPlaylist",
-                                "/createPlaylist", "/renamePlaylist", "/deletePlaylist",
-                                "/viewPlaylist/**", "/deleteSongFromPlaylist", "/updateSecurityQuestions", "/securityQuestionsUpdated")
-                        .permitAll()   // Allow access to all these pages
-                        .requestMatchers("/viewSongPreview/**").permitAll()  // Allow access to login and registration pages
-                        .requestMatchers("/viewSongPreview/**").permitAll()
-                        .anyRequest().authenticated()                         // Require authentication for all other requests
-                )
-                .logout(LogoutConfigurer::permitAll) // Allow everyone to access the logout endpoint
-                .headers(headers -> headers
-                        .frameOptions().sameOrigin() // Allow iframe embedding from the same origin
-                );
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/",
+                        "/login",
+                        "/login?error",
+                        "/register",
+                        "/js/**",
+                        "/css/**",
+                        "/images/**").permitAll()
+                .anyRequest().authenticated());
+        http.formLogin(formLogin ->
+                formLogin
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/search")
+                        .failureUrl("/login?error")
+                        .permitAll()
+        );
+        http.logout(lOut -> {
+            lOut.invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/login?logout")
+                    .permitAll();
+        });
+        http.csrf().disable();
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+
+        return authenticationManagerBuilder.build();
     }
 }
 

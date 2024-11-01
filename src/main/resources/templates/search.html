@@ -26,8 +26,8 @@
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Account
           </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/login" onclick="return confirmLogout()">Log Out</a></li>
+          <ul class="dropdown-menu" id="dropdown-menu">
+            <li><a class="dropdown-item" id="logoutButton">Log Out</a></li>
             <li><a class="dropdown-item" href="/changePasswordLoggedIn">Change Password</a></li>
             <li><a class="dropdown-item" href="/updateSecurityQuestions">Change Security Questions</a></li>
           </ul>
@@ -67,7 +67,9 @@
               <!-- Artist name -->
               <span class="artistText" th:text="${item.getArtistName()}"></span>
 
-              <span class="songTime" th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60)}"></span>
+              <span class="songTime"
+                    th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60 < 10 ? '0' + (item.getLength() % 60) : item.getLength() % 60)}"></span>
+
 
               <!-- Song preview as a link -->
               <a th:href="${item.getSongPreview()}" title="Preview"
@@ -108,8 +110,17 @@
               <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div th:if="${results != null and #lists.size(results) > 0}">
-                <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post">
+            <div class="modal-body addPlaylistModelBody">
+              <form id="createPlaylistForm" th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
+                <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
+                <input type="text" id="playlistName" placeholder="New playlist name" th:field="*{playlistName}">
+                <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save</button>
+              </form>
+
+              <p>Select the playlists you want to add to:</p>
+
+              <div th:if="${results != null and #lists.size(results) > 0}">
+                <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" id="addSongToPlaylistForm">
                   <input type="hidden" id="songID" th:field="*{songID}" />
                   <input type="hidden" id="songName" th:field="*{songName}" />
                   <input type="hidden" id="artistName" th:field="*{artistName}" />
@@ -120,9 +131,6 @@
                   <input type="hidden" id="albumID" th:field="*{albumID}" />
                   <input type="hidden" id="songLength" th:field="*{songLength}" />
 
-
-                <div class="modal-body">
-                  <p>Select the playlists you want to add to:</p>
                   <ul class="list-group">
                     <th:block th:each="playlist : ${currentUser.getPlaylists()}">
                       <li class="list-group-item">
@@ -138,18 +146,18 @@
                       </li>
                     </th:block>
                   </ul>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
+              <div class="modal-footer" id="CreatePlaylistModalFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addSongToPlaylistForm" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+              </div>
           </div>
         </div>
       </div>
 
-  <script src="/js/searchPage.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+    <script src="/js/searchPage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
 </html>

@@ -1,16 +1,16 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
+import edu.carroll.initMusic.web.form.CheckUserEmailForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import edu.carroll.initMusic.web.form.CheckUserEmailForm;
-import edu.carroll.initMusic.jpa.model.User;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * Controller for handling password changes via email verification.
@@ -61,17 +61,14 @@ public class ChangePasswordEmailController {
      * it redirects the user to the security questions page. Otherwise, it shows an error.
      *
      * @param emailForm the form containing the email to check
-     * @param httpSession the session where the user's details will be stored temporarily
+     * @param authentication the authentication token
      * @param model the model used to pass data back to the view
      * @return the view to display next, either the security questions page or the email input page with an error
      */
     @PostMapping("/changePasswordEmail")
-    public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, HttpSession httpSession, Model model) {
+    public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, Authentication authentication, Model model) {
         User user = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
-        if (user != null) {
-            // Set the found user in session
-            httpSession.setAttribute("currentUser", user);
-
+        if (user != null && authentication.getPrincipal() != null) {
             // Pass user's security questions to the model for rendering on the next page
             model.addAttribute("question1", user.getQuestion1());
             model.addAttribute("question2", user.getQuestion2());

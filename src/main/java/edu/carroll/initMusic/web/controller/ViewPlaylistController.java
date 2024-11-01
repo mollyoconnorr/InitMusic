@@ -1,15 +1,16 @@
 package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.DeleteSongFromPlaylistForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,14 +54,14 @@ public class ViewPlaylistController {
      * which is passed through the path to the page.
      * @param playlistID ID of playlist to load
      * @param model Model to add attributes to
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token, if any
      * @return ViewPlaylist page
      */
     @GetMapping("/viewPlaylist/{playlistID}")
-    public String getViewPlaylistPage(@PathVariable("playlistID") Long playlistID, Model model,HttpSession httpSession) {
-
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+    public String getViewPlaylistPage(@PathVariable("playlistID") Long playlistID, Model model, Authentication authentication) {
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userDetails.getUser();
         log.info("User id#{} went to view playlist id#{}", user.getuserID(), playlistID);
 
         final Playlist playlist = playlistService.getPlaylist(playlistID);
@@ -86,18 +87,19 @@ public class ViewPlaylistController {
      * Handles deleting the selected song from the playlist
      * @param deleteSongFromPlaylistForm Form which contains information of song and playlist to delete song from
      * @param bindingResult Binding result
-     * @param httpSession Current httpSession
+     * @param authentication Current authentication token, if any
      * @param redirectAttributes Redirection Attributes, if any
      * @return Redirect to viewPlaylist page regardless if song was deleted or not.
      */
     @PostMapping("/deleteSongFromPlaylist")
     public String deleteSongFromPlaylist(@Valid @ModelAttribute DeleteSongFromPlaylistForm deleteSongFromPlaylistForm,
                                          BindingResult bindingResult,
-                                         HttpSession httpSession,
+                                         Authentication authentication,
                                          RedirectAttributes redirectAttributes){
 
-        final User sessionUser = (User) httpSession.getAttribute("currentUser");
-        final User user = userService.getUser(sessionUser.getUsername());
+        //Retrieve the current user
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userDetails.getUser();
 
         final Long playlistID = deleteSongFromPlaylistForm.getPlaylistID();
         final Long songID = deleteSongFromPlaylistForm.getSongID();

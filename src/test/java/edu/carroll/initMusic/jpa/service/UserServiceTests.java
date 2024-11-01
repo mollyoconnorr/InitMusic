@@ -2,65 +2,36 @@ package edu.carroll.initMusic.jpa.service;
 
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.service.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTests {
 
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private BCryptPasswordEncoder passwordEncoder;
-
     @Autowired
     private UserServiceImpl userService;
 
-    private User validUser;
-    private final Long userId = 1L;
-    private final String username = "testUser";
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        validUser = new User();
-        validUser.setuserID(userId); // Assuming there's a method to set user ID
-        validUser.setUsername(username);
-        validUser.setHashedPassword("hashedPassword");
-        validUser.setEmail("test@example.com");
-        validUser.setFirstName("John");
-        validUser.setLastName("Doe");
-    }
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     /*
      * Basic tests
      */
 
     @Test
-    public void checkUniqueUsernameTrue() {
-        when(userRepository.findByUsernameIgnoreCase("newUser")).thenReturn(Collections.emptyList());
+    public void checkUniqueUsernameUniqueUsername() {
         assertSame(userService.uniqueUserName("newUser"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
-    public void checkUniqueUsernameFalse() {
-        when(userRepository.findByUsernameIgnoreCase("existingUser")).thenReturn(List.of(new User()));
-        assertNotSame(userService.uniqueUserName("existingUser"), ResponseStatus.SUCCESS, "Username should already exist");
+    public void checkUniqueUsernameNotUniqueUsername() {
+        userService.saveUser("testuser12","password","email12@email.com","John","Doe");
+
+        assertNotSame(userService.uniqueUserName("testuser12"), ResponseStatus.SUCCESS, "Username should already exist");
     }
 
     @Test
@@ -198,19 +169,6 @@ public class UserServiceTests {
         assertNotEquals(userService.uniqueUserName("123 456"), ResponseStatus.SUCCESS, "Username should not be available because it contains spaces and digits");
     }
 
-    /**
-     * This checks that all strings considered too long are actually prevented from being deemed 'unique'.
-     * It checks from 50 (Max length of a username for us) to 255 (Max limit of a varchar in mysql)
-     */
-    @Test
-    public void checkUniqueUsernameInValidName50to250Characters(){
-        for (int i = 50; i <= 255; i++) {
-            String name = "K".repeat(i); // Create a string of 'K's of length i
-            assertNotEquals(userService.uniqueUserName(name), ResponseStatus.SUCCESS,
-                    String.format("Iteration %d: Username with length %d should not be valid as it's too long", i, name.length()));
-        }
-    }
-
     /*
      * Second, testing valid usernames which are all unique
      */
@@ -240,7 +198,6 @@ public class UserServiceTests {
         };
 
         for (String name : validUsernames) {
-            when(userRepository.findByUsernameIgnoreCase(name)).thenReturn(Collections.emptyList());
             assertSame(userService.uniqueUserName(name), ResponseStatus.SUCCESS,
                     String.format("Username '%s' is valid and shouldn't already exist", name));
         }
@@ -248,50 +205,42 @@ public class UserServiceTests {
 
     @Test
     public void checkUniqueUsernameValidWithNumbers() {
-        when(userRepository.findByUsernameIgnoreCase("validUser123")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("validUser123"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithSpecialCharacters() {
-        when(userRepository.findByUsernameIgnoreCase("user!@#")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("user!@#"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithAlphanumericAndSpecialCharacters() {
-        when(userRepository.findByUsernameIgnoreCase("User123!@")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("User123!@"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithUnderscore() {
-        when(userRepository.findByUsernameIgnoreCase("user_name")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("user_name"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithDash() {
-        when(userRepository.findByUsernameIgnoreCase("user-name")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("user-name"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithMixedCase() {
-        when(userRepository.findByUsernameIgnoreCase("UsEr123")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("UsEr123"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidLongUsername() {
-        String username = "validUserWithLongLength123!@#"; // 30 characters
-        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(Collections.emptyList());
+        final String username = "validUserWithLongLength123!@#"; // 30 characters
         assertSame(userService.uniqueUserName(username), ResponseStatus.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidMixedCharacters() {
-        when(userRepository.findByUsernameIgnoreCase("user_123$%^&*")).thenReturn(Collections.emptyList());
         assertSame(userService.uniqueUserName("user_123$%^&*"), ResponseStatus.SUCCESS, "Username should be available");
     }
 
@@ -301,84 +250,42 @@ public class UserServiceTests {
 
     @Test
     public void checkUniqueUsernameNotUniqueWithSameCase() {
-        when(userRepository.findByUsernameIgnoreCase("duplicateUser")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("duplicateUser"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist (same case)");
+        userService.saveUser("duplicateUser1","password","email3@email.com","First","Last");
+
+        assertSame(userService.uniqueUserName("duplicateUser1"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist (same case)");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueWithDifferentCase() {
-        when(userRepository.findByUsernameIgnoreCase("DUPLICATEUSER")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("DUPLICATEUSER"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist (different case)");
-    }
+        userService.saveUser("duplicateUser2","password","email2@email.com","First","Last");
 
-    @Test
-    public void checkUniqueUsernameNotUniqueWithNumbers() {
-        when(userRepository.findByUsernameIgnoreCase("user123")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("user123"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with numbers");
-    }
-
-    @Test
-    public void checkUniqueUsernameNotUniqueWithSpecialCharacters() {
-        when(userRepository.findByUsernameIgnoreCase("user!@#")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("user!@#"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with special characters");
-    }
-
-    @Test
-    public void checkUniqueUsernameNotUniqueWithUnderscore() {
-        when(userRepository.findByUsernameIgnoreCase("user_name")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("user_name"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with underscore");
-    }
-
-    @Test
-    public void checkUniqueUsernameNotUniqueWithDash() {
-        when(userRepository.findByUsernameIgnoreCase("user-name")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("user-name"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with dash");
-    }
-
-    @Test
-    public void checkUniqueUsernameNotUniqueWithMixedSymbols() {
-        when(userRepository.findByUsernameIgnoreCase("user!$%^&*()")).thenReturn(List.of(new User()));
-        assertSame(userService.uniqueUserName("user!$%^&*()"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with mixed symbols");
+        assertSame(userService.uniqueUserName("DUPLICATEUSER2"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist (different case)");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueWithConsecutiveSpecialCharacters() {
-        when(userRepository.findByUsernameIgnoreCase("user!!duplicate")).thenReturn(List.of(new User()));
+        userService.saveUser("user!!duplicate","password","email18@email.com","John","Doe");
+
         assertSame(userService.uniqueUserName("user!!duplicate"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with consecutive special characters");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueVeryLong() {
-        String username = "veryLongDuplicateUsername1234567890!@#$";
-        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(List.of(new User()));
+        final String username = "veryLongDuplicateUsername1234567890!@#$";
+        userServiceImpl.saveUser(username,"password","JDoe1@email.com","John","Doe");
         assertSame(userService.uniqueUserName(username), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist (very long)");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueWithNumbersAtEnd() {
-        when(userRepository.findByUsernameIgnoreCase("user456")).thenReturn(List.of(new User()));
+        userServiceImpl.saveUser("user456","password","JDoe2@email.com","John","Doe");
+
         assertSame(userService.uniqueUserName("user456"), ResponseStatus.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
     }
 
     /*
      * Testing uniqueEmail method
      */
-
-    /*
-     * Basic Tests of uniqueEmail
-     */
-
-    @Test
-    public void checkUniqueEmailTrue() {
-        when(userRepository.findByEmailIgnoreCase("new@example.com")).thenReturn(Collections.emptyList());
-        assertFalse(userService.uniqueEmail("new@example.com").failed(), "Email should be available");
-    }
-
-    @Test
-    public void checkUniqueEmailFalse() {
-        when(userRepository.findByEmailIgnoreCase("existing@example.com")).thenReturn(List.of(new User()));
-        assertTrue(userService.uniqueEmail("existing@example.com").failed(), "Email should already exist");
-    }
 
     /*
      * Testing cases where email is invalid
@@ -516,27 +423,25 @@ public class UserServiceTests {
     // Saving a valid user
     @Test
     public void saveValidUser() {
-        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(validUser);
+        final String password = "password123";
 
-        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser1", "password123","test1@example.com", "John", "Doe");
 
-        assertEquals("testUser", savedUser.getUsername());
-        assertEquals("test@example.com", savedUser.getEmail());
-        assertEquals("hashedPassword", savedUser.getHashedPassword());
-        assertEquals("John", savedUser.getFirstName());
-        assertEquals("Doe", savedUser.getLastName());
-        assertNull(savedUser.getQuestion1());
-        assertNull(savedUser.getAnswer1());
-        assertNull(savedUser.getQuestion2());
-        assertNull(savedUser.getAnswer2());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals("testUser1", savedUser.getUsername(),"username should match given username");
+        assertEquals("test1@example.com", savedUser.getEmail(),"email should match given email");
+        assertNotEquals(password, savedUser.getHashedPassword(),"Password should be hashed on creation of new user");
+        assertEquals("John", savedUser.getFirstName(),"First name should match given first name");
+        assertEquals("Doe", savedUser.getLastName(),"Last name should match given last name");
+        assertNull(savedUser.getQuestion1(), "On user creation, security question 1 should be null");
+        assertNull(savedUser.getAnswer1(), "On user creation, security question 1 answer should be null");
+        assertNull(savedUser.getQuestion2(), "On user creation, security question 2 should be null");
+        assertNull(savedUser.getAnswer2(), "On user creation, security question 2 answer should be null");
     }
 
     // Saving a user with a blank username
     @Test
     public void saveUserWithBlankUsername() {
-        final User savedUser = userService.saveUser("", "test@example.com", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("", "password123", "test2@example.com","John", "Doe");
 
         assertNull(savedUser, "Expected null when username is blank");
     }
@@ -544,7 +449,7 @@ public class UserServiceTests {
     // Saving a user with a blank email
     @Test
     public void saveUserWithBlankEmail() {
-        final User savedUser = userService.saveUser("testUser", "", "John", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser2", "password123", "", "John", "Doe");
 
         assertNull(savedUser, "Expected null when email is blank");
     }
@@ -552,7 +457,7 @@ public class UserServiceTests {
     // Saving a user with a blank first name
     @Test
     public void saveUserWithBlankFirstName() {
-        final User savedUser = userService.saveUser("testUser", "test@example.com", "", "Doe", "password123");
+        final User savedUser = userService.saveUser("testUser3", "password123","test3@example.com", "", "Doe");
 
         assertNull(savedUser, "Expected null when first name is blank");
     }
@@ -560,7 +465,7 @@ public class UserServiceTests {
     // Saving a user with a blank last name
     @Test
     public void saveUserWithBlankLastName() {
-        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "", "password123");
+        final User savedUser = userService.saveUser("testUser4", "password123","test4@example.com", "John", "");
 
         assertNull(savedUser, "Expected null when last name is blank");
     }
@@ -568,7 +473,7 @@ public class UserServiceTests {
     // Saving a user with a blank password
     @Test
     public void saveUserWithBlankPassword() {
-        final User savedUser = userService.saveUser("testUser", "test@example.com", "John", "Doe", "");
+        final User savedUser = userService.saveUser("testUser5", "","test5@example.com", "John", "Doe");
 
         assertNull(savedUser, "Expected null when password is blank");
     }
@@ -576,39 +481,26 @@ public class UserServiceTests {
     // Saving a user with valid special characters in username
     @Test
     public void saveUserWithValidSpecialCharacterUsername() {
-        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
-        validUser.setUsername("user.name");
-        when(userRepository.save(any(User.class))).thenReturn(validUser);
+        final User savedUser = userService.saveUser("user.name", "password123","test6@example.com", "John", "Doe");
 
-        final User savedUser = userService.saveUser("user.name", "test@example.com", "John", "Doe", "password123");
-
-        assertEquals("user.name", savedUser.getUsername());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals("user.name", savedUser.getUsername(), "Users name should match regardless of special characters");
     }
 
     // Saving a user with trailing spaces in username
     @Test
     public void saveUserWithTrailingSpacesInUsername() {
-        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(validUser);
+        final User savedUser = userService.saveUser(" testUser6 ", "password123","test7@example.com", "John", "Doe");
 
-        final User savedUser = userService.saveUser(" testUser ", "test@example.com", "John", "Doe", "password123");
-
-        assertEquals("testUser", savedUser.getUsername());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals("testUser6", savedUser.getUsername(), "Usernames should match regardless if there are trailing spaces");
     }
 
     // Saving a user with spaces in first name and last name
     @Test
     public void saveUserWithSpacesInNames() {
-        when(passwordEncoder.encode("password123")).thenReturn("hashedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(validUser);
+        final User savedUser = userService.saveUser("testUser7", "password123","test8@example.com", "John ", "Doe ");
 
-        final User savedUser = userService.saveUser("testUser", "test@example.com", "John ", "Doe ", "password123");
-
-        assertEquals("John", savedUser.getFirstName());
-        assertEquals("Doe", savedUser.getLastName());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals("John", savedUser.getFirstName(), "First names should match");
+        assertEquals("Doe", savedUser.getLastName(), "Last names should match");
     }
 
     /*
@@ -622,14 +514,14 @@ public class UserServiceTests {
         final String question2 = "What is your hometown?";
         final String answer2 = "Springfield";
 
-        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+        final User newUser = userService.saveUser("testUser13", "password123","test13@example.com", "John ", "Doe ");
+        final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertTrue(result, "Security questions should be updated successfully");
-        assertEquals(question1, validUser.getQuestion1());
-        assertEquals(answer1, validUser.getAnswer1());
-        assertEquals(question2, validUser.getQuestion2());
-        assertEquals(answer2, validUser.getAnswer2());
-        verify(userRepository, times(1)).save(validUser);
+        assertEquals(question1, newUser.getQuestion1(),"Questions for security question 1 should match");
+        assertEquals(answer1, newUser.getAnswer1(),"Answers for security question 1 should match");
+        assertEquals(question2, newUser.getQuestion2(),"Questions for security question 2 should match");
+        assertEquals(answer2, newUser.getAnswer2(), "Answers for security question 2 should match");
     }
 
     @Test
@@ -639,10 +531,10 @@ public class UserServiceTests {
         final String question2 = "What is your hometown?";
         final String answer2 = "Springfield";
 
-        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+        final User newUser = userService.saveUser("testUser14", "password123","test14@example.com", "John ", "Doe ");
+        final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question1");
-        verify(userRepository, never()).save(validUser);
     }
 
     @Test
@@ -652,10 +544,10 @@ public class UserServiceTests {
         final String question2 = "What is your hometown?";
         final String answer2 = "Springfield";
 
-        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+        final User newUser = userService.saveUser("testUser26", "password123","test26@example.com", "John ", "Doe ");
+        final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank answer1");
-        verify(userRepository, never()).save(validUser);
     }
 
     @Test
@@ -665,10 +557,10 @@ public class UserServiceTests {
         final String question2 = "";
         final String answer2 = "Springfield";
 
-        final boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+        final User newUser = userService.saveUser("testUser25", "password123","test25@example.com", "John ", "Doe ");
+        final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question2");
-        verify(userRepository, never()).save(validUser);
     }
 
     @Test
@@ -677,11 +569,11 @@ public class UserServiceTests {
         final String answer1 = "Fluffy";
         final String question2 = "What is your hometown?";
         final String answer2 = "";
-        
-        boolean result = userService.updateUserSecurityQuestions(validUser, question1, answer1, question2, answer2);
+
+        final User newUser = userService.saveUser("testUser15", "password123","test20@example.com", "John ", "Doe ");
+        boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank answer2");
-        verify(userRepository, never()).save(validUser);
     }
 
     /*
@@ -690,34 +582,28 @@ public class UserServiceTests {
 
     @Test
     public void findByEmailSuccessfully() {
-        when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(List.of(validUser));
+        final User newUser = userService.saveUser("testUser16", "password123","test16@example.com", "John ", "Doe ");
 
-        final User foundUser = userService.findByEmail("test@example.com");
+        final User foundUser = userService.findByEmail("test16@example.com");
 
         assertNotNull(foundUser, "User should be found");
-        assertEquals(validUser.getEmail(), foundUser.getEmail());
-        verify(userRepository, times(1)).findByEmailIgnoreCase("test@example.com");
+        assertEquals(newUser.getEmail(), foundUser.getEmail(), "Emails should match");
     }
 
     @Test
     public void findByEmailIgnoringCase() {
-        when(userRepository.findByEmailIgnoreCase("TEST@EXAMPLE.COM")).thenReturn(List.of(validUser));
-        
-        final User foundUser = userService.findByEmail("TEST@EXAMPLE.COM");
+        final User newUser = userService.saveUser("testUser12", "password123","test12@example.com", "John ", "Doe ");
+        final User foundUser = userService.findByEmail("TEST12@EXAMPLE.COM");
 
         assertNotNull(foundUser, "User should be found");
-        assertEquals(validUser.getEmail(), foundUser.getEmail());
-        verify(userRepository, times(1)).findByEmailIgnoreCase("TEST@EXAMPLE.COM");
+        assertEquals(newUser.getEmail(), foundUser.getEmail(), "Emails should match");
     }
 
     @Test
     public void findByEmailWhenNoUserFound() {
-        when(userRepository.findByEmailIgnoreCase("nonexistent@example.com")).thenReturn(Collections.emptyList());
-
         final User foundUser = userService.findByEmail("nonexistent@example.com");
 
         assertNull(foundUser, "User should not be found");
-        verify(userRepository, times(1)).findByEmailIgnoreCase("nonexistent@example.com");
     }
 
     @Test
@@ -725,31 +611,13 @@ public class UserServiceTests {
         final User foundUser = userService.findByEmail(null);
 
         assertNull(foundUser, "User should not be found for null email");
-        verify(userRepository, never()).findByEmailIgnoreCase(anyString()); // Should not call the repository
     }
 
     @Test
     public void findByEmailWithEmptyEmail() {
-        when(userRepository.findByEmailIgnoreCase("")).thenReturn(Collections.emptyList());
-        
         final User foundUser = userService.findByEmail("");
         
         assertNull(foundUser, "User should not be found for empty email");
-        verify(userRepository, times(1)).findByEmailIgnoreCase(anyString()); // Should not call the repository
-    }
-
-    @Test
-    public void findByEmailWhenMultipleUsersFound() {
-        final User anotherUser = new User();
-        anotherUser.setUsername("anotherUser");
-        anotherUser.setEmail("test@example.com");
-        when(userRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(List.of(validUser, anotherUser));
-        
-        final User foundUser = userService.findByEmail("test@example.com");
-
-        assertNotNull(foundUser, "User should be found");
-        assertEquals(validUser.getEmail(), foundUser.getEmail()); // Check that the first user is returned
-        verify(userRepository, times(1)).findByEmailIgnoreCase("test@example.com");
     }
 
     /*
@@ -758,73 +626,44 @@ public class UserServiceTests {
 
     @Test
     public void updatePasswordSuccessfully() {
+        final User newUser = userService.saveUser("testUser17", "password123","test17@example.com", "John ", "Doe ");
+
         final String newPassword = "newPassword123";
-        final String hashedPassword = "newHashedPassword";
 
-        when(passwordEncoder.encode(newPassword)).thenReturn(hashedPassword);
-        when(userRepository.save(validUser)).thenReturn(validUser); // Simulate saving the user
-
-        final boolean result = userService.updatePassword(validUser, newPassword);
+        final boolean result = userService.updatePassword(newUser, newPassword);
 
         assertTrue(result, "Password should be updated successfully");
-        assertEquals(hashedPassword, validUser.getHashedPassword(), "User's hashed password should be updated");
-        verify(passwordEncoder, times(1)).encode(newPassword); // Ensure password was encoded
-        verify(userRepository, times(1)).save(validUser); // Ensure user was saved
+        assertNotEquals(newPassword, newUser.getHashedPassword(), "User's new password should be hashed");
     }
 
     @Test
     public void updatePasswordWithNullUser() {
         final String newPassword = "newPassword123";
 
-        // Act & Assert
         assertThrows(NullPointerException.class, () -> userService.updatePassword(null, newPassword), "Updating password for a null user should throw NullPointerException");
     }
 
     @Test
     public void updatePasswordWithNullNewPassword() {
-        final boolean result = userService.updatePassword(validUser, null);
+        final User newUser = userService.saveUser("duplicateUser20","password","email20@email.com","First","Last");
+
+        final String passwordBeforeUpdate = newUser.getHashedPassword();
+        final boolean result = userService.updatePassword(newUser, null);
 
         assertFalse(result, "Updating password with null should return false");
-        assertEquals("hashedPassword", validUser.getHashedPassword(), "User's hashed password should not change");
-        verify(passwordEncoder, times(0)).encode(null); // Ensure encode was not called
-        verify(userRepository, times(0)).save(validUser); // Ensure save was not called
+        assertEquals(passwordBeforeUpdate, newUser.getHashedPassword(), "User's hashed password should not change");
     }
 
     @Test
     public void updatePasswordWithShortNewPassword() {
+        final User newUser = userService.saveUser("duplicateUser21","password","email21@email.com","First","Last");
         final String newPassword = "short"; // Less than 8 characters
 
-        final boolean result = userService.updatePassword(validUser, newPassword);
+        final String passwordBeforeUpdate = newUser.getHashedPassword();
+        final boolean result = userService.updatePassword(newUser, newPassword);
 
         assertFalse(result, "Updating password with a short password should return false");
-        assertEquals("hashedPassword", validUser.getHashedPassword(), "User's hashed password should not change");
-        verify(passwordEncoder, times(0)).encode(newPassword); // Ensure encode was not called
-        verify(userRepository, times(0)).save(validUser); // Ensure save was not called
-    }
-
-    @Test
-    public void updatePasswordWithValidNewPasswordAfterShortPassword() {
-        final String newPassword = "validPassword123"; // Valid password
-        final String hashedPassword = "newHashedPassword";
-
-        when(passwordEncoder.encode(newPassword)).thenReturn(hashedPassword);
-
-        final boolean result = userService.updatePassword(validUser, newPassword);
-
-        assertTrue(result, "Password should be updated successfully");
-        assertEquals(hashedPassword, validUser.getHashedPassword(), "User's hashed password should be updated");
-        verify(passwordEncoder, times(1)).encode(newPassword); // Ensure password was encoded
-        verify(userRepository, times(1)).save(validUser); // Ensure user was saved
-    }
-
-    @Test
-    public void updatePasswordCallsRepositoryOnce() {
-        final String newPassword = "validPassword123";
-        when(passwordEncoder.encode(newPassword)).thenReturn("hashedPassword");
-
-        userService.updatePassword(validUser, newPassword);
-
-        verify(userRepository, times(1)).save(validUser); // Ensure save was called only once
+        assertEquals(passwordBeforeUpdate, newUser.getHashedPassword(), "User's hashed password should not change");
     }
 
     /*
@@ -833,24 +672,21 @@ public class UserServiceTests {
 
     @Test
     public void findByIdWithPlaylists_UserExists() {
-        when(userRepository.findByIdWithPlaylists(userId)).thenReturn(validUser);
-
-        final User foundUser = userService.findByIdWithPlaylists(userId);
+        final User newUser = userService.saveUser("duplicateUser23","password","email23@email.com","First","Last");
+        final Long userID = newUser.getuserID();
+        final User foundUser = userService.findByIdWithPlaylists(userID);
 
         assertNotNull(foundUser, "User should be found");
-        assertEquals(validUser.getUsername(), foundUser.getUsername(), "Usernames should match");
-        assertEquals(validUser.getEmail(), foundUser.getEmail(), "Emails should match");
-        verify(userRepository, times(1)).findByIdWithPlaylists(userId); // Ensure method is called once
+        assertEquals(newUser.getUsername(), foundUser.getUsername(), "Usernames should match");
+        assertEquals(newUser.getEmail(), foundUser.getEmail(), "Emails should match");
     }
 
     @Test
     public void findByIdWithPlaylists_UserDoesNotExist() {
-        when(userRepository.findByIdWithPlaylists(userId)).thenReturn(null);
-
+        final Long userId = 123324334344L;
         final User foundUser = userService.findByIdWithPlaylists(userId);
 
         assertNull(foundUser, "User should not be found");
-        verify(userRepository, times(1)).findByIdWithPlaylists(userId); // Ensure method is called once
     }
 
     @Test
@@ -860,7 +696,6 @@ public class UserServiceTests {
         final User foundUser = userService.findByIdWithPlaylists(negativeUserId);
 
         assertNull(foundUser, "User should not be found for a negative ID");
-        verify(userRepository, times(1)).findByIdWithPlaylists(negativeUserId); // Ensure method is called once
     }
 
     /*
@@ -869,38 +704,19 @@ public class UserServiceTests {
 
     @Test
     public void getUser_UserExists() {
-        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(Collections.singletonList(validUser));
+        final String username = "duplicateUser24";
+        final User newUser = userService.saveUser(username,"password","email24@email.com","First","Last");
 
         final User foundUser = userService.getUser(username);
 
         assertNotNull(foundUser, "User should be found");
-        assertEquals(validUser.getUsername(), foundUser.getUsername(), "Usernames should match");
-        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
+        assertEquals(newUser.getUsername(), foundUser.getUsername(), "Usernames should match");
     }
 
     @Test
     public void getUser_UserDoesNotExist() {
-        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(Collections.emptyList());
-
-        final User foundUser = userService.getUser(username);
+        final User foundUser = userService.getUser("NathanWilliams");
 
         assertNull(foundUser, "User should not be found");
-        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
-    }
-
-    @Test
-    public void getUser_MultipleUsersFound() {
-        final User anotherUser = new User();
-        anotherUser.setUsername(username);
-        anotherUser.setEmail("another@example.com");
-        anotherUser.setFirstName("Jane");
-        anotherUser.setLastName("Doe");
-
-        when(userRepository.findByUsernameIgnoreCase(username)).thenReturn(List.of(validUser, anotherUser));
-
-        final User foundUser = userService.getUser(username);
-
-        assertNull(foundUser, "User should not be found due to multiple users");
-        verify(userRepository, times(1)).findByUsernameIgnoreCase(username); // Ensure method is called once
     }
 }

@@ -1,16 +1,17 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.SecurityQuestionsForm; // Ensure correct import
+import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpSession;
 
 
 /**
@@ -61,15 +62,17 @@ public class SecurityQuestionsController {
      * </p>
      *
      * @param securityQuestionsForm the form containing the user's answers to the security questions.
-     * @param httpSession           the HTTP session used to store the current user.
+     * @param authentication        the current authentication token, if any user is attached
      * @param model                 the model to be used in the view.
      * @return the name of the view or a redirect URL based on the result of the form submission.
      */
     @PostMapping("/securityQuestions")
-    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, HttpSession httpSession, Model model) {
-        User currentUser = (User) httpSession.getAttribute("currentUser");
+    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, Authentication authentication, Model model) {
 
-        if (currentUser != null) {
+        if (authentication.getPrincipal() != null) {
+            //Retrieve the current user
+            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            final User currentUser = userDetails.getUser();
             log.info("Security questions submitted for user: {}", currentUser.getUsername());
             // Call the updated updateUser method, passing the user and the form
             final String question1 = securityQuestionsForm.getQuestion1();
