@@ -17,7 +17,7 @@ h1 {
     text-align: center;
     font-size: 2.5rem;
     color: black;
-    padding: 40px 0px 20px 0px; /* top, right, bottom, left */
+    padding: 40px 0 20px 0; /* top, right, bottom, left */
 }
 
 /* Center the search result heading */
@@ -41,8 +41,7 @@ h3 {
 /* Style the search form */
 form {
     max-width: 600px;
-    margin: 20px auto;
-    margin-top: 70px;
+    margin: 70px auto 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -240,21 +239,21 @@ button.btn-primary:hover {
     max-width: 500px;
 }
 
-.addSongToPlaylistForm{
+#addSongToPlaylistForm{
     flex-direction: column;
     margin-top: 0;
-}
-.addPlaylistModelBody{
-    min-height: 300px;
-    max-width: 400px;
-    overflow-y: auto;
     display: flow;
     align-items: center;
 }
+.addPlaylistModelBody{
+    min-height: 300px;
+    overflow-y: auto;
+}
 
 .createPlaylistBtn{
-    align-self: center;
     background-color: #007bff;
+    max-height: 40px;
+    max-width: 75px;
 }
 
 .createPlaylistBtn:hover{
@@ -268,4 +267,17 @@ button.btn-primary:hover {
 #saveChangesBtn{
     margin-left: 0;
     margin-right: 0;
+}
+
+.addPlaylistModelBody p{
+    text-align: center;
+    font-weight: bold;
+}
+
+#createPlaylistForm{
+    margin-top: 20px;
+}
+
+#createPlaylistLbl{
+    max-width: 60px;
 }

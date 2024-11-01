@@ -111,12 +111,13 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body addPlaylistModelBody">
-              <p>Select the playlists you want to add to:</p>
-              <form id="createPlaylistForm">
-                <label for="playlistName">Create playlist</label>
-                <input type="text" id="playlistName" placeholder="New playlist name">
-                <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save changes</button>
+              <form id="createPlaylistForm" th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
+                <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
+                <input type="text" id="playlistName" placeholder="New playlist name" th:field="*{playlistName}">
+                <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save</button>
               </form>
+
+              <p>Select the playlists you want to add to:</p>
 
               <div th:if="${results != null and #lists.size(results) > 0}">
                 <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" id="addSongToPlaylistForm">
@@ -151,7 +152,6 @@
               <div class="modal-footer" id="CreatePlaylistModalFooter">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="addSongToPlaylistForm" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
-                <button type="button" class="btn btn-secondary createPlaylistBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">Create playlist</button>
               </div>
           </div>
         </div>
