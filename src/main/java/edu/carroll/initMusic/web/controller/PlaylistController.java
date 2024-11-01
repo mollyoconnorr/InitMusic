@@ -111,7 +111,7 @@ public class PlaylistController {
         //If there are any binding errors, log errors and return back to page
         if (bindingResult.hasErrors()) {
             if(bindingResult.getFieldError("playlistName") != null) {
-                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("playlistName"));
+                redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError("playlistName").getDefaultMessage());
             }
             log.error("createPlaylist: Binding errors found when attempting to create a playlist: {}", bindingResult.getAllErrors());
 
