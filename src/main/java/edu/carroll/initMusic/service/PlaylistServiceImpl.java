@@ -63,7 +63,7 @@ public class PlaylistServiceImpl implements PlaylistService{
 
         name = name.strip();
 
-        if (!playlistRepository.findByPlaylistNameContainingIgnoreCase(name).isEmpty()) {
+        if (user.getPlaylist(name) != null) {
             log.warn("Attempted to create a duplicate playlist name '{}' for User id#{}", name, user.getuserID());
             return ResponseStatus.PLAYLIST_NAME_EXISTS;
         }

@@ -44,7 +44,7 @@ public class Playlist {
     private final Set<Song> songs = new HashSet<>();
 
     /** Name of playlist */
-    @Column(name= "playlist_name",nullable = false, unique = true)
+    @Column(name= "playlist_name",nullable = false)
     private String playlistName;
 
     /** Date playlist was created */

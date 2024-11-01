@@ -51,7 +51,7 @@ public class LoginServiceTests {
         String hashedPassword = passwordEncoder.encode("testpassword");
         testUser.setHashedPassword(hashedPassword);
         userRepository.save(testUser);
-        model = new ConcurrentModel(); // Mocking because the validation logic doesn't depend on the model
+        model = new ConcurrentModel(); // Mocking because the validation lo gic doesn't depend on the model
     }
 
     /**
