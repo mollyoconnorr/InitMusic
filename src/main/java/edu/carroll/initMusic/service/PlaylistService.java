@@ -15,11 +15,11 @@ import edu.carroll.initMusic.jpa.model.User;
 public interface PlaylistService{
     /**
      * Adds a song to the given playlist.
+     *
      * @param playlistId ID of playlist to add song to
-     * @param song Song to add to playlist
-     * @return True if playlist was added, false if not
+     * @param song       Song to add to playlist
      */
-    boolean addSongToPlaylist(Long playlistId, Song song);
+    void addSongToPlaylist(Long playlistId, Song song);
 
     /**
      * Gets a playlist by playlist ID
