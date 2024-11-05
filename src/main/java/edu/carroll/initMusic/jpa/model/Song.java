@@ -1,10 +1,10 @@
 package edu.carroll.initMusic.jpa.model;
 
+import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import jakarta.persistence.*;
 
 /**
  * This class is used to represent songs, and
@@ -33,21 +33,6 @@ public class Song {
      */
     @ManyToMany(mappedBy = "songs", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Playlist> playlists = new HashSet<>();
-
-    /**
-     * Set that keeps track of what artists made this song.
-     * Many-to-Many relationship with Artist class
-     */
-    @ManyToMany(mappedBy = "songs")
-    private Set<Artist> artists = new HashSet<>();
-
-    /**
-     * Album song belongs to.
-     * Many-to-One relationship with Album class
-     */
-    @ManyToOne()
-    @JoinColumn(name = "albumID")
-    private Album album;
 
     /** Name of song */
     @Column(name = "name", nullable=false)
@@ -169,64 +154,6 @@ public class Song {
      */
     public void setSongName(String songName) {
         this.songName = songName;
-    }
-
-    /**
-     * Gets artists of song
-     * @return The artists
-     */
-    public Set<Artist> getArtists() {
-        return artists;
-    }
-
-    /**
-     * Checks if song was created by given artist
-     * @param artist Artist to check
-     * @return If artist created the song, false otherwise
-     */
-    public boolean isCreatedBy(Artist artist){
-        return artists.contains(artist);
-    }
-
-    /**
-     * Sets the artists of song
-     * @param artists Artists to set
-     */
-    public void setArtists(Set<Artist> artists) {
-        this.artists = artists;
-    }
-
-    /**
-     * Add artist to artists set
-     * @param artist Artist to add
-     */
-    public void addArtist(Artist artist) {
-        this.artists.add(artist);
-    }
-
-    /**
-     * Remove artist
-     * @param artist Artist to remove
-     * @return If artist was removed
-     */
-    public boolean removeArtist(Artist artist) {
-        return this.artists.remove(artist);
-    }
-
-    /**
-     * Gets album of song
-     * @return The album the song is in
-     */
-    public Album getAlbum() {
-        return album;
-    }
-
-    /**
-     * Sets the album the song is in
-     * @param album Album to set
-     */
-    public void setAlbum(Album album) {
-        this.album = album;
     }
 
     /**
@@ -384,7 +311,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songName, length, songID,artistName, artistID, album, albumID);
+        return Objects.hash(songName, length, songID,artistName, artistID, albumID);
     }
 
     /**
