@@ -17,6 +17,11 @@ import java.util.regex.Pattern;
  * This class provides methods for saving user information, checking unique usernames/emails,
  * updating security questions, and managing passwords.
  * </p>
+ *
+ * @author Nick Clouse
+ * @author Molly O'Connor
+ *
+ * @since October 4, 2024
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
      * @return ResponseStatus Enum that tells outcome of method.
      */
     public ResponseStatus uniqueUserName(String username) {
-        log.info("Checking if username '{}' is unique", username);
+        log.info("uniqueUserName: Checking if username '{}' is unique", username);
         List<User> usersByName = userRepository.findByUsernameIgnoreCase(username);
 
         if(username == null || username.length() < 5 || username.isBlank()){
@@ -68,10 +73,10 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!usersByName.isEmpty()) {
-            log.info("Username '{}' already exists", username);
+            log.info("uniqueUserName: Username '{}' already exists", username);
             return ResponseStatus.USER_ALREADY_EXISTS;
         } else {
-            log.info("Username '{}' is available", username);
+            log.info("uniqueUserName: Username '{}' is available", username);
             return ResponseStatus.SUCCESS;
         }
     }
@@ -83,47 +88,47 @@ public class UserServiceImpl implements UserService {
      * @return ResponseStatus Enum that tells outcome of method.
      */
     public ResponseStatus uniqueEmail(String email) {
-        log.info("Checking if email '{}' is unique", email);
+        log.info("uniqueEmail: Checking if email '{}' is unique", email);
 
         // Check for null or empty email
         if (email == null || email.trim().isEmpty()) {
-            log.warn("Email is null or empty");
+            log.warn("uniqueEmail: Email is null or empty");
             return ResponseStatus.EMAIL_INVALID_FORMAT;
         }
 
         // Check if the email matches the regex
         if (!pattern.matcher(email).matches()) {
-            log.warn("Email '{}' is not a valid format", email);
+            log.warn("uniqueEmail: Email '{}' is not a valid format", email);
             return ResponseStatus.EMAIL_INVALID_FORMAT;
         }
 
         // Check for length restrictions
         if (email.length() > 254) {
-            log.warn("Email '{}' exceeds maximum length of 254 characters", email);
+            log.warn("uniqueEmail: Email '{}' exceeds maximum length of 254 characters", email);
             return ResponseStatus.EMAIL_TOO_LONG;
         }
 
         //Check if email split into two parts using @ sign
         String[] parts = email.split("@");
         if (parts.length != 2) {
-            log.warn("Email '{}' is not in a valid format", email);
+            log.warn("uniqueEmail: Email '{}' is not in a valid format", email);
             return ResponseStatus.EMAIL_INVALID_FORMAT;
         }
 
-        String localPart = parts[0];
-        String domainPart = parts[1];
+        final String localPart = parts[0];
+        final String domainPart = parts[1];
 
         //Local part (Before @) has to be less than 64 characters
         if (localPart.length() > 64) {
-            log.warn("Local part of email '{}' exceeds maximum length of 64 characters", email);
+            log.warn("uniqueEmail: Local part of email '{}' exceeds maximum length of 64 characters", email);
             return ResponseStatus.EMAIL_LOCAL_PART_TOO_LONG;
         }
 
         // Check if the domain part (After @) has any labels exceeding 63 characters
-        String[] domainLabels = domainPart.split("\\.");
+        final String[] domainLabels = domainPart.split("\\.");
         for (String label : domainLabels) {
             if (label.length() > 63) {
-                log.warn("Domain label '{}' exceeds maximum length of 63 characters", label);
+                log.warn("uniqueEmail: Domain label '{}' exceeds maximum length of 63 characters", label);
                 return ResponseStatus.EMAIL_DOMAIN_LABEL_TOO_LONG;
             }
         }
@@ -131,10 +136,10 @@ public class UserServiceImpl implements UserService {
         //Find email to see if It's already in database
         final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
         if (!usersByEmail.isEmpty()) {
-            log.info("Email '{}' already exists", email);
+            log.info("uniqueEmail: Email '{}' already exists", email);
             return ResponseStatus.EMAIL_ALREADY_EXISTS;
         } else {
-            log.info("Email '{}' is available", email);
+            log.info("uniqueEmail: Email '{}' is available", email);
             return ResponseStatus.SUCCESS;
         }
     }
@@ -149,10 +154,10 @@ public class UserServiceImpl implements UserService {
      * @return the saved {@link User} object
      */
     public User saveUser(String username,String password,String email,String firstName,String lastName) {
-        log.info("Saving new user with username '{}'", username);
+        log.info("saveUser: Saving new user with username '{}'", username);
 
         if(username.isBlank() ||  email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()){
-            log.warn("Failed to save user, information is missing: " +
+            log.warn("saveUser: Failed to save user, information is missing: " +
                     "Username: {} | Email: {} | Password: {} | firstName: {} | lastName: {}", username.isBlank(),
                     email.isBlank(),password.isBlank(),firstName.isBlank(),lastName.isBlank());
             return null;
@@ -169,7 +174,7 @@ public class UserServiceImpl implements UserService {
         // Validate that password is not null
         final String hashedPassword = passwordEncoder.encode(password);
         newUser.setHashedPassword(hashedPassword);
-        log.info("Password for user '{}' has been hashed", newUser.getUsername());
+        log.info("saveUser: Password for user '{}' has been hashed", newUser.getUsername());
 
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
@@ -178,7 +183,7 @@ public class UserServiceImpl implements UserService {
         newUser.setQuestion2(null);
         newUser.setAnswer2(null);
 
-        log.info("User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
+        log.info("saveUser: User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
         return userRepository.save(newUser);
     }
 
@@ -196,13 +201,13 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        log.info("Updating security questions for user id#{}", user.getuserID());
+        log.info("updateUserSecurityQuestions: Updating security questions for user id#{}", user.getuserID());
         user.setQuestion1(question1);
         user.setAnswer1(answer1);
         user.setQuestion2(question2);
         user.setAnswer2(answer2);
         userRepository.save(user); // Save the user with updated security questions to the database
-        log.info("Security questions updated for user id#{}", user.getuserID());
+        log.info("updateUserSecurityQuestions: Security questions updated for user id#{}", user.getuserID());
         return true;
     }
 
@@ -213,14 +218,14 @@ public class UserServiceImpl implements UserService {
      * @return the user if found, otherwise null
      */
     public User findByEmail(String email) {
-        log.info("Finding user by email '{}'", email);
+        log.info("findByEmail: Finding user by email '{}'", email);
         final List<User> users = userRepository.findByEmailIgnoreCase(email);
         final User foundUser = users.isEmpty() ? null : users.getFirst();  // Return the first user or null if none found
 
         if (foundUser != null) {
-            log.info("User found with email '{}'", email);
+            log.info("findByEmail: User found with email '{}'", email);
         } else {
-            log.info("No user found with email '{}'", email);
+            log.info("findByEmail: No user found with email '{}'", email);
         }
         return foundUser;
     }
@@ -235,10 +240,10 @@ public class UserServiceImpl implements UserService {
         if(newPassword == null || newPassword.length() < 8){
             return false;
         }
-        log.info("Updating password for user id#{}", user.getuserID());
+        log.info("updatePassword: Updating password for user id#{}", user.getuserID());
         user.setHashedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user); // Save the user with updated password to the database
-        log.info("Password updated for user id#{}", user.getuserID());
+        log.info("updatePassword: Password updated for user id#{}", user.getuserID());
         return true;
     }
 

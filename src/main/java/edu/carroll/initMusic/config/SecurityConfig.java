@@ -28,8 +28,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /** UserDetailsService to use */
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Injects dependencies
+     * @param userDetailsService UserDetailsService to inject
+     */
     public SecurityConfig(final CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
@@ -63,6 +68,7 @@ public class SecurityConfig {
                         "/css/**",
                         "/images/**").permitAll()
                 .anyRequest().authenticated());
+        //Set login page to our own
         http.formLogin(formLogin ->
                 formLogin
                         .loginPage("/login")
@@ -70,6 +76,7 @@ public class SecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
         );
+        //Set logout actions
         http.logout(lOut -> {
             lOut.invalidateHttpSession(true)
                     .clearAuthentication(true)
@@ -82,12 +89,22 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures a AuthenticationManager with our own userDetailsService and password encoder
+     * @param http HttpSecurity object to get AuthenticationManagerBuilder class from
+     * @return New AuthenticationManager object with our custom compnonents
+     * @throws Exception Any Exception that might occur
+     *
+     * @see AuthenticationManager
+     * @see HttpSecurity
+     * @see CustomUserDetailsService
+     */
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
+        final AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
 
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);

@@ -5,8 +5,7 @@ import edu.carroll.initMusic.jpa.model.Song;
 import java.util.Set;
 
 /**
- * Interface for SongService, defines methods related to searching for songs
- * and adding songs to playlists.
+ * Defines methods related to searching for songs
  *
  * @author Nick Clouse
  *

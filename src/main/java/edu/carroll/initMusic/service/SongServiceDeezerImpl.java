@@ -19,10 +19,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This services handles everything related to songs, like
- * Searching for songs on Deezer and adding a song to a playlist
+ * This services handles Searching for songs using the deezer api.
  *
  * @author Nick Clouse
+ *
+ * @see <a href="https://developers.deezer.com/api">Deezer API</a>
  *
  * @since September 30, 2024
  */
@@ -31,6 +32,7 @@ public class SongServiceDeezerImpl implements SongService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceDeezerImpl.class);
 
+    /** httpClient used */
     private HttpClient httpClient = HttpClient.newHttpClient();
 
     /**
@@ -113,16 +115,16 @@ public class SongServiceDeezerImpl implements SongService{
                     songsFound.add(newSong);
                 }
             } else {
-                log.error("Error response from Deezer API: Status Code {}", response.statusCode());
+                log.error("searchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());
             }
 
         } catch (IOException | InterruptedException e) {
-            log.error("Network error occurred during search with query {}", query, e);
+            log.error("searchForSongs: Network error occurred during search with query {}", query, e);
         } catch (JSONException e) {
-            log.error("JSON parsing error occurred with query {}", query, e);
+            log.error("searchForSongs: JSON parsing error occurred with query {}", query, e);
         }
 
-        log.info("Found {} songs for query '{}'",songsFound.size(),query);
+        log.info("searchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
         return songsFound;
     }
 }
