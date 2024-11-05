@@ -62,13 +62,13 @@ public class ViewPlaylistController {
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userDetails.getUser();
-        log.info("User id#{} went to view playlist id#{}", user.getuserID(), playlistID);
+        log.info("getViewPlaylistPage: User id#{} went to view playlist id#{}", user.getuserID(), playlistID);
 
         final Playlist playlist = playlistService.getPlaylist(playlistID);
 
         if(playlist == null) {
             model.addAttribute("error", "Playlist not found");
-            log.info("Playlist not found when user id#{} tried to view playlist id#{}", user.getuserID(), playlistID);
+            log.info("getViewPlaylistPage: Playlist not found when user id#{} tried to view playlist id#{}", user.getuserID(), playlistID);
             return "viewPlaylist";
         }
 
@@ -109,7 +109,7 @@ public class ViewPlaylistController {
 
         //If there are any binding errors, log errors and return back to viewPlaylist page
         if (bindingResult.hasErrors()) {
-            log.error("Binding errors found when attempting to delete a song from a playlist: {}", bindingResult.getAllErrors());
+            log.warn("deleteSongFromPlaylist: Binding errors found when attempting to delete a song from a playlist: {}", bindingResult.getAllErrors());
             //This error would not be caused by any user input
             redirectAttributes.addFlashAttribute("error", "Error deleting "+ songName +" from " +playlistName);
             return "redirect:/viewPlaylist/"+playlistID;
@@ -120,6 +120,7 @@ public class ViewPlaylistController {
         //If song wasn't removed for some reason
         if(songRemoved.failed()){
             redirectAttributes.addFlashAttribute("error", songRemoved.getMessage());
+            log.error("deleteSongFromPlaylist: Song wasn't removed from playlist because '{}'", songRemoved.getMessage());
             return "redirect:/viewPlaylist/"+playlistID;
         }
 

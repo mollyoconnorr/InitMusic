@@ -65,7 +65,7 @@ public class PlaylistController {
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
-        log.info("{} went to playlist page", user.getuserID());
+        log.info("showPlaylistPage: {} went to playlist page", user.getuserID());
 
         model.addAttribute("currentUser", user);
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
@@ -74,7 +74,7 @@ public class PlaylistController {
 
         // Check for flash attributes
         if (model.containsAttribute("creationError")) {
-            log.info("Flash attribute 'creationError' found: {}", model.getAttribute("creationError"));
+            log.info("showPlaylistPage: Flash attribute 'creationError' found: {}", model.getAttribute("creationError"));
         }
 
         return "playlists"; // Return to the playlist page
@@ -110,7 +110,7 @@ public class PlaylistController {
                 redirectPage = "redirect:" + uri.getPath();
                 //Catch URI syntax exception
             } catch (URISyntaxException e) {
-                log.warn("createPlaylist: Tried to redirect to {} after playlist was created but got: {}", referer, e.getMessage());
+                log.warn("createPlaylist: createPlaylist: Tried to redirect to {} after playlist was created but got: {}", referer, e.getMessage());
                 redirectPage = defaultRedirect;
             }
         }
@@ -163,7 +163,7 @@ public class PlaylistController {
                 //Error was not related to any user input
                 redirectAttributes.addFlashAttribute("error", "Error renaming playlist");
             }
-            log.error("Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
+            log.error("renamePlaylist: Binding errors found when attempting to rename a playlist: {}", bindingResult.getAllErrors());
             return "redirect:/playlists";  // Return the view with errors
         }
 
@@ -175,7 +175,7 @@ public class PlaylistController {
         final String oldPlaylistName = playlistService.getPlaylist(playlistID).getPlaylistName();
 
 
-        log.info("User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
+        log.info("renamePlaylist: User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
         //Check if playlist was successfully renamed
         final ResponseStatus playlistRenamed = playlistService.renamePlaylist(newPlaylistName,playlistID,user);
@@ -206,7 +206,7 @@ public class PlaylistController {
                                  RedirectAttributes redirectAttributes){
         //If there are any binding errors, log errors and return back to playlists page
         if (bindingResult.hasErrors()) {
-            log.error("Binding errors found when attempting to delete a playlist: {}", bindingResult.getAllErrors());
+            log.error("deletePlaylist: Binding errors found when attempting to delete a playlist: {}", bindingResult.getAllErrors());
             //This error would not be caused by any user input
             redirectAttributes.addFlashAttribute("error", "Error deleting playlist");
             return "redirect:/playlists";  // Return the view with errors
@@ -218,7 +218,7 @@ public class PlaylistController {
         final Long playlistID = deletePlaylistForm.getPlaylistID();
         final String playlistName = deletePlaylistForm.getPlaylistName();
 
-        log.info("User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
+        log.info("deletePlaylist: User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
 
         //If there was an error deleting a playlist, add error attr to model and return it
         final ResponseStatus playlistDeleted = playlistService.deletePlaylist(playlistName,playlistID,user);

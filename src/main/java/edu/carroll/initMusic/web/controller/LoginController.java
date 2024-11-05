@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @EnableWebSecurity
 public class LoginController {
-
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     /**
@@ -42,33 +39,5 @@ public class LoginController {
         log.info("loginGet: Get login page");
         model.addAttribute("loginForm", new LoginForm());
         return "login";
-    }
-
-    /**
-     * Displays the login success page.
-     * <p>
-     * This method is invoked when the user successfully logs in. It renders
-     * the login success view.
-     * </p>
-     *
-     * @return the name of the login success view (Thymeleaf template).
-     */
-    @GetMapping("/loginSuccess")
-    public String loginSuccess() {
-        return "loginSuccess";
-    }
-
-    /**
-     * Displays the login failure page.
-     * <p>
-     * This method is invoked when a login attempt fails. It renders the login
-     * failure view.
-     * </p>
-     *
-     * @return the name of the login failure view (Thymeleaf template).
-     */
-    @GetMapping("/loginFailure")
-    public String loginFailure() {
-        return "loginFailure";
     }
 }

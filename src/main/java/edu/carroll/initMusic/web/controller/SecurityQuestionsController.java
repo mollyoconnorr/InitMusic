@@ -25,12 +25,11 @@ import org.springframework.web.bind.annotation.PostMapping;
  */
 @Controller
 public class SecurityQuestionsController {
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(SecurityQuestionsController.class);
 
-    private final UserService userService; // Inject UserService
+    /** User Service */
+    private final UserService userService;
 
     /**
      * Constructor for SecurityQuestionsController.
@@ -73,20 +72,20 @@ public class SecurityQuestionsController {
             //Retrieve the current user
             final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             final User currentUser = userDetails.getUser();
-            log.info("Security questions submitted for user: {}", currentUser.getUsername());
+            log.info("submitSecurityQuestions: Security questions submitted for user: {}", currentUser.getUsername());
             // Call the updated updateUser method, passing the user and the form
             final String question1 = securityQuestionsForm.getQuestion1();
             final String question2 = securityQuestionsForm.getQuestion2();
             final String answer1 = securityQuestionsForm.getAnswer1();
             final String answer2 = securityQuestionsForm.getAnswer2();
             final boolean questionsUpdated = userService.updateUserSecurityQuestions(currentUser,question1,answer1,question2,answer2);
+            // Redirect to the user registered confirmation page
             if(questionsUpdated){
                 model.addAttribute("username", currentUser.getUsername());
-                return "userRegistered";  // Redirect to the user registered confirmation page
             }else{
                 model.addAttribute("errorMessage","One of the security question fields is blank");
-                return "userRegistered";  // Redirect to the user registered confirmation page
             }
+            return "userRegistered";  // Redirect to the user registered confirmation page
         } else {
             log.warn("submitSecurityQuestions: No user found in current httpSession");
             // Add an error message to the model

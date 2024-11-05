@@ -55,7 +55,7 @@ public class Song {
 
     /** Deezer ID of artist */
     @Column(name = "artist_id", nullable=false)
-    private long artistID;
+    private Long artistID;
 
     /** Name of album this song is in */
     @Column(name = "album_name", nullable=false)
@@ -63,7 +63,7 @@ public class Song {
 
     /** Deezer ID of album */
     @Column(name = "album_id", nullable=false)
-    private long albumID;
+    private Long albumID;
 
     /** Link to songs cover art */
     @Column(name = "song_img")
@@ -240,7 +240,7 @@ public class Song {
      * Gets Deezer id of artist
      * @return Deezer id of artist
      */
-    public long getArtistID() {
+    public Long getArtistID() {
         return artistID;
     }
 
@@ -272,7 +272,7 @@ public class Song {
      * Gets Deezer ID of songs' album
      * @return ID of album
      */
-    public long getAlbumID() {
+    public Long getAlbumID() {
         return albumID;
     }
 

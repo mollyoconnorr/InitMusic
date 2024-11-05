@@ -56,10 +56,10 @@ public class ChangePasswordEmailController {
 
     /**
      * Handles the email form submission for password change.
-     *
+     * <p>
      * This method checks if the email exists in the system. If the email is valid,
      * it redirects the user to the security questions page. Otherwise, it shows an error.
-     *
+     * </p>
      * @param emailForm the form containing the email to check
      * @param authentication the authentication token
      * @param model the model used to pass data back to the view
@@ -75,7 +75,7 @@ public class ChangePasswordEmailController {
             return "passSecurity"; // Thymeleaf template for the security questions
         } else {
             // Log the situation and show an error message if the email isn't found
-            log.info("No user found with email: {}", emailForm.getEmail());
+            log.info("handleEmailSubmission: No user found with email: {}", emailForm.getEmail());
             model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again.");
             return "changePasswordEmail"; // Reload the form with an error message
         }

@@ -3,15 +3,14 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.ResponseStatus;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.RegistrationForm; // Ensure correct import
+import edu.carroll.initMusic.web.form.RegistrationForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling user registration.
@@ -62,16 +61,15 @@ public class RegisterController {
      * </p>
      *
      * @param registrationForm the registration form submitted by the user.
-     * @param httpSession      the HTTP session used to store the user's details.
      * @param model            the model to be used in the view.
      * @return the name of the view or a redirect URL based on the registration result.
      */
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationForm registrationForm, HttpSession httpSession, Model model) {
+    public String registerUser(@ModelAttribute RegistrationForm registrationForm, Model model) {
         final String username = registrationForm.getUsername();
         final String email = registrationForm.getEmail();
 
-        log.info("Attempting to register user with username: {} and email: {}", username, email);
+        log.info("registerUser: Attempting to register user with username: {} and email: {}", username, email);
 
         final ResponseStatus emailUnique = userService.uniqueEmail(email);
         final ResponseStatus usernameUnique = userService.uniqueUserName(username);
@@ -83,14 +81,14 @@ public class RegisterController {
         }
         //UniqueEmail failed for some other reason
         if(emailUnique.failed()){
-            log.info("Error checking for unique email {}, {}", email,emailUnique.getMessage());
+            log.info("registerUser: Error checking for unique email {}, {}", email,emailUnique.getMessage());
             model.addAttribute("errorMessage", emailUnique.getMessage());
             model.addAttribute("registrationForm", new RegistrationForm());
             return "register";
         }
         // Check if the username is already taken
         if (usernameUnique.failed()) {
-            log.info("Error checking for unique username {}, {}", username,usernameUnique.getMessage());
+            log.info("registerUser: Error checking for unique username {}, {}", username,usernameUnique.getMessage());
             // Set an error message
             if(usernameUnique.equals(ResponseStatus.USER_ALREADY_EXISTS)){
                 model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
@@ -102,7 +100,7 @@ public class RegisterController {
             return "register"; // Return to the registration view
         }
         // If both the username and email are unique
-        log.info("Unique user. Proceeding with registration for {}", username);
+        log.info("registerUser: Unique user. Proceeding with registration for {}", username);
 
         final String firstName = registrationForm.getFirstName();
         final String lastName = registrationForm.getLastName();
@@ -111,9 +109,6 @@ public class RegisterController {
         // Save the user
         final User currentUser = userService.saveUser(username,password,email,firstName,lastName);
 
-        log.info("Storing current user in session");
-        // Store user in session
-        httpSession.setAttribute("currentUser", currentUser);
         return "redirect:/securityQuestions"; // Redirect to security questions page
     }
 }

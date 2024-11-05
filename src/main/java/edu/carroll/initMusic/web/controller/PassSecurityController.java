@@ -2,7 +2,6 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.PassSQuestionsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,22 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class PassSecurityController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(PassSecurityController.class);
-
-    /** Service for user-related operations. */
-    private final UserService userService;
-
-    /**
-     * Constructs a PassSecurityController with the specified UserService.
-     *
-     * @param userService the service used for user-related operations, such as verifying answers.
-     */
-    public PassSecurityController(UserService userService) {
-        this.userService = userService;
-    }
 
     /**
      * Displays the security questions page.
@@ -80,18 +65,18 @@ public class PassSecurityController {
             final User currentUser = userDetails.getUser();
             // Check if the answers provided match the user's stored answers
             if (currentUser.getAnswer1().equals(passSecurityForm.getAnswer1()) && currentUser.getAnswer2().equals(passSecurityForm.getAnswer2())) {
-                log.info("User got security questions right. Redirect to change password");
+                log.info("handleSecuritySubmission: User got security questions right. Redirect to change password");
                 return "changePassword";  // Redirect to the change password page
             } else {
                 // Provide feedback to the user
-                log.info("User answered Security Questions Wrong");
+                log.info("handleSecuritySubmission: User answered Security Questions Wrong");
                 model.addAttribute("question1", currentUser.getQuestion1());  // Assuming you have this method
                 model.addAttribute("question2", currentUser.getQuestion2());
                 model.addAttribute("errorMessage", "Incorrect answers. Please try again.");
                 return "passSecurity";  // Return to the security questions page with an error message
             }
         } else {
-            log.error("No user found in session.");
+            log.error("handleSecuritySubmission: No user found in session.");
             model.addAttribute("errorMessage", "No user found. Please log in.");
             return "redirect:/login";  // Redirect to login if no user is found in the session
         }

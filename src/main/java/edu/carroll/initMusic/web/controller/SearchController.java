@@ -72,11 +72,10 @@ public class SearchController {
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userDetails.getUser();
 
-
         //Fetch user with playlists
         final User fullUser = userService.findByIdWithPlaylists(user.getuserID());
 
-        log.info("{} went to search page", fullUser.getUsername());
+        log.info("showSearchPage: {} went to search page", fullUser.getuserID());
 
         //Add the user and their playlists to the model
         model.addAttribute("currentUser", fullUser);
@@ -106,7 +105,7 @@ public class SearchController {
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
-        log.info("{} searched for songs with query '{}'", user.getUsername(), query);
+        log.info("search: {} searched for songs with query '{}'", user.getUsername(), query);
 
         //If query doesnt have any text
         if (query.trim().isEmpty() || query.length() < 3) {
@@ -139,7 +138,7 @@ public class SearchController {
     @PostMapping("/addSongToPlaylist")
     public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
         if (result.hasErrors()) {
-            log.info("Adding song errors: {}", result.getAllErrors());
+            log.warn("addSongToPlaylist: Adding song errors: {}", result.getAllErrors());
             attrs.addFlashAttribute("error", result.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/search";
         }
@@ -149,7 +148,7 @@ public class SearchController {
 
         // Handle the logic for adding the song to the selected playlists
         for (Long playlistId : selectedPlaylists) {
-            log.info("Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
+            log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
             playlistService.addSongToPlaylist(playlistId, song);
         }
 
@@ -164,12 +163,12 @@ public class SearchController {
      */
     private static Song getSong(NewSongForm addSongForm) {
         final Long songID = addSongForm.getSongID();
-        final  String songName = addSongForm.getSongName();
+        final String songName = addSongForm.getSongName();
         final int songLength = addSongForm.getSongLength();
         final String artistName = addSongForm.getArtistName();
-        final long artistID = addSongForm.getArtistID();
+        final Long artistID = addSongForm.getArtistID();
         final String albumName = addSongForm.getAlbumName();
-        final long albumID = addSongForm.getAlbumID();
+        final Long albumID = addSongForm.getAlbumID();
         final String songImg = addSongForm.getSongImg();
         final String songPreview = addSongForm.getSongPreview();
 

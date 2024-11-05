@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class NewPasswordController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(NewPasswordController.class);
 
     /** Service for user-related operations such as updating user passwords. */
@@ -70,19 +68,18 @@ public class NewPasswordController {
      */
     @PostMapping("/changePassword")
     public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, Authentication authentication, Model model) {
-
         if (authentication.getPrincipal()!= null) {
             //Retrieve the current user
             final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             final User currentUser = userDetails.getUser();
-            log.info("Password changed for {}", currentUser.getUsername());
+            log.info("handleSecuritySubmission: Password changed for {}", currentUser.getUsername());
             final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
             if(!passwordUpdated) {
                 model.addAttribute("errorMessage", "Password update failed");
             }
             return "passwordChanged";  // Redirect to the password changed confirmation page
         } else {
-            log.error("No user found in session.");
+            log.error("handleSecuritySubmission: No user found in session.");
             return "redirect:/login";  // Redirect to the login page if no user is found in the session
         }
     }
