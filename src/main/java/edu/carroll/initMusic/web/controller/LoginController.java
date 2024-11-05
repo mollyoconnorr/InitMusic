@@ -1,7 +1,5 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.service.LoginService;
-import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.LoginForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,23 +26,6 @@ public class LoginController {
      * Logger object used for logging actions within this controller.
      */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-
-    /** Service used for validating login credentials. */
-    private final LoginService loginService;
-
-    /** Service for user-related operations, such as retrieving users. */
-    private final UserService userService;
-
-    /**
-     * Constructs a LoginController with the specified services.
-     *
-     * @param loginService the service used for validating user login attempts.
-     * @param userService the service for user operations, such as fetching user details.
-     */
-    public LoginController(LoginService loginService, UserService userService) {
-        this.userService = userService;
-        this.loginService = loginService;
-    }
 
     /**
      * Displays the login page.
