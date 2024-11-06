@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
         newUser.setQuestion2(null);
         newUser.setAnswer2(null);
 
-        log.info("saveUser: User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
+        log.info("saveUser: User '{}' saved", newUser.getUsername());
         return userRepository.save(newUser);
     }
 

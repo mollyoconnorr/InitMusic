@@ -32,7 +32,7 @@ public class LoginController {
      * the login form and adds it to the model.
      * </p>
      *
-     * @param error Any errors that have occurred 
+     * @param error Any errors that have occurred
      * @param model the model to be used in the view.
      * @return the name of the login view (Thymeleaf template).
      */
