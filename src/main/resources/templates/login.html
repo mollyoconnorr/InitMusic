@@ -11,6 +11,10 @@
   <div th:if="${errorMessage}" style="color: red;">
     <p th:text="${errorMessage}"></p>
   </div>
+  <!-- Display error message if present -->
+  <div th:if="${errorMsg}" style="color: red;">
+    <p th:text="${errorMsg}"></p>
+  </div>
 
   <form th:action="@{/login}" th:object="${loginForm}" method="post">
     <label for="username">Username:</label><br>
