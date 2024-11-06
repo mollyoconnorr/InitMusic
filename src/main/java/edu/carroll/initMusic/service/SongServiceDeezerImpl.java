@@ -63,7 +63,7 @@ public class SongServiceDeezerImpl implements SongService{
     public Set<Song> searchForSongs(String query) {
 
         //Make sure there is test in query
-        if (query.trim().isEmpty() || query.length() < 3) {
+        if (query == null || query.trim().isEmpty() || query.length() < 3) {
             return new HashSet<>();
         }
 
