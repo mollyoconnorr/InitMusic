@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.RegistrationForm;
@@ -71,11 +71,11 @@ public class RegisterController {
 
         log.info("registerUser: Attempting to register user with username: {} and email: {}", username, email);
 
-        final ResponseStatus emailUnique = userService.uniqueEmail(email);
-        final ResponseStatus usernameUnique = userService.uniqueUserName(username);
+        final MethodOutcome emailUnique = userService.uniqueEmail(email);
+        final MethodOutcome usernameUnique = userService.uniqueUserName(username);
 
         // Check if the email already exists
-        if (emailUnique.equals(ResponseStatus.EMAIL_ALREADY_EXISTS)) {
+        if (emailUnique.equals(MethodOutcome.EMAIL_ALREADY_EXISTS)) {
             // Redirect to a new page for users with existing emails
             return "emailTaken"; // Redirect to email taken page
         }
@@ -90,7 +90,7 @@ public class RegisterController {
         if (usernameUnique.failed()) {
             log.info("registerUser: Error checking for unique username {}, {}", username,usernameUnique.getMessage());
             // Set an error message
-            if(usernameUnique.equals(ResponseStatus.USER_ALREADY_EXISTS)){
+            if(usernameUnique.equals(MethodOutcome.USER_ALREADY_EXISTS)){
                 model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
             }else{
                 model.addAttribute("errorMessage", usernameUnique.getMessage());

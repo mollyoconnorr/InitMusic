@@ -11,7 +11,7 @@ package edu.carroll.initMusic;
  *
  * @since October 2, 2024
  */
-public enum ResponseStatus {
+public enum MethodOutcome {
     SUCCESS("Success"),
     USER_NOT_FOUND("User not found!"),
     USER_ALREADY_EXISTS("User already exists!"),
@@ -40,7 +40,7 @@ public enum ResponseStatus {
      * Constructs a new constant
      * @param message Message of constant
      */
-    ResponseStatus(String message) {
+    MethodOutcome(String message) {
         this.message = message;
     }
 

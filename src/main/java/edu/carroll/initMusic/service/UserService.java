@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
 
 /**
@@ -17,16 +17,16 @@ public interface UserService {
     /**
      * Checks if given username is unique
      * @param username Username to check
-     * @return ResponseStatus Enum that tells outcome of method.
+     * @return MethodOutcome Enum that tells outcome of method.
      */
-    ResponseStatus uniqueUserName(String username);
+    MethodOutcome uniqueUserName(String username);
 
     /**
      * Checks if given email is unique
      * @param email Email to check
-     * @return ResponseStatus Enum that tells outcome of method.
+     * @return MethodOutcome Enum that tells outcome of method.
      */
-    ResponseStatus uniqueEmail(String email);
+    MethodOutcome uniqueEmail(String email);
 
     /**
      * Saves a user and their information to the database

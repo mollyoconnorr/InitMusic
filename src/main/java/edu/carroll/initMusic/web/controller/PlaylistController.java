@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
@@ -129,7 +129,7 @@ public class PlaylistController {
         log.info("createPlaylist: User id#{} wants to make a new playlist with name {}",user.getuserID(),playlistName);
 
         //Create new playlist
-        final ResponseStatus playlistCreated = playlistService.createPlaylist(playlistName,user);
+        final MethodOutcome playlistCreated = playlistService.createPlaylist(playlistName,user);
         if(playlistCreated.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistCreated.getMessage());
             return redirectPage;
@@ -178,7 +178,7 @@ public class PlaylistController {
         log.info("renamePlaylist: User {} wants to rename playlist {} to '{}'",user.getuserID(),playlistID,newPlaylistName);
 
         //Check if playlist was successfully renamed
-        final ResponseStatus playlistRenamed = playlistService.renamePlaylist(newPlaylistName,playlistID,user);
+        final MethodOutcome playlistRenamed = playlistService.renamePlaylist(newPlaylistName,playlistID,user);
 
         if (playlistRenamed.failed()) {
             redirectAttributes.addFlashAttribute("error", playlistRenamed.getMessage());
@@ -221,7 +221,7 @@ public class PlaylistController {
         log.info("deletePlaylist: User {} wants to delete playlist id#{}",user.getuserID(),playlistID);
 
         //If there was an error deleting a playlist, add error attr to model and return it
-        final ResponseStatus playlistDeleted = playlistService.deletePlaylist(playlistName,playlistID,user);
+        final MethodOutcome playlistDeleted = playlistService.deletePlaylist(playlistName,playlistID,user);
         if(playlistDeleted.failed()){
             redirectAttributes.addFlashAttribute("error", playlistDeleted.getMessage());
             return "redirect:/playlists";

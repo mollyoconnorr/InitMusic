@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
@@ -34,9 +34,9 @@ public interface PlaylistService{
      * @param user User who created playlist
      * @return A responseStatus enum, which tells the outcome of the transaction.
      *
-     * @see ResponseStatus
+     * @see MethodOutcome
      */
-    ResponseStatus createPlaylist(String name, User user);
+    MethodOutcome createPlaylist(String name, User user);
 
     /**
      * Renames the given playlist with the new given name
@@ -45,9 +45,9 @@ public interface PlaylistService{
      * @param user User who created playlist
      * @return A responseStatus enum, which tells the outcome of the transaction.
      *
-     * @see ResponseStatus
+     * @see MethodOutcome
      */
-    ResponseStatus renamePlaylist(String newName, Long playlistID, User user);
+    MethodOutcome renamePlaylist(String newName, Long playlistID, User user);
 
     /**
      * Deletes the given playlist
@@ -56,9 +56,9 @@ public interface PlaylistService{
      * @param user User who created playlist
      * @return A responseStatus enum, which tells the outcome of the transaction.
      *
-     * @see ResponseStatus
+     * @see MethodOutcome
      */
-    ResponseStatus deletePlaylist(String playlistName, Long playlistID, User user);
+    MethodOutcome deletePlaylist(String playlistName, Long playlistID, User user);
 
     /**
      * Removes the given song from the given playlist
@@ -66,7 +66,7 @@ public interface PlaylistService{
      * @param songID ID of song to remove
      * @return A responseStatus enum, which tells the outcome of the transaction.
      *
-     * @see ResponseStatus
+     * @see MethodOutcome
      */
-    ResponseStatus removeSongFromPlaylist(Long playlistID, Long songID);
+    MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID);
 }

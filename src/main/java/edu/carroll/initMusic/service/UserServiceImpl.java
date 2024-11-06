@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.slf4j.Logger;
@@ -56,28 +56,28 @@ public class UserServiceImpl implements UserService {
      * Checks whether the provided username is unique (i.e., not already present in the database).
      *
      * @param username the username to check for uniqueness
-     * @return ResponseStatus Enum that tells outcome of method.
+     * @return MethodOutcome Enum that tells outcome of method.
      */
-    public ResponseStatus uniqueUserName(String username) {
+    public MethodOutcome uniqueUserName(String username) {
         log.info("uniqueUserName: Checking if username '{}' is unique", username);
         List<User> usersByName = userRepository.findByUsernameIgnoreCase(username);
 
         if(username == null || username.length() < 5 || username.isBlank()){
-            return ResponseStatus.USER_TOO_SHORT;
+            return MethodOutcome.USER_TOO_SHORT;
         }
         if(username.length() >= 50){
-            return ResponseStatus.USER_TOO_LONG;
+            return MethodOutcome.USER_TOO_LONG;
         }
         if(username.contains(" ")){
-            return ResponseStatus.USER_HAS_SPACES;
+            return MethodOutcome.USER_HAS_SPACES;
         }
 
         if (!usersByName.isEmpty()) {
             log.info("uniqueUserName: Username '{}' already exists", username);
-            return ResponseStatus.USER_ALREADY_EXISTS;
+            return MethodOutcome.USER_ALREADY_EXISTS;
         } else {
             log.info("uniqueUserName: Username '{}' is available", username);
-            return ResponseStatus.SUCCESS;
+            return MethodOutcome.SUCCESS;
         }
     }
 
@@ -85,34 +85,34 @@ public class UserServiceImpl implements UserService {
      * Checks whether the provided email is unique (i.e., not already present in the database).
      *
      * @param email the email to check for uniqueness
-     * @return ResponseStatus Enum that tells outcome of method.
+     * @return MethodOutcome Enum that tells outcome of method.
      */
-    public ResponseStatus uniqueEmail(String email) {
+    public MethodOutcome uniqueEmail(String email) {
         log.info("uniqueEmail: Checking if email '{}' is unique", email);
 
         // Check for null or empty email
         if (email == null || email.trim().isEmpty()) {
             log.warn("uniqueEmail: Email is null or empty");
-            return ResponseStatus.EMAIL_INVALID_FORMAT;
+            return MethodOutcome.EMAIL_INVALID_FORMAT;
         }
 
         // Check if the email matches the regex
         if (!pattern.matcher(email).matches()) {
             log.warn("uniqueEmail: Email '{}' is not a valid format", email);
-            return ResponseStatus.EMAIL_INVALID_FORMAT;
+            return MethodOutcome.EMAIL_INVALID_FORMAT;
         }
 
         // Check for length restrictions
         if (email.length() > 254) {
             log.warn("uniqueEmail: Email '{}' exceeds maximum length of 254 characters", email);
-            return ResponseStatus.EMAIL_TOO_LONG;
+            return MethodOutcome.EMAIL_TOO_LONG;
         }
 
         //Check if email split into two parts using @ sign
         String[] parts = email.split("@");
         if (parts.length != 2) {
             log.warn("uniqueEmail: Email '{}' is not in a valid format", email);
-            return ResponseStatus.EMAIL_INVALID_FORMAT;
+            return MethodOutcome.EMAIL_INVALID_FORMAT;
         }
 
         final String localPart = parts[0];
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         //Local part (Before @) has to be less than 64 characters
         if (localPart.length() > 64) {
             log.warn("uniqueEmail: Local part of email '{}' exceeds maximum length of 64 characters", email);
-            return ResponseStatus.EMAIL_LOCAL_PART_TOO_LONG;
+            return MethodOutcome.EMAIL_LOCAL_PART_TOO_LONG;
         }
 
         // Check if the domain part (After @) has any labels exceeding 63 characters
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
         for (String label : domainLabels) {
             if (label.length() > 63) {
                 log.warn("uniqueEmail: Domain label '{}' exceeds maximum length of 63 characters", label);
-                return ResponseStatus.EMAIL_DOMAIN_LABEL_TOO_LONG;
+                return MethodOutcome.EMAIL_DOMAIN_LABEL_TOO_LONG;
             }
         }
 
@@ -137,10 +137,10 @@ public class UserServiceImpl implements UserService {
         final List<User> usersByEmail = userRepository.findByEmailIgnoreCase(email);
         if (!usersByEmail.isEmpty()) {
             log.info("uniqueEmail: Email '{}' already exists", email);
-            return ResponseStatus.EMAIL_ALREADY_EXISTS;
+            return MethodOutcome.EMAIL_ALREADY_EXISTS;
         } else {
             log.info("uniqueEmail: Email '{}' is available", email);
-            return ResponseStatus.SUCCESS;
+            return MethodOutcome.SUCCESS;
         }
     }
 

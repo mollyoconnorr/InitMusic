@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
@@ -115,7 +115,7 @@ public class ViewPlaylistController {
             return "redirect:/viewPlaylist/"+playlistID;
         }
 
-        final ResponseStatus songRemoved = playlistService.removeSongFromPlaylist(playlistID, songID);
+        final MethodOutcome songRemoved = playlistService.removeSongFromPlaylist(playlistID, songID);
 
         //If song wasn't removed for some reason
         if(songRemoved.failed()){

@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
@@ -59,30 +59,30 @@ public class PlaylistServiceImpl implements PlaylistService{
      * with the given name, or if the given name isn't valid (Is blank).
      * @param name Name of new playlist
      * @param user User who created playlist
-     * @return ResponseStatus Enum which corresponds to outcome of function
+     * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public ResponseStatus createPlaylist(String name, User user){
+    public MethodOutcome createPlaylist(String name, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} doesn't exist", user.getuserID());
-            return ResponseStatus.USER_NOT_FOUND;
+            return MethodOutcome.USER_NOT_FOUND;
         }
 
         if (name == null || name.trim().isEmpty()) {
-            return ResponseStatus.PLAYLIST_NAME_INVALID;
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         //If string is empty or blank
         if(name.isBlank()){
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} tried to make a playlist with a blank String", user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_INVALID;
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         name = name.strip();
 
         if (user.getPlaylist(name) != null) {
             log.warn("createPlaylist: Attempted to create a duplicate playlist name '{}' for User id#{}", name, user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_EXISTS;
+            return MethodOutcome.PLAYLIST_NAME_EXISTS;
         }
 
         final Playlist newPlaylist = new Playlist(user,name);
@@ -91,7 +91,7 @@ public class PlaylistServiceImpl implements PlaylistService{
 
         log.info("createPlaylist: Playlist '{}' created for user '{}'", name, user.getuserID());
 
-        return ResponseStatus.SUCCESS;
+        return MethodOutcome.SUCCESS;
     }
 
     /**
@@ -99,29 +99,29 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @param newName New name of playlist
      * @param playlistID ID of playlist to rename
      * @param user User who created playlist
-     * @return ResponseStatus Enum which corresponds to outcome of function
+     * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public ResponseStatus renamePlaylist(String newName, Long playlistID, User user){
+    public MethodOutcome renamePlaylist(String newName, Long playlistID, User user){
         if(user.getPlaylist(newName) != null){
             log.warn("renamePlaylist: Attempted to rename playlist, but a Playlist with name '{}' already exists for user id#{}", newName, user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_EXISTS;
+            return MethodOutcome.PLAYLIST_NAME_EXISTS;
         }
 
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} doesn't exist", user.getuserID());
-            return ResponseStatus.USER_NOT_FOUND;
+            return MethodOutcome.USER_NOT_FOUND;
         }
 
         if(newName == null) {
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist null", user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_INVALID;
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         //If string is empty or blank
         if(newName.isBlank()){
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist with a blank String", user.getuserID());
-            return ResponseStatus.PLAYLIST_NAME_INVALID;
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         //Look through each playlist, faster to do in-memory then pull playlist from repository
@@ -130,11 +130,11 @@ public class PlaylistServiceImpl implements PlaylistService{
                 playlist.setPlaylistName(newName);
                 playlistRepository.save(playlist);
                 log.info("renamePlaylist: Playlist with id '{}' renamed to '{}'", playlistID, newName);
-                return ResponseStatus.SUCCESS;
+                return MethodOutcome.SUCCESS;
             }
         }
 
-        return ResponseStatus.PLAYLIST_RENAME_ERROR;
+        return MethodOutcome.PLAYLIST_RENAME_ERROR;
     }
 
     /**
@@ -142,19 +142,19 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @param playlistName Name of playlist to delete
      * @param playlistID ID of playlist to delete
      * @param user User who created playlist
-     * @return ResponseStatus Enum which corresponds to outcome of function
+     * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public ResponseStatus deletePlaylist(String playlistName, Long playlistID, User user){
+    public MethodOutcome deletePlaylist(String playlistName, Long playlistID, User user){
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't exist", user.getuserID());
-            return ResponseStatus.USER_NOT_FOUND;
+            return MethodOutcome.USER_NOT_FOUND;
         }
 
         //If playlist isn't found for given user.
         if(user.getPlaylist(playlistName) == null){
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
-            return ResponseStatus.PLAYLIST_NOT_FOUND;
+            return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
 
         playlistRepository.delete(user.getPlaylist(playlistName));
@@ -163,7 +163,7 @@ public class PlaylistServiceImpl implements PlaylistService{
 
         userRepository.save(user);
 
-        return ResponseStatus.SUCCESS;
+        return MethodOutcome.SUCCESS;
     }
 
     /**
@@ -185,15 +185,15 @@ public class PlaylistServiceImpl implements PlaylistService{
      * Removes a song from a playlist based off their respective ID's
      * @param playlistID ID of playlist
      * @param songID ID of song
-     * @return ResponseStatus Enum which corresponds to outcome of function
+     * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public ResponseStatus removeSongFromPlaylist(Long playlistID, Long songID){
+    public MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID){
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         //If there was 0 or more than 1 playlist found
         if(playlistsFound.size() != 1){
             log.warn("removeSongFromPlaylist: Playlist id#{} not found",playlistID);
-            return ResponseStatus.PLAYLIST_NOT_FOUND;
+            return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
         final Playlist playlist = playlistsFound.getFirst();
 
@@ -202,14 +202,14 @@ public class PlaylistServiceImpl implements PlaylistService{
         //If song wasn't removed
         if(!songRemoved){
             log.warn("removeSongFromPlaylist: Error when removing song id#{} from playlist id#{} using removeSong(songID)",songID,playlistID);
-            return ResponseStatus.SONG_NOT_IN_PLAYLIST;
+            return MethodOutcome.SONG_NOT_IN_PLAYLIST;
         }
 
         playlistRepository.save(playlist);
 
         log.info("removeSongFromPlaylist: Song id#{} successfully removed from playlist id#{}", songID, playlistID);
 
-        return ResponseStatus.SUCCESS;
+        return MethodOutcome.SUCCESS;
     }
 
     /**

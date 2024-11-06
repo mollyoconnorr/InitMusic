@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.jpa.service;
 
-import edu.carroll.initMusic.ResponseStatus;
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.model.Song;
@@ -59,8 +59,8 @@ public class PlaylistServiceTests {
      */
     @Test
     void testCreatePlaylistSuccess() {
-        ResponseStatus status = playlistService.createPlaylist("Test Playlist", testUser);
-        assertEquals(ResponseStatus.SUCCESS, status, "Playlist should be created successfully");
+        MethodOutcome status = playlistService.createPlaylist("Test Playlist", testUser);
+        assertEquals(MethodOutcome.SUCCESS, status, "Playlist should be created successfully");
     }
 
     /**
@@ -101,14 +101,14 @@ public class PlaylistServiceTests {
     @Test
     void testCreateDuplicatePlaylistName() {
         // Create the initial playlist
-        ResponseStatus status = playlistService.createPlaylist("Test Playlist", testUser);
-        assertEquals(ResponseStatus.SUCCESS, status); // Ensure the first creation is successful
+        MethodOutcome status = playlistService.createPlaylist("Test Playlist", testUser);
+        assertEquals(MethodOutcome.SUCCESS, status); // Ensure the first creation is successful
 
         // Attempt to create a duplicate playlist
-        ResponseStatus duplicateStatus = playlistService.createPlaylist("Test Playlist", testUser);
+        MethodOutcome duplicateStatus = playlistService.createPlaylist("Test Playlist", testUser);
 
         // Assert that the response status is PLAYLIST_NAME_EXISTS
-        assertEquals(ResponseStatus.PLAYLIST_NAME_EXISTS, duplicateStatus,
+        assertEquals(MethodOutcome.PLAYLIST_NAME_EXISTS, duplicateStatus,
                 "Creating a duplicate playlist should return PLAYLIST_NAME_EXISTS");
     }
 
@@ -121,8 +121,8 @@ public class PlaylistServiceTests {
         playlistService.createPlaylist("Old Playlist", testUser);
 
         Playlist playlist = testUser.getPlaylists().iterator().next();
-        ResponseStatus status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), testUser);
-        assertEquals(ResponseStatus.SUCCESS, status);
+        MethodOutcome status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.SUCCESS, status);
 
         Playlist renamedPlaylist = playlistRepository.findById(playlist.getPlaylistID()).orElse(null);
         assertNotNull(renamedPlaylist);
@@ -139,8 +139,8 @@ public class PlaylistServiceTests {
         playlistService.createPlaylist("Playlist Two", testUser);
 
         Playlist playlistOne = testUser.getPlaylist("Playlist One");
-        ResponseStatus status = playlistService.renamePlaylist("Playlist Two", playlistOne.getPlaylistID(), testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NAME_EXISTS, status);
+        MethodOutcome status = playlistService.renamePlaylist("Playlist Two", playlistOne.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_EXISTS, status);
     }
 
     /**
@@ -150,8 +150,8 @@ public class PlaylistServiceTests {
     @Test
     void testDeletePlaylistSuccess() {
         // Create and save the playlist in the database
-        ResponseStatus status = playlistService.createPlaylist("Delete Me", testUser);
-        assertEquals(ResponseStatus.SUCCESS, status);
+        MethodOutcome status = playlistService.createPlaylist("Delete Me", testUser);
+        assertEquals(MethodOutcome.SUCCESS, status);
 
         // Retrieve the playlist from the user's list or directly from the repository
         Playlist playlist = testUser.getPlaylists().stream()
@@ -162,7 +162,7 @@ public class PlaylistServiceTests {
 
         // Perform the delete operation using the actual persisted playlist ID
         status = playlistService.deletePlaylist("Delete Me", playlist.getPlaylistID(), testUser);
-        assertEquals(ResponseStatus.SUCCESS, status);
+        assertEquals(MethodOutcome.SUCCESS, status);
 
         // Assert that the playlist is no longer found in the repository
         assertTrue(playlistRepository.findById(playlist.getPlaylistID()).isEmpty());
@@ -174,8 +174,8 @@ public class PlaylistServiceTests {
      */
     @Test
     void testDeletePlaylistNotFound() {
-        ResponseStatus status = playlistService.deletePlaylist("Nonexistent Playlist", 1L, testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NOT_FOUND, status);
+        MethodOutcome status = playlistService.deletePlaylist("Nonexistent Playlist", 1L, testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status);
     }
 
     /**
@@ -183,8 +183,8 @@ public class PlaylistServiceTests {
      */
     @Test
     void testCreatePlaylistEmptyName() {
-        ResponseStatus status = playlistService.createPlaylist("", testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NAME_INVALID, status, "Empty playlist name should return PLAYLIST_NAME_INVALID");
+        MethodOutcome status = playlistService.createPlaylist("", testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Empty playlist name should return PLAYLIST_NAME_INVALID");
     }
 
     /**
@@ -192,8 +192,8 @@ public class PlaylistServiceTests {
      */
     @Test
     void testCreatePlaylistNullName() {
-        ResponseStatus status = playlistService.createPlaylist(null, testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NAME_INVALID, status, "Null playlist name should return PLAYLIST_NAME_INVALID");
+        MethodOutcome status = playlistService.createPlaylist(null, testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Null playlist name should return PLAYLIST_NAME_INVALID");
     }
 
     /**
@@ -204,8 +204,8 @@ public class PlaylistServiceTests {
     void testRenamePlaylistEmptyName() {
         playlistService.createPlaylist("Existing Playlist", testUser);
         Playlist playlist = testUser.getPlaylists().iterator().next();
-        ResponseStatus status = playlistService.renamePlaylist("", playlist.getPlaylistID(), testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NAME_INVALID, status, "Renaming to an empty name should return PLAYLIST_NAME_INVALID");
+        MethodOutcome status = playlistService.renamePlaylist("", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming to an empty name should return PLAYLIST_NAME_INVALID");
     }
 
     /**
@@ -216,8 +216,8 @@ public class PlaylistServiceTests {
     void testRenamePlaylistNullName() {
         playlistService.createPlaylist("Existing Playlist", testUser);
         Playlist playlist = testUser.getPlaylists().iterator().next();
-        ResponseStatus status = playlistService.renamePlaylist(null, playlist.getPlaylistID(), testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NAME_INVALID, status, "Renaming to a null name should return PLAYLIST_NAME_INVALID");
+        MethodOutcome status = playlistService.renamePlaylist(null, playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming to a null name should return PLAYLIST_NAME_INVALID");
     }
 
     /**
@@ -225,8 +225,8 @@ public class PlaylistServiceTests {
      */
     @Test
     void testDeletePlaylistInvalidID() {
-        ResponseStatus status = playlistService.deletePlaylist("Invalid Playlist", 999L, testUser);
-        assertEquals(ResponseStatus.PLAYLIST_NOT_FOUND, status, "Deleting with an invalid playlist ID should return PLAYLIST_NOT_FOUND");
+        MethodOutcome status = playlistService.deletePlaylist("Invalid Playlist", 999L, testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Deleting with an invalid playlist ID should return PLAYLIST_NOT_FOUND");
     }
 
     /**
@@ -275,8 +275,8 @@ public class PlaylistServiceTests {
         assertTrue(playlist.getSongs().contains(song), "The song should be present in the playlist before removal");
 
         // Remove the song
-        ResponseStatus status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getSongID());
-        assertEquals(ResponseStatus.SUCCESS, status, "Song should be removed successfully");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getSongID());
+        assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed successfully");
 
         // Refresh the playlist from the repository to ensure we have the latest state
         Playlist updatedPlaylist = playlistRepository.findById(playlist.getPlaylistID()).orElseThrow();
@@ -290,7 +290,7 @@ public class PlaylistServiceTests {
      */
     @Test
     void testRemoveSongFromNonExistentPlaylist() {
-        ResponseStatus status = playlistService.removeSongFromPlaylist(999L, 1L);
-        assertEquals(ResponseStatus.PLAYLIST_NOT_FOUND, status, "Removing a song from a non-existent playlist should return PLAYLIST_NOT_FOUND");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(999L, 1L);
+        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Removing a song from a non-existent playlist should return PLAYLIST_NOT_FOUND");
     }
 }
