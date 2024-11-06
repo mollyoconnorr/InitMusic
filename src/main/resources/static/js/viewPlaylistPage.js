@@ -1,3 +1,4 @@
+//Populates the deleteSongModal (But could do any modal) with given data
 function populateDeleteSongModal(modal, songID, songName, playlistID, playlistName){
     const modalBody = modal.querySelector('.modal-body');
     modalBody.textContent = 'Are you sure you want to delete ' + songName + ' from ' +
@@ -9,6 +10,7 @@ function populateDeleteSongModal(modal, songID, songName, playlistID, playlistNa
     document.getElementById('songName').value = songName;
 }
 
+// Adds event listener to deleteSongModal and populates it with data
 const deleteSongModal = document.getElementById('deleteSongModal');
 deleteSongModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
@@ -20,6 +22,9 @@ deleteSongModal.addEventListener('show.bs.modal', function (event) {
     populateDeleteSongModal(deleteSongModal, songID, songName, playlistID, playlistName);
 });
 
+/**
+ * Shows a popup message that makes user confirm logout, and then fetches post for /logout and logs user out
+ */
 function logout() {
     // Show confirmation dialog
     const userConfirmed = confirm("Are you sure you want to log out?");
@@ -53,6 +58,7 @@ document.getElementById('logoutButton').addEventListener('click', logout);
 
 let popupWindow = null; // Global variable to store the pop-up window reference
 
+//Opens popup window with given url
 function openPopup(url) {
     console.log("Opening URL:", url); // Log the URL
 
@@ -68,6 +74,7 @@ function openPopup(url) {
     popupWindow = window.open(url, 'songPreview', `width=${width},height=${height},top=${top},left=${left},resizable=yes`);
 }
 
+//Closes popup window
 function closePopup() {
     if (popupWindow) {
         popupWindow.close(); // Close the pop-up window

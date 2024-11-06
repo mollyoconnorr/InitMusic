@@ -65,6 +65,7 @@ renamePlaylistModal.addEventListener('show.bs.modal', function (event) {
     populateRenamePlaylistModal(renamePlaylistModal, playlistName, playlistID); // Pass it to the modal
 });
 
+//Populates delete playlist modal
 const deletePlaylistModal = document.getElementById('deletePlaylistModal');
 deletePlaylistModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
@@ -73,6 +74,7 @@ deletePlaylistModal.addEventListener('show.bs.modal', function (event) {
     populateDeletePlaylistModal(deletePlaylistModal, playlistName, playlistID);
 });
 
+//Adds event listener to playlist Containers so on double click, a new page opens with the songs inside the playlist
 const playlistContainer = document.getElementsByClassName('list-group-item-container');
 for (let i = 0; i < playlistContainer.length; i++) {
     playlistContainer[i].addEventListener('dblclick', function () {
@@ -93,6 +95,9 @@ for (let i = 0; i < playlistContainer.length; i++) {
     });
 }
 
+/**
+ * Shows a popup message that makes user confirm logout, and then fetches post for /logout and logs user out
+ */
 function logout() {
     // Show confirmation dialog
     const userConfirmed = confirm("Are you sure you want to log out?");

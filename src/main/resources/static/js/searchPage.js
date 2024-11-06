@@ -28,6 +28,10 @@ function populateModal(button) {
     document.getElementById('songPreview').value = songPreview;
 
 }
+
+/**
+ * Shows a popup message that makes user confirm logout, and then fetches post for /logout and logs user out
+ */
 function logout() {
     // Show confirmation dialog
     const userConfirmed = confirm("Are you sure you want to log out?");
@@ -58,6 +62,7 @@ function logout() {
 
 let popupWindow = null; // Global variable to store the pop-up window reference
 
+//Opens a new popup window with the given url
 function openPopup(url) {
     console.log("Opening URL:", url); // Log the URL
 
@@ -73,6 +78,7 @@ function openPopup(url) {
     popupWindow = window.open(url, 'songPreview', `width=${width},height=${height},top=${top},left=${left},resizable=yes`);
 }
 
+//Closes popup window
 function closePopup() {
     if (popupWindow) {
         popupWindow.close(); // Close the pop-up window

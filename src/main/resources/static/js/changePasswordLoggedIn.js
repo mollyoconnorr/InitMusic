@@ -2,9 +2,10 @@ function goBack() {
     window.history.back();
 }
 
+//Validates password matches confirm password
 function validatePassword() {
-    var password = document.getElementById("newPassword").value;
-    var confirmPassword = document.getElementById("confirmPassword").value;
+    const password = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
 
     // Check if the passwords match
     if (password !== confirmPassword) {
