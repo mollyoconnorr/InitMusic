@@ -39,7 +39,7 @@ class SongServiceTests {
 
     /** invalid query string (Empty String) */
     private static final String EMPTY_QUERY = "";
-    
+
     /** Service we are testing */
     @InjectMocks
     private SongServiceDeezerImpl songService;
