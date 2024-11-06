@@ -7,13 +7,28 @@ package edu.carroll.initMusic.web.form;
  * the username, email, password, first name, and last name.
  * It provides getter and setter methods for accessing and modifying these fields.
  * </p>
+ *
+ * @author Molly O'Connor
+ *
+ * @since September 12, 2024
  */
 public class RegistrationForm {
+    /** User's username */
     private String username;
+
+    /** User's email */
     private String email;
+
+    /** User's password */
     private String password;
-    private String firstName;  // New attribute
-    private String lastName;   // New attribute
+
+    /** User's first Name */
+    private String firstName;
+
+    /** User's last Name */
+    private String lastName;
+
+    /** User's confirm Password, should match password */
     private String confirmPassword;
 
     /**

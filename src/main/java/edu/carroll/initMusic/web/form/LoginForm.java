@@ -7,9 +7,16 @@ package edu.carroll.initMusic.web.form;
  * the username and password, providing getter and setter methods
  * for accessing and modifying these fields.
  * </p>
+ *
+ * @author Molly O'Connor
+ *
+ * @since September 9, 2024
  */
 public class LoginForm {
+    /** Username */
     private String username;
+
+    /** Password */
     private String password;
 
     /**
