@@ -68,7 +68,9 @@ public class SecurityConfig {
                         "/css/**",
                         "/changePasswordEmail",
                         "/securityQuestions",
+                        "/changePassword",
                         "/securityQuestionsUpdated",
+                        "/passSecurity",
                         "/images/**").permitAll()
                 .requestMatchers("/submitSecurityQuestions").authenticated()
                 .anyRequest().authenticated());
