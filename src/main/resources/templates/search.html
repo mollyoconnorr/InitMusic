@@ -42,9 +42,21 @@
     <button type="submit">Search</button>
   </form>
 
-  <div th:if="${error}" class="errorMsg">
-    <p th:text="${error}"></p>
+  <!--  Success messages after adding song to playlist(s)-->
+  <div th:if="${addingSuccesses != null and !addingSuccesses.isEmpty()}" th:each="suc : ${addingSuccesses}" class="successMsg">
+    <div th:text="${suc}"></div>
   </div>
+
+  <!-- Error from searchController-->
+  <div th:if="${searchError}" class="errorMsg">
+    <p th:text="${searchError}"></p>
+  </div>
+
+  <!--  Error messages after adding song to playlist(s)-->
+  <div th:if="${addingErrors != null and !addingErrors.isEmpty()}" th:each="error : ${addingErrors}" class="errorMsg">
+    <div th:text="${error}"></div>
+  </div>
+
 
   <!-- Display Results if Search is Performed -->
   <div th:if="${results != null and #lists.size(results) > 0}">
@@ -117,6 +129,15 @@
             <input type="text" id="playlistName" placeholder="New playlist name" th:field="*{playlistName}">
             <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save</button>
           </form>
+          <!-- errorMessage after creating playlist, would come from playlistController createPlaylist mapping -->
+          <div th:if="${error}">
+            <p class="errorMsg" th:text="${error}"></p>
+          </div>
+
+          <!-- successMessage after creating playlist, would come from playlistController createPlaylist mapping -->
+          <div th:if="${successMsg}">
+            <p class="successMsg" th:text="${successMsg}"></p>
+          </div>
 
           <p>Select the playlists you want to add to:</p>
 

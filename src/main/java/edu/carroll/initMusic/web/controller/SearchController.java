@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,14 +129,14 @@ public class SearchController {
 
         //If query doesnt have any text
         if (query.trim().isEmpty() || query.length() < 3) {
-            model.addAttribute("error", "Search term must be at least 3 characters long.");
+            model.addAttribute("searchError", "Search term must be at least 3 characters long.");
             return "search"; // Return to the search page with error message
         }
 
         Set<Song> results = songService.searchForSongs(query);
 
         if(results.isEmpty()) {
-            model.addAttribute("error", "No songs found.");
+            model.addAttribute("searchError", String.format("No songs found for query '%s'", query));
             return "search";
         }
 
@@ -160,17 +162,33 @@ public class SearchController {
     public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs, HttpSession session) {
         if (result.hasErrors()) {
             log.warn("addSongToPlaylist: Adding song errors: {}", result.getAllErrors());
-            attrs.addFlashAttribute("error", result.getAllErrors().getFirst().getDefaultMessage());
+            attrs.addFlashAttribute("searchError", result.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/search";
         }
         final List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
 
         final Song song = getSong(newSongForm);
 
+        final List<String> errorMessages = new ArrayList<>();
+        final List<String> successMessages = new ArrayList<>();
+
         // Handle the logic for adding the song to the selected playlists
         for (Long playlistId : selectedPlaylists) {
             log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
-            playlistService.addSongToPlaylist(playlistId, song);
+            final MethodOutcome outcome = playlistService.addSongToPlaylist(playlistId, song);
+            if(outcome.failed()){
+                errorMessages.add(String.format("Error adding %s to playlist: %s", song.getSongName(),outcome.getMessage()));
+            }else{
+                successMessages.add(String.format("Added %s to playlist %s", song.getSongName(), playlistId));
+            }
+        }
+
+        if(!errorMessages.isEmpty()){
+            attrs.addFlashAttribute("addingErrors", errorMessages);
+        }
+
+        if(!successMessages.isEmpty()){
+            attrs.addFlashAttribute("addingSuccesses", successMessages);
         }
 
         if(session.getAttribute("results") instanceof Set<?>){
