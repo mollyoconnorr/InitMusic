@@ -6,7 +6,7 @@ import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPasswordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,11 +67,12 @@ public class NewPasswordController {
      * @return the name of the view to render (either the success page or a redirect).
      */
     @PostMapping("/changePassword")
-    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, Authentication authentication, Model model) {
-        if (authentication.getPrincipal()!= null) {
+    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession session, Model model) {
+
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        if (currentUser != null) {
             //Retrieve the current user
-            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            final User currentUser = userDetails.getUser();
             log.info("handleSecuritySubmission: Password changed for {}", currentUser.getUsername());
             final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
             if(!passwordUpdated) {
