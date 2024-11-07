@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpSession;
+
 
 /**
  * Controller for handling password changes via email verification.
@@ -66,13 +68,14 @@ public class ChangePasswordEmailController {
      * @return the view to display next, either the security questions page or the email input page with an error
      */
     @PostMapping("/changePasswordEmail")
-    public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, Authentication authentication, Model model) {
-        User user = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
-        if (user != null && authentication.getPrincipal() != null) {
+    public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, Model model, HttpSession session) {
+        User currentUser = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
+        if (currentUser != null) {
             // Pass user's security questions to the model for rendering on the next page
-            model.addAttribute("question1", user.getQuestion1());
-            model.addAttribute("question2", user.getQuestion2());
-            return "passSecurity"; // Thymeleaf template for the security questions
+            model.addAttribute("question1", currentUser.getQuestion1());
+            model.addAttribute("question2", currentUser.getQuestion2());
+            session.setAttribute("currentUser", currentUser);
+            return "passSecurity";
         } else {
             // Log the situation and show an error message if the email isn't found
             log.info("handleEmailSubmission: No user found with email: {}", emailForm.getEmail());
