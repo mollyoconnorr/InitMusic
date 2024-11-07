@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling user security questions validation.
@@ -57,15 +58,15 @@ public class PassSecurityController {
      * @return the name of the view to render (either the password change page or the security questions page with errors).
      */
     @PostMapping("/passSecurity")
-    public String handleSecuritySubmission(@ModelAttribute PassSQuestionsForm passSecurityForm, Authentication authentication, Model model) {
+    public String handleSecuritySubmission(@ModelAttribute PassSQuestionsForm passSecurityForm, Model model, HttpSession session) {
+
+        User currentUser = (User) session.getAttribute("currentUser");
+
         // Ensure that currentUser is not null to avoid NullPointerException
-        if (authentication.getPrincipal() != null) {
-            //Retrieve the current user
-            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            final User currentUser = userDetails.getUser();
+        if (currentUser != null) {
             // Check if the answers provided match the user's stored answers
             if (currentUser.getAnswer1().equals(passSecurityForm.getAnswer1()) && currentUser.getAnswer2().equals(passSecurityForm.getAnswer2())) {
-                log.info("handleSecuritySubmission: User got security questions right. Redirect to change password");
+                log.info("handleSecuritySubmission: {} got security questions right. Redirect to change password", currentUser.getUsername());
                 return "changePassword";  // Redirect to the change password page
             } else {
                 // Provide feedback to the user
