@@ -89,8 +89,7 @@ public class SecurityQuestionsController {
         final String answer2 = securityQuestionsForm.getAnswer2();
 
         // Call the updated updateUser method to update security questions
-        boolean questionsUpdated = userService.updateUserSecurityQuestions(
-                currentUser, question1, answer1, question2, answer2);
+        boolean questionsUpdated = userService.updateUserSecurityQuestions(currentUser, question1, answer1, question2, answer2);
 
         // If the update is successful, set the username in the model
         if (questionsUpdated) {
