@@ -72,7 +72,7 @@ public class SecurityConfig {
         http.formLogin(formLogin ->
                 formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/search")
+                        .defaultSuccessUrl("/search",true)
                         .failureUrl("/login?error")
                         .permitAll()
         );
