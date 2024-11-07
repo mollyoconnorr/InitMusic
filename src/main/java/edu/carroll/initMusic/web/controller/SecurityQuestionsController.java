@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpSession;
+
 
 
 /**
@@ -66,35 +68,40 @@ public class SecurityQuestionsController {
      * @return the name of the view or a redirect URL based on the result of the form submission.
      */
     @PostMapping("/securityQuestions")
-    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, Authentication authentication, Model model) {
+    public String submitSecurityQuestions(@ModelAttribute SecurityQuestionsForm securityQuestionsForm, Model model, HttpSession session) {
 
-        if (authentication.getPrincipal() != null) {
-            //Retrieve the current user
-            final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            final User currentUser = userDetails.getUser();
-            log.info("submitSecurityQuestions: Security questions submitted for user: {}", currentUser.getUsername());
-            // Call the updated updateUser method, passing the user and the form
-            final String question1 = securityQuestionsForm.getQuestion1();
-            final String question2 = securityQuestionsForm.getQuestion2();
-            final String answer1 = securityQuestionsForm.getAnswer1();
-            final String answer2 = securityQuestionsForm.getAnswer2();
-            final boolean questionsUpdated = userService.updateUserSecurityQuestions(currentUser,question1,answer1,question2,answer2);
-            // Redirect to the user registered confirmation page
-            if(questionsUpdated){
-                model.addAttribute("username", currentUser.getUsername());
-            }else{
-                model.addAttribute("errorMessage","One of the security question fields is blank");
-            }
-            return "userRegistered";  // Redirect to the user registered confirmation page
-        } else {
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        // If the user is not available in the session, log a warning and return an error message
+        if (currentUser == null) {
             log.warn("submitSecurityQuestions: No user found in current httpSession");
-            // Add an error message to the model
             model.addAttribute("errorMessage", "No user found in current httpSession");
+            return "securityQuestions";  // Return to the security questions view with error
         }
 
-        // Add security questions to the model to display them again
-        model.addAttribute("securityQuestionsForm", securityQuestionsForm); // Preserve the submitted answers
-        return "securityQuestions"; // Return to the security questions view with the error message
+        // Log the submitted security questions
+        log.info("submitSecurityQuestions: Security questions submitted for user: {}", currentUser.getUsername());
+
+        // Retrieve the submitted answers
+        final String question1 = securityQuestionsForm.getQuestion1();
+        final String question2 = securityQuestionsForm.getQuestion2();
+        final String answer1 = securityQuestionsForm.getAnswer1();
+        final String answer2 = securityQuestionsForm.getAnswer2();
+
+        // Call the updated updateUser method to update security questions
+        boolean questionsUpdated = userService.updateUserSecurityQuestions(
+                currentUser, question1, answer1, question2, answer2);
+
+        // If the update is successful, set the username in the model
+        if (questionsUpdated) {
+            model.addAttribute("username", currentUser.getUsername());
+        } else {
+            model.addAttribute("errorMessage", "One of the security question fields is blank");
+        }
+
+        // If questions are updated, redirect to the userRegistered page
+        return "userRegistered";  // Redirect to confirmation page if successful
+
     }
 }
 

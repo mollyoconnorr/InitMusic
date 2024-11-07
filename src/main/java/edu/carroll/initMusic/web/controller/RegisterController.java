@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling user registration.
@@ -65,7 +66,7 @@ public class RegisterController {
      * @return the name of the view or a redirect URL based on the registration result.
      */
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationForm registrationForm, Model model) {
+    public String registerUser(@ModelAttribute RegistrationForm registrationForm, Model model, HttpSession session) {
         final String username = registrationForm.getUsername();
         final String email = registrationForm.getEmail();
 
@@ -92,7 +93,7 @@ public class RegisterController {
             // Set an error message
             if(usernameUnique.equals(MethodOutcome.USER_ALREADY_EXISTS)){
                 model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
-            }else{
+            } else{
                 model.addAttribute("errorMessage", usernameUnique.getMessage());
             }
             // Return to the registration form with the error message
@@ -108,7 +109,7 @@ public class RegisterController {
 
         // Save the user
         final User currentUser = userService.saveUser(username,password,email,firstName,lastName);
-
+        session.setAttribute("currentUser", currentUser);
         return "redirect:/securityQuestions"; // Redirect to security questions page
     }
 }
