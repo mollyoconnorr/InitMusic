@@ -100,7 +100,7 @@
 
   <!-- Display message if no results found -->
   <div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
-    <p>"<span th:text="'No results found for '+${query}"></span>".</p>
+    <p id="noResultsFoundP"><span th:text="${'No results found for &quot;' + query + '&quot;'}"></span>.</p>
   </div>
       <!-- Modal for adding song to playlist -->
       <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">

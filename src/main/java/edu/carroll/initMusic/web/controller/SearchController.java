@@ -8,6 +8,7 @@ import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.NewSongForm;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,13 +62,13 @@ public class SearchController {
     }
 
     /**
-     * This shows the search page and adds several important attributes to the model for the oage
+     * This shows the search page and adds several important attributes to the model for the page
      * @param model Model to use
      * @param authentication Current authenticated user token, if any
      * @return Search page
      */
     @GetMapping("/search")
-    public String showSearchPage(Model model, Authentication authentication) {
+    public String showSearchPage(Model model, Authentication authentication,HttpSession session) {
         //Retrieve the current user from the session
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userDetails.getUser();
@@ -81,9 +82,26 @@ public class SearchController {
         model.addAttribute("currentUser", fullUser);
         model.addAttribute("playlists", fullUser.getPlaylists());
 
-        //Initialize results and query
-        model.addAttribute("results", new HashSet<>()); // Initialize results as empty
-        model.addAttribute("query", null); // Initialize query as empty
+        /*
+          Result is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a empty hashset
+         */
+        if(session.getAttribute("results") instanceof Set<?> && session.getAttribute("results") != null) {
+            model.addAttribute("results", session.getAttribute("results"));
+        }else{
+            model.addAttribute("results", new HashSet<>());
+        }
+
+        /*
+          query is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a new song form
+         */
+        if(session.getAttribute("query") != null) {
+            model.addAttribute("query", session.getAttribute("query"));
+        }else{
+            model.addAttribute("query", null);
+        }
+
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
@@ -100,7 +118,7 @@ public class SearchController {
      */
     @PostMapping("/search")
     @Transactional
-    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication) {
+    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication, HttpSession session) {
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
@@ -113,13 +131,15 @@ public class SearchController {
             return "search"; // Return to the search page with error message
         }
 
-        final Set<Song> results = songService.searchForSongs(query);
+        Set<Song> results = songService.searchForSongs(query);
 
         if(results.isEmpty()) {
             model.addAttribute("error", "No songs found.");
             return "search";
         }
 
+        session.setAttribute("results", results);
+        session.setAttribute("query", query);
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         model.addAttribute("currentUser", user);
@@ -135,8 +155,9 @@ public class SearchController {
      * pass a Song object through the form, we need to pass
      * all the params needed for a song and create a new object.
      */
+    @SuppressWarnings("unchecked")
     @PostMapping("/addSongToPlaylist")
-    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
+    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs, HttpSession session) {
         if (result.hasErrors()) {
             log.warn("addSongToPlaylist: Adding song errors: {}", result.getAllErrors());
             attrs.addFlashAttribute("error", result.getAllErrors().getFirst().getDefaultMessage());
@@ -150,6 +171,14 @@ public class SearchController {
         for (Long playlistId : selectedPlaylists) {
             log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
             playlistService.addSongToPlaylist(playlistId, song);
+        }
+
+        if(session.getAttribute("results") instanceof Set<?>){
+            //Add results and query to flash attributes so they can be redisplayed again
+            final Set<Song> results = (Set<Song>) session.getAttribute("results");
+            final String query = (String) session.getAttribute("query");
+            attrs.addFlashAttribute("results", results);
+            attrs.addFlashAttribute("query", query);
         }
 
         return "redirect:/search";

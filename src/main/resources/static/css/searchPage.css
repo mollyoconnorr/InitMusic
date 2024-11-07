@@ -281,3 +281,8 @@ button.btn-primary:hover {
 #createPlaylistLbl{
     max-width: 60px;
 }
+
+#noResultsFoundP{
+    text-align: center;
+    color: red;
+}
