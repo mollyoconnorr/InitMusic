@@ -66,7 +66,11 @@ public class SecurityConfig {
                         "/register",
                         "/js/**",
                         "/css/**",
+                        "/changePasswordEmail",
+                        "/securityQuestions",
+                        "/securityQuestionsUpdated",
                         "/images/**").permitAll()
+                .requestMatchers("/submitSecurityQuestions").authenticated()
                 .anyRequest().authenticated());
         //Set login page to our own
         http.formLogin(formLogin ->
