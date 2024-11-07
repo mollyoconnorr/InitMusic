@@ -102,63 +102,67 @@
   <div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
     <p id="noResultsFoundP"><span th:text="${'No results found for &quot;' + query + '&quot;'}"></span>.</p>
   </div>
-      <!-- Modal for adding song to playlist -->
-      <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body addPlaylistModelBody">
-              <form id="createPlaylistForm" th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
-                <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
-                <input type="text" id="playlistName" placeholder="New playlist name" th:field="*{playlistName}">
-                <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save</button>
-              </form>
 
-              <p>Select the playlists you want to add to:</p>
+  <!-- Modal for adding song to playlist -->
+  <div class="modal fade" id="addToPlaylistModal" tabindex="-1" aria-labelledby="addToPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body addPlaylistModelBody">
+          <form id="createPlaylistForm" th:action="@{/createPlaylist}" method="post" th:object="${NewPlaylistForm}">
+            <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
+            <input type="text" id="playlistName" placeholder="New playlist name" th:field="*{playlistName}">
+            <button type="submit" form="createPlaylistForm" class="btn btn-secondary createPlaylistBtn">Save</button>
+          </form>
 
-              <div th:if="${results != null and #lists.size(results) > 0}">
-                <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" id="addSongToPlaylistForm">
-                  <input type="hidden" id="songID" th:field="*{songID}" />
-                  <input type="hidden" id="songName" th:field="*{songName}" />
-                  <input type="hidden" id="artistName" th:field="*{artistName}" />
-                  <input type="hidden" id="artistID" th:field="*{artistID}" />
-                  <input type="hidden" id="albumName" th:field="*{albumName}" />
-                  <input type="hidden" id="songImg" th:field="*{songImg}" />
-                  <input type="hidden" id="songPreview" th:field="*{songPreview}" />
-                  <input type="hidden" id="albumID" th:field="*{albumID}" />
-                  <input type="hidden" id="songLength" th:field="*{songLength}" />
+          <p>Select the playlists you want to add to:</p>
 
-                  <ul class="list-group">
-                    <th:block th:each="playlist : ${currentUser.getPlaylists()}">
-                      <li class="list-group-item">
-                        <input class="form-check-input me-1"
-                               type="checkbox"
-                               th:value="${playlist.getPlaylistID()}"
-                               th:id="'checkbox-' + ${playlist.getPlaylistID()}"
-                               th:field="*{selectedPlaylists}"
-                               name="selectedPlaylists" />
-                        <label class="form-check-label stretched-link"
-                               th:for="'checkbox-' + ${playlist.getPlaylistID()}"
-                               th:text="${playlist.getPlaylistName()}"></label>
-                      </li>
-                    </th:block>
-                  </ul>
-                </form>
-              </div>
-            </div>
-              <div class="modal-footer" id="CreatePlaylistModalFooter">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="addSongToPlaylistForm" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
-              </div>
+          <div th:if="${results != null and #lists.size(results) > 0}">
+            <form th:action="@{/addSongToPlaylist}" th:object="${newSongForm}" method="post" id="addSongToPlaylistForm">
+              <input type="hidden" id="songID" th:field="*{songID}" />
+              <input type="hidden" id="songName" th:field="*{songName}" />
+              <input type="hidden" id="artistName" th:field="*{artistName}" />
+              <input type="hidden" id="artistID" th:field="*{artistID}" />
+              <input type="hidden" id="albumName" th:field="*{albumName}" />
+              <input type="hidden" id="songImg" th:field="*{songImg}" />
+              <input type="hidden" id="songPreview" th:field="*{songPreview}" />
+              <input type="hidden" id="albumID" th:field="*{albumID}" />
+              <input type="hidden" id="songLength" th:field="*{songLength}" />
+
+              <ul class="list-group">
+                <th:block th:each="playlist : ${currentUser.getPlaylists()}">
+                  <li class="list-group-item">
+                    <input class="form-check-input me-1"
+                           type="checkbox"
+                           th:value="${playlist.getPlaylistID()}"
+                           th:id="'checkbox-' + ${playlist.getPlaylistID()}"
+                           th:field="*{selectedPlaylists}"
+                           name="selectedPlaylists" />
+                    <label class="form-check-label stretched-link"
+                           th:for="'checkbox-' + ${playlist.getPlaylistID()}"
+                           th:text="${playlist.getPlaylistName()}"></label>
+                  </li>
+                </th:block>
+              </ul>
+            </form>
           </div>
         </div>
+          <div class="modal-footer" id="CreatePlaylistModalFooter">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" form="addSongToPlaylistForm" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+          </div>
       </div>
+    </div>
+  </div>
 
-    <script src="/js/searchPage.js"></script>
-    <script src="/js/logoutFunc.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="/js/searchPage.js"></script>
+  <script src="/js/logoutFunc.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- jQuery and AJAX Script -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </body>
 </html>

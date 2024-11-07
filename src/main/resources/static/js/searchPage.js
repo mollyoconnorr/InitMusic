@@ -5,28 +5,48 @@
  * @param button Button of song that was pressed.
  */
 function populateModal(button) {
-    const songId = button.getAttribute('data-song-id');
-    const songName = button.getAttribute('data-song-name');
-    const songLength = button.getAttribute('data-song-length');
-    const artistName = button.getAttribute('data-artist-name');
-    const artistId = button.getAttribute('data-artist-id');
-    const albumName = button.getAttribute('data-album-name');
-    const albumId = button.getAttribute('data-album-id');
-    const songImg = button.getAttribute('data-song-img');
-    const songPreview = button.getAttribute('data-song-pre');
+    saveButtonData(button);
 
+    popModalWithButtonData();
+}
 
-    //Get the hidden input fields in the modal
-    document.getElementById('songID').value = songId;
-    document.getElementById('songName').value = songName;
-    document.getElementById('songLength').value = songLength;
-    document.getElementById('artistName').value = artistName;
-    document.getElementById('artistID').value = artistId;
-    document.getElementById('albumName').value = albumName;
-    document.getElementById('albumID').value = albumId;
-    document.getElementById('songImg').value = songImg;
-    document.getElementById('songPreview').value = songPreview;
+//Take the data from the given button and saves in session storage
+function saveButtonData(button) {
+    const buttonData = {
+        songId: button.getAttribute('data-song-id'),
+        songName: button.getAttribute('data-song-name'),
+        songLength: button.getAttribute('data-song-length'),
+        artistName: button.getAttribute('data-artist-name'),
+        artistId: button.getAttribute('data-artist-id'),
+        albumName: button.getAttribute('data-album-name'),
+        albumId: button.getAttribute('data-album-id'),
+        songImg: button.getAttribute('data-song-img'),
+        songPreview: button.getAttribute('data-song-pre')
+    };
 
+    //Convert the object to a JSON string and store it
+    sessionStorage.setItem('clickedButtonData', JSON.stringify(buttonData));
+}
+
+//Populate the ids gotten with the data from SessionStorage
+function popModalWithButtonData() {
+    //Parse data
+    const buttonData = JSON.parse(sessionStorage.getItem('clickedButtonData'));
+
+    if (buttonData) {
+        console.log(buttonData.songId);
+        document.getElementById('songID').value = buttonData.songId;
+        document.getElementById('songName').value = buttonData.songName;
+        document.getElementById('songLength').value = buttonData.songLength;
+        document.getElementById('artistName').value = buttonData.artistName;
+        document.getElementById('artistID').value = buttonData.artistId;
+        document.getElementById('albumName').value = buttonData.albumName;
+        document.getElementById('albumID').value = buttonData.albumId;
+        document.getElementById('songImg').value = buttonData.songImg;
+        document.getElementById('songPreview').value = buttonData.songPreview;
+    } else {
+        console.log("No button data found in sessionStorage.");
+    }
 }
 
 
@@ -72,5 +92,22 @@ document.addEventListener('click', function(event) {
 
     if (!popupWindow.closed && !isPreviewLink) {
         closePopup(); // Close the pop-up if it's open and the click is outside of the links
+    }
+});
+
+//When createPlaylistForm is submitted, and set showModal to true in sessionStorage so modal will show back up
+document.getElementById('createPlaylistForm').addEventListener('submit', function(event) {
+    sessionStorage.setItem('showModal', 'true');
+});
+
+//Check if the flag is set in sessionStorage on page load, if so, load and populate modal
+window.addEventListener('load', function() {
+    if (sessionStorage.getItem('showModal') === 'true') {
+        const myModal = new bootstrap.Modal(document.getElementById('addToPlaylistModal')); // Initialize modal
+        popModalWithButtonData();
+        myModal.show();
+
+        // lear the flag after showing the modal
+        sessionStorage.removeItem('showModal');
     }
 });
