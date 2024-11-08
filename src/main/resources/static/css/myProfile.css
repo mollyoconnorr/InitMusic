@@ -1,0 +1,142 @@
+/* Style for the profile page */
+body {
+    background-image: url('/images/homeScreenImage.jpg'); /* Add a background image for the profile page */
+    background-size: cover; /* Ensures the image covers the whole page */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents image from repeating */
+    background-attachment: fixed; /* Fixes the image relative to the viewport */
+    font-family: 'Lato', sans-serif;
+    color: #343a40;
+    padding-top: 30px;
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+    height: 100vh; /* Make the body take up the full height of the viewport */
+    margin: 0; /* Remove any default margins */
+    flex-direction: column; /* Stack the elements vertically */
+}
+
+.profile-info,
+.list-group {
+    width: 100%; /* Ensure they both take full width of their container */
+    max-width: 900px; /* Optional: set a maximum width if needed */
+    min-width: 800px; /* Optional: set a minimum width if needed */
+    box-sizing: border-box;
+}
+
+/* Center the profile info and add a nice box around it */
+.profile-info {
+    background-color: rgba(255, 255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.profile-info p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+/* Additional adjustments to the container for the entire profile */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally center all items */
+    justify-content: flex-start; /* Align items to the top */
+    width: 100%; /* Make container take up full width */
+    text-align: center; /* Make sure text inside the container is centered */
+}
+
+/* Style the profile header */
+h1 {
+    text-align: center; /* Center align the text */
+    font-size: 2rem; /* Increase font size for emphasis */
+    color: ghostwhite; /* Dark gray text color */
+    margin-top: 30px; /* Add space from the top of the page (adjust as needed) */
+    font-weight: bold; /* Make the text bold */
+    text-transform: uppercase; /* Convert text to uppercase for added emphasis */
+    letter-spacing: 2px; /* Add spacing between letters for a more modern look */
+    text-shadow: 6px 6px 10px rgba(0, 0, 0, 0.9); /* Soft shadow for depth */
+}
+
+/* Style the list group containing actions */
+.list-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally center all items */
+    justify-content: flex-start; /* Align items to the top */
+    width: 100%; /* Make container take up full width */
+    text-align: center;
+}
+
+.list-group-item {
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background-color: #fff8dc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    padding: 20px;
+    text-align: center;
+}
+
+.list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background-color: #ffe5b4; /* Lighter shade on hover */
+}
+
+/* Style for the container that holds the buttons */
+.button-container {
+    display: flex;
+    justify-content: center; /* Horizontally center the buttons */
+    gap: 20px; /* Add some space between the buttons */
+    margin-bottom: 20px;
+    margin-top: 0;
+    width: 100%; /* Make it take up the full width */
+    align-items: center; /* Center vertically if needed */
+}
+
+/* Additional styling for the buttons if needed */
+button.btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+button.btn-warning {
+    background-color: #F4A460;
+    border-color: #F4A460;
+    color: white;
+}
+
+button.btn-warning:hover {
+    background-color: #C19A6B;
+}
+
+button.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+button.btn-danger:hover {
+    background-color: darkred;
+}
+
+/* Error and success messages */
+.errorMsg {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.successMsg {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
