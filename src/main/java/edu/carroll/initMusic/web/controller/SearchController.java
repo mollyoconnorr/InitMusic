@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.web.controller;
 
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
@@ -8,6 +9,7 @@ import edu.carroll.initMusic.service.SongService;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPlaylistForm;
 import edu.carroll.initMusic.web.form.NewSongForm;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,13 +64,13 @@ public class SearchController {
     }
 
     /**
-     * This shows the search page and adds several important attributes to the model for the oage
+     * This shows the search page and adds several important attributes to the model for the page
      * @param model Model to use
      * @param authentication Current authenticated user token, if any
      * @return Search page
      */
     @GetMapping("/search")
-    public String showSearchPage(Model model, Authentication authentication) {
+    public String showSearchPage(Model model, Authentication authentication,HttpSession session) {
         //Retrieve the current user from the session
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userDetails.getUser();
@@ -81,9 +84,32 @@ public class SearchController {
         model.addAttribute("currentUser", fullUser);
         model.addAttribute("playlists", fullUser.getPlaylists());
 
-        //Initialize results and query
-        model.addAttribute("results", new HashSet<>()); // Initialize results as empty
-        model.addAttribute("query", null); // Initialize query as empty
+        /*
+          Result is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a empty hashset
+         */
+        if(session.getAttribute("results") instanceof Set<?> && session.getAttribute("results") != null) {
+            model.addAttribute("results", session.getAttribute("results"));
+        }else{
+            model.addAttribute("results", new HashSet<>());
+        }
+
+        /*
+          query is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a new song form
+         */
+        if(session.getAttribute("query") != null) {
+            model.addAttribute("query", session.getAttribute("query"));
+        }else{
+            model.addAttribute("query", null);
+        }
+
+        if(session.getAttribute("localQuery") != null) {
+            model.addAttribute("localQuery", session.getAttribute("localQuery"));
+        }else{
+            model.addAttribute("localQuery", false);
+        }
+
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
@@ -100,7 +126,7 @@ public class SearchController {
      */
     @PostMapping("/search")
     @Transactional
-    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication) {
+    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication, HttpSession session) {
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
@@ -109,17 +135,29 @@ public class SearchController {
 
         //If query doesnt have any text
         if (query.trim().isEmpty() || query.length() < 3) {
-            model.addAttribute("error", "Search term must be at least 3 characters long.");
+            model.addAttribute("searchError", "Search term must be at least 3 characters long.");
             return "search"; // Return to the search page with error message
         }
 
-        final Set<Song> results = songService.searchForSongs(query);
+        Set<Song> results = songService.getLocalCache(query);
 
+        //If no cache found, then do global search
+        if(results == null){
+            results = songService.searchForSongs(query);
+        }else{
+            //Local cache found, set these to true so message displays on search page that search was local
+            model.addAttribute("localQuery", true);
+            session.setAttribute("localQuery",true);
+        }
+
+        //If no songs found
         if(results.isEmpty()) {
-            model.addAttribute("error", "No songs found.");
+            model.addAttribute("searchError", String.format("No songs found for query '%s'", query));
             return "search";
         }
 
+        session.setAttribute("results", results);
+        session.setAttribute("query", query);
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         model.addAttribute("currentUser", user);
@@ -127,7 +165,51 @@ public class SearchController {
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
-        return "search"; // Return the search template
+        return "search";
+    }
+
+    /**
+     * Searches with the 'searchForSongs' method in SongService, which should search using an
+     * api and return a set of songs found related to query
+     * @param query String to search for
+     * @param model Model to use
+     * @param authentication Current authenticated user token, if any
+     * @return Updated search page
+     *
+     * @see SongService#searchForSongs(String)
+     */
+    @PostMapping("/searchWithAPI")
+    public String searchWithAPI(@RequestParam(value = "query") String query, Model model, Authentication authentication, HttpSession session){
+        //Reload user details
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
+
+        //Search for songs
+        final Set<Song> results = songService.searchForSongs(query);
+
+        //If no songs found
+        if(results.isEmpty()) {
+            model.addAttribute("searchError", String.format("No songs found for query '%s'", query));
+            return "search";
+        }
+
+        //Add query, results to session
+        session.setAttribute("results", results);
+        session.setAttribute("query", query);
+
+        //Set local query to false bc this was not local search
+        session.setAttribute("localQuery",false);
+        model.addAttribute("localQuery",false);
+
+        //Reload model attributes
+        model.addAttribute("results", results);
+        model.addAttribute("query", query);
+        model.addAttribute("currentUser", user);
+        model.addAttribute("playlists",user.getPlaylists());
+        model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+
+        return "search";
     }
 
     /**
@@ -135,21 +217,46 @@ public class SearchController {
      * pass a Song object through the form, we need to pass
      * all the params needed for a song and create a new object.
      */
+    @SuppressWarnings("unchecked")
     @PostMapping("/addSongToPlaylist")
-    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs) {
+    public String addSongToPlaylist(@Valid @ModelAttribute NewSongForm newSongForm, BindingResult result, RedirectAttributes attrs, HttpSession session) {
         if (result.hasErrors()) {
             log.warn("addSongToPlaylist: Adding song errors: {}", result.getAllErrors());
-            attrs.addFlashAttribute("error", result.getAllErrors().getFirst().getDefaultMessage());
+            attrs.addFlashAttribute("searchError", result.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/search";
         }
         final List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
 
         final Song song = getSong(newSongForm);
 
+        final List<String> errorMessages = new ArrayList<>();
+        final List<String> successMessages = new ArrayList<>();
+
         // Handle the logic for adding the song to the selected playlists
         for (Long playlistId : selectedPlaylists) {
             log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
-            playlistService.addSongToPlaylist(playlistId, song);
+            final MethodOutcome outcome = playlistService.addSongToPlaylist(playlistId, song);
+            if(outcome.failed()){
+                errorMessages.add(String.format("Error adding %s to playlist: %s", song.getSongName(),outcome.getMessage()));
+            }else{
+                successMessages.add(String.format("Added %s to playlist %s", song.getSongName(), playlistId));
+            }
+        }
+
+        if(!errorMessages.isEmpty()){
+            attrs.addFlashAttribute("addingErrors", errorMessages);
+        }
+
+        if(!successMessages.isEmpty()){
+            attrs.addFlashAttribute("addingSuccesses", successMessages);
+        }
+
+        if(session.getAttribute("results") instanceof Set<?>){
+            //Add results and query to flash attributes so they can be redisplayed again
+            final Set<Song> results = (Set<Song>) session.getAttribute("results");
+            final String query = (String) session.getAttribute("query");
+            attrs.addFlashAttribute("results", results);
+            attrs.addFlashAttribute("query", query);
         }
 
         return "redirect:/search";

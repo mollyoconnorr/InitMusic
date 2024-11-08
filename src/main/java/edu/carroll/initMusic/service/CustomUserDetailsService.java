@@ -42,10 +42,14 @@ public class CustomUserDetailsService implements UserDetailsService {
      * Loads user using given username
      * @param username Username to search by
      * @return UserDetails object with user information
-     * @throws UsernameNotFoundException Thrown is username is not found
+     * @throws UsernameNotFoundException Thrown if username is not found
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if(username == null || username.isEmpty()){
+            throw new UsernameNotFoundException("Username cannot be empty");
+        }
+        username = username.strip();
         final List<User> user = userRepository.findByUsernameIgnoreCase(username);
         if(user.size() != 1) {
             log.info("loadUserByUsername: username={} not found", username);

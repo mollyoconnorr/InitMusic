@@ -1,12 +1,16 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
+import edu.carroll.initMusic.jpa.repo.QueryCacheRepository;
+import edu.carroll.initMusic.jpa.repo.SongRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,6 +20,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,11 +40,18 @@ public class SongServiceDeezerImpl implements SongService{
     /** httpClient used */
     private HttpClient httpClient = HttpClient.newHttpClient();
 
+    /** QueryCache repository */
+    private final QueryCacheRepository queryCacheRepository;
+
+    /** Song repository */
+    private final SongRepository songRepository;
+
     /**
      * Constructor
      */
-    public SongServiceDeezerImpl() {
-
+    public SongServiceDeezerImpl(QueryCacheRepository queryCacheRepository, SongRepository songRepository) {
+        this.queryCacheRepository = queryCacheRepository;
+        this.songRepository = songRepository;
     }
 
     /**
@@ -60,10 +72,11 @@ public class SongServiceDeezerImpl implements SongService{
      * @param query Query to search for
      * @return Set of songs related to query
      */
+    @Transactional
     public Set<Song> searchForSongs(String query) {
 
-        //Make sure there is test in query
-        if (query.trim().isEmpty() || query.length() < 3) {
+        //Make sure there is text in query
+        if (query == null || query.trim().isEmpty() || query.length() < 3) {
             return new HashSet<>();
         }
 
@@ -124,7 +137,98 @@ public class SongServiceDeezerImpl implements SongService{
             log.error("searchForSongs: JSON parsing error occurred with query {}", query, e);
         }
 
+        createCache(query,songsFound);
+
         log.info("searchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
         return songsFound;
+    }
+
+    /**
+     * Gets the local cache with the given query, if there is one
+     * @param query Query to search for
+     * @return Set of songs related to given query, null if cache wasn't found
+     *
+     * @see QueryCache
+     */
+    @Override
+    public Set<Song> getLocalCache(String query) {
+        if(query == null || query.isEmpty()){
+            return null;
+        }
+        query = query.strip().toLowerCase();
+        final List<QueryCache> queryCacheList = queryCacheRepository.findQueryCacheByQueryIgnoreCase(query);
+        if (queryCacheList != null && !queryCacheList.isEmpty()) {
+            log.info("getLocalCache: Found query cache for {} with {} songs found", query, queryCacheList.getFirst().getResults().size());
+            return queryCacheList.getFirst().getResults();
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates a new QueryCache with the given query and songs
+     * @param query Query String
+     * @param songs Songs found related to query
+     *
+     * @see QueryCache
+     */
+    public boolean createCache(String query, Set<Song> songs){
+        if(query == null || query.isEmpty() || songs == null){
+            return false;
+        }
+        if(queryCacheRepository == null){
+            return false;
+        }
+        final QueryCache newCache;
+
+        //Check if there is already a cache with the given query, if so, rewrite its data
+        final List<QueryCache> queryCacheList = queryCacheRepository.findQueryCacheByQueryIgnoreCase(query);
+        if (queryCacheList.size() == 1) {
+            //cache found
+            log.info("createCache: Editing found query cache for {} with {} songs found", query, queryCacheList.getFirst().getResults().size());
+            newCache = queryCacheList.getFirst();
+        }else{
+            //No cache found
+            log.info("createCache: Creating new cache object for query {}", query);
+            newCache = new QueryCache();
+        }
+
+        query = query.strip().toLowerCase();
+        newCache.setQuery(query);
+
+        // Separate new and existing songs
+        final Set<Song> newSongs = new HashSet<>();
+        final Set<Song> allSongsForCache = new HashSet<>();
+
+        //Go through each song and check if its in repository yet
+        for (Song song : songs) {
+            final List<Song> songFound = songRepository.findBySongID(song.getSongID());
+
+            if (songFound.isEmpty()) {  //Song is new
+                newSongs.add(song);
+                song.addQueryCache(newCache);  //Link new song to new cache
+            } else {  //Song exists in DB
+                final Song existingSong = songFound.getFirst();
+                existingSong.addQueryCache(newCache);  //Link existing song to new cache
+                allSongsForCache.add(existingSong);  //Add existing song to final set for cache
+            }
+        }
+
+        //Save the new cache, have to do this here as well
+        //as below so each song doesn't try to save a new queryCache with the same data
+        queryCacheRepository.save(newCache);
+
+        //Persist only new songs
+        if (!newSongs.isEmpty()) {
+            songRepository.saveAll(newSongs);
+        }
+
+        //Add both new and old songs to the cache results
+        allSongsForCache.addAll(newSongs);  //Combine new and existing songs for cache
+        newCache.setResults(allSongsForCache);
+        queryCacheRepository.save(newCache);
+
+        log.info("Saved new cache with associated songs {}", newCache);
+        return true;
     }
 }

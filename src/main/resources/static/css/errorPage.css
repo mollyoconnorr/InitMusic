@@ -1,0 +1,15 @@
+h1{
+    font-weight: bold;
+    color: black;
+}
+
+p{
+    font-weight: bold;
+}
+
+.errorContainer{
+    text-align: center;
+    font-size: 1.5rem;
+    color: black;
+}
+

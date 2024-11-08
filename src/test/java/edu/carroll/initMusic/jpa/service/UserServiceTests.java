@@ -15,35 +15,6 @@ public class UserServiceTests {
     @Autowired
     private UserServiceImpl userService;
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
-
-    /*
-     * Basic tests
-     */
-
-    @Test
-    public void checkUniqueUsernameUniqueUsername() {
-        assertSame(userService.uniqueUserName("newUser"), MethodOutcome.SUCCESS, "Username should be available");
-    }
-
-    @Test
-    public void checkUniqueUsernameNotUniqueUsername() {
-        userService.saveUser("testuser12","password","email12@email.com","John","Doe");
-
-        assertNotSame(userService.uniqueUserName("testuser12"), MethodOutcome.SUCCESS, "Username should already exist");
-    }
-
-    @Test
-    public void checkUniqueUsernameEmptyUsername() {
-        assertNotEquals(userService.uniqueUserName(""), MethodOutcome.SUCCESS, "Blank username Username should not be available");
-    }
-
-    @Test
-    public void checkUniqueUsernameNullUsername(){
-        assertNotEquals(userService.uniqueUserName(null), MethodOutcome.SUCCESS, "Null username should not be available");
-    }
-
     /*
      * First testing invalid usernames
      */
@@ -128,6 +99,16 @@ public class UserServiceTests {
         assertNotEquals(userService.uniqueUserName("  "), MethodOutcome.SUCCESS, "Username should not be available because its too short (Its just '    ')");
     }
 
+    @Test
+    public void checkUniqueUsernameEmptyUsername() {
+        assertNotEquals(userService.uniqueUserName(""), MethodOutcome.SUCCESS, "Blank username Username should not be available");
+    }
+
+    @Test
+    public void checkUniqueUsernameNullUsername(){
+        assertNotEquals(userService.uniqueUserName(null), MethodOutcome.SUCCESS, "Null username should not be available");
+    }
+
     /*
      * Testing invalid usernames with various edge cases
      */
@@ -172,6 +153,18 @@ public class UserServiceTests {
     /*
      * Second, testing valid usernames which are all unique
      */
+
+    @Test
+    public void checkUniqueUsernameWithUniqueUsername() {
+        assertSame(userService.uniqueUserName("newUser"), MethodOutcome.SUCCESS, "Username should be available");
+    }
+
+    @Test
+    public void checkUniqueUsernameWithNotUniqueUsername() {
+        userService.saveUser("testuser12","password","email12@email.com","John","Doe");
+
+        assertNotSame(userService.uniqueUserName("testuser12"), MethodOutcome.SUCCESS, "Username should already exist");
+    }
 
     @Test
     public void checkUniqueUsernameValidName5to49Characters(){
@@ -272,13 +265,13 @@ public class UserServiceTests {
     @Test
     public void checkUniqueUsernameNotUniqueVeryLong() {
         final String username = "veryLongDuplicateUsername1234567890!@#$";
-        userServiceImpl.saveUser(username,"password","JDoe1@email.com","John","Doe");
+        userService.saveUser(username,"password","JDoe1@email.com","John","Doe");
         assertSame(userService.uniqueUserName(username), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (very long)");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueWithNumbersAtEnd() {
-        userServiceImpl.saveUser("user456","password","JDoe2@email.com","John","Doe");
+        userService.saveUser("user456","password","JDoe2@email.com","John","Doe");
 
         assertSame(userService.uniqueUserName("user456"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
     }
@@ -424,8 +417,9 @@ public class UserServiceTests {
     @Test
     public void saveValidUser() {
         final String password = "password123";
+        final String username = "testUser1";
 
-        final User savedUser = userService.saveUser("testUser1", "password123","test1@example.com", "John", "Doe");
+        final User savedUser = userService.saveUser(username, "password123","test1@example.com", "John", "Doe");
 
         assertEquals("testUser1", savedUser.getUsername(),"username should match given username");
         assertEquals("test1@example.com", savedUser.getEmail(),"email should match given email");
@@ -436,71 +430,91 @@ public class UserServiceTests {
         assertNull(savedUser.getAnswer1(), "On user creation, security question 1 answer should be null");
         assertNull(savedUser.getQuestion2(), "On user creation, security question 2 should be null");
         assertNull(savedUser.getAnswer2(), "On user creation, security question 2 answer should be null");
+
+        assertNotNull(userService.getUser(username), "User should exist in database after saveUser is called!");
     }
 
     // Saving a user with a blank username
     @Test
     public void saveUserWithBlankUsername() {
-        final User savedUser = userService.saveUser("", "password123", "test2@example.com","John", "Doe");
+        final String username = "";
+        final User savedUser = userService.saveUser(username, "password123", "test2@example.com","John", "Doe");
 
         assertNull(savedUser, "Expected null when username is blank");
+        assertNull(userService.getUser(username), "User should not exist in database after saveUser is called with a empty username!");
     }
 
     // Saving a user with a blank email
     @Test
     public void saveUserWithBlankEmail() {
+        final String username = "testUser2";
         final User savedUser = userService.saveUser("testUser2", "password123", "", "John", "Doe");
 
         assertNull(savedUser, "Expected null when email is blank");
+        assertNull(userService.getUser(username), "User should not exist in database after saveUser is called with a empty email!");
     }
 
     // Saving a user with a blank first name
     @Test
     public void saveUserWithBlankFirstName() {
-        final User savedUser = userService.saveUser("testUser3", "password123","test3@example.com", "", "Doe");
+        final String username = "testUser3";
+        final User savedUser = userService.saveUser(username, "password123","test3@example.com", "", "Doe");
 
         assertNull(savedUser, "Expected null when first name is blank");
+        assertNull(userService.getUser(username), "User should not exist in database after saveUser is called with a empty first name!");
     }
 
     // Saving a user with a blank last name
     @Test
     public void saveUserWithBlankLastName() {
-        final User savedUser = userService.saveUser("testUser4", "password123","test4@example.com", "John", "");
+        final String username = "testUser4";
+        final User savedUser = userService.saveUser(username, "password123","test4@example.com", "John", "");
 
         assertNull(savedUser, "Expected null when last name is blank");
+        assertNull(userService.getUser(username), "User should not exist in database after saveUser is called with a empty first name!");
     }
 
     // Saving a user with a blank password
     @Test
     public void saveUserWithBlankPassword() {
-        final User savedUser = userService.saveUser("testUser5", "","test5@example.com", "John", "Doe");
+        final String username = "testUser5";
+        final User savedUser = userService.saveUser(username, "","test5@example.com", "John", "Doe");
 
         assertNull(savedUser, "Expected null when password is blank");
+        assertNull(userService.getUser(username), "User should not exist in database after saveUser is called with a empty password!");
+
     }
 
     // Saving a user with valid special characters in username
     @Test
     public void saveUserWithValidSpecialCharacterUsername() {
-        final User savedUser = userService.saveUser("user.name", "password123","test6@example.com", "John", "Doe");
+        final String username = "user.name";
+        final User savedUser = userService.saveUser(username, "password123","test6@example.com", "John", "Doe");
 
         assertEquals("user.name", savedUser.getUsername(), "Users name should match regardless of special characters");
+        assertNotNull(userService.getUser(username), "User should  exist in database after saveUser is called with username with special characters!");
     }
 
-    // Saving a user with trailing spaces in username
+    // Saving a user with trailing and leading spaces in username
     @Test
-    public void saveUserWithTrailingSpacesInUsername() {
-        final User savedUser = userService.saveUser(" testUser6 ", "password123","test7@example.com", "John", "Doe");
+    public void saveUserWithTrailingLeadingSpacesInUsername() {
+        final String username = " testUser6 ";
 
-        assertEquals("testUser6", savedUser.getUsername(), "Usernames should match regardless if there are trailing spaces");
+        final User savedUser = userService.saveUser(username, "password123","test7@example.com", "John", "Doe");
+
+        assertEquals("testUser6", savedUser.getUsername(), "Usernames should match regardless if there are trailing/leading spaces");
+        assertNull(userService.getUser(username), "User should  exist in database after saveUser is called with username with trailing and leading spaces!");
     }
 
     // Saving a user with spaces in first name and last name
     @Test
     public void saveUserWithSpacesInNames() {
-        final User savedUser = userService.saveUser("testUser7", "password123","test8@example.com", "John ", "Doe ");
+        final String username = "testUser7";
+        final User savedUser = userService.saveUser(username, "password123","test8@example.com", "John ", "Doe ");
 
         assertEquals("John", savedUser.getFirstName(), "First names should match");
         assertEquals("Doe", savedUser.getLastName(), "Last names should match");
+        assertNotNull(userService.getUser(username), "User should exist in database after saveUser is called with spaces in first and last names!");
     }
 
     /*
@@ -515,6 +529,12 @@ public class UserServiceTests {
         final String answer2 = "Springfield";
 
         final User newUser = userService.saveUser("testUser13", "password123","test13@example.com", "John ", "Doe ");
+
+        assertNotEquals(question1, newUser.getQuestion1(), "Security question 1 should not match before being updated!");
+        assertNotEquals(answer1, newUser.getAnswer1(), "Security answer 1 should not match before being updated!");
+        assertNotEquals(question2, newUser.getQuestion2(), "Security question 2 should not match before being updated!");
+        assertNotEquals(answer2, newUser.getAnswer2(), "Security answer 2 should not match before being updated!");
+
         final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertTrue(result, "Security questions should be updated successfully");
@@ -535,6 +555,10 @@ public class UserServiceTests {
         final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question1");
+        assertNotEquals(question1, newUser.getQuestion1(), "Security question 1 should not match when a question is left blank!");
+        assertNotEquals(answer1, newUser.getAnswer1(), "Security answer 1 should not match when a question is left blank!");
+        assertNotEquals(question2, newUser.getQuestion2(), "Security question 2 should not when a question is left blank!");
+        assertNotEquals(answer2, newUser.getAnswer2(), "Security answer 2 should not match when a question is left blank!");
     }
 
     @Test
@@ -548,6 +572,10 @@ public class UserServiceTests {
         final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank answer1");
+        assertNotEquals(question1, newUser.getQuestion1(), "Security question 1 should not match when a answer is left blank!");
+        assertNotEquals(answer1, newUser.getAnswer1(), "Security answer 1 should not match when a answer is left blank!");
+        assertNotEquals(question2, newUser.getQuestion2(), "Security question 2 should not when a answer is left blank!");
+        assertNotEquals(answer2, newUser.getAnswer2(), "Security answer 2 should not match when a answer is left blank!");
     }
 
     @Test
@@ -561,6 +589,10 @@ public class UserServiceTests {
         final boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank question2");
+        assertNotEquals(question1, newUser.getQuestion1(), "Security question 1 should not match when question2 is left blank!");
+        assertNotEquals(answer1, newUser.getAnswer1(), "Security answer 1 should not match when a question2 is left blank!");
+        assertNotEquals(question2, newUser.getQuestion2(), "Security question 2 should not when a question2 is left blank!");
+        assertNotEquals(answer2, newUser.getAnswer2(), "Security answer 2 should not match when a question2 is left blank!");
     }
 
     @Test
@@ -574,6 +606,10 @@ public class UserServiceTests {
         boolean result = userService.updateUserSecurityQuestions(newUser, question1, answer1, question2, answer2);
         
         assertFalse(result, "Security questions update should fail due to blank answer2");
+        assertNotEquals(question1, newUser.getQuestion1(), "Security question 1 should not match when answer2 is left blank!");
+        assertNotEquals(answer1, newUser.getAnswer1(), "Security answer 1 should not match when a answer2 is left blank!");
+        assertNotEquals(question2, newUser.getQuestion2(), "Security question 2 should not when a answer2 is left blank!");
+        assertNotEquals(answer2, newUser.getAnswer2(), "Security answer 2 should not match when a answer2 is left blank!");
     }
 
     /*
@@ -625,7 +661,7 @@ public class UserServiceTests {
      */
 
     @Test
-    public void updatePasswordSuccessfully() {
+    public void updatePasswordValidNewPassword() {
         final User newUser = userService.saveUser("testUser17", "password123","test17@example.com", "John ", "Doe ");
 
         final String newPassword = "newPassword123";
@@ -671,7 +707,7 @@ public class UserServiceTests {
      */
 
     @Test
-    public void findByIdWithPlaylists_UserExists() {
+    public void findByIdWithPlaylistsUserExists() {
         final User newUser = userService.saveUser("duplicateUser23","password","email23@email.com","First","Last");
         final Long userID = newUser.getuserID();
         final User foundUser = userService.findByIdWithPlaylists(userID);
@@ -682,7 +718,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void findByIdWithPlaylists_UserDoesNotExist() {
+    public void findByIdWithPlaylistsUserDoesNotExist() {
         final Long userId = 123324334344L;
         final User foundUser = userService.findByIdWithPlaylists(userId);
 
@@ -690,7 +726,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void findByIdWithPlaylists_NegativeUserId() {
+    public void findByIdWithPlaylistsNegativeUserId() {
         final Long negativeUserId = -1L;
 
         final User foundUser = userService.findByIdWithPlaylists(negativeUserId);
@@ -703,7 +739,7 @@ public class UserServiceTests {
      */
 
     @Test
-    public void getUser_UserExists() {
+    public void getUserUserExists() {
         final String username = "duplicateUser24";
         final User newUser = userService.saveUser(username,"password","email24@email.com","First","Last");
 
@@ -714,7 +750,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void getUser_UserDoesNotExist() {
+    public void getUserUserDoesNotExist() {
         final User foundUser = userService.getUser("NathanWilliams");
 
         assertNull(foundUser, "User should not be found");

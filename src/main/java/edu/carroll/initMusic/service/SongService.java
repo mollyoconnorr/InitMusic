@@ -19,4 +19,11 @@ public interface SongService {
      * @return Set of songs related to query
      */
     Set<Song> searchForSongs(String query);
+
+    /**
+     * Gets the local cache of songs related to the given query, if any
+     * @param query Query to use to check for local cache
+     * @return Set of songs found, if any
+     */
+    Set<Song> getLocalCache(String query);
 }

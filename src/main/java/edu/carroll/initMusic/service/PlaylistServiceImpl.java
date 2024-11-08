@@ -219,14 +219,15 @@ public class PlaylistServiceImpl implements PlaylistService{
      *
      * @param playlistId ID of playlist to add song to
      * @param song       Song to add to playlist
+     * @return MethodOutcome, the outcome of the method
      */
-    public void addSongToPlaylist(Long playlistId, Song song) {
+    public MethodOutcome addSongToPlaylist(Long playlistId, Song song) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistId);
 
         //Check if exactly one playlist was found
         if (playlistsFound.size() != 1) {
             log.warn("addSongToPlaylist: Playlist id#{} not found when trying to add song#{}",playlistId,song.getSongID());
-            return;
+            return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
 
         final Playlist playlist = playlistsFound.getFirst();
@@ -234,7 +235,7 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
             log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}",playlistId,playlist.getAuthor().getuserID(),song.getSongID());
-            return; //Song is already in the playlist
+            return MethodOutcome.PLAYLIST_ALREADY_CONTAINS_SONG; //Song is already in the playlist
         }
 
         //Attempt to find the song in the repository
@@ -254,5 +255,6 @@ public class PlaylistServiceImpl implements PlaylistService{
         playlistRepository.save(playlist);
 
         log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
+        return MethodOutcome.SUCCESS;
     }
 }

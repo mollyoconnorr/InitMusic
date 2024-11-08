@@ -144,9 +144,9 @@ public class NewSongForm {
 
     /**
      * Gets the deezer id of the artist
-     * @return
+     * @return Artists deezer id
      */
-    public long getArtistID() {
+    public Long getArtistID() {
         return artistID;
     }
 
@@ -160,9 +160,9 @@ public class NewSongForm {
 
     /**
      * Gets deezer id of the album
-     * @return
+     * @return Albums deezer ID
      */
-    public long getAlbumID() {
+    public Long getAlbumID() {
         return albumID;
     }
 

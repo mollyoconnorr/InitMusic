@@ -26,6 +26,7 @@ public enum MethodOutcome {
     SONG_NOT_FOUND("Song not found!"),
     PLAYLIST_NOT_FOUND("Playlist not found!"),
     PLAYLIST_ALREADY_EXISTS("Playlist already exists!"),
+    PLAYLIST_ALREADY_CONTAINS_SONG("Playlist already contains given song!"),
     PLAYLIST_NAME_EXISTS("Playlist with given name already exists!"),
     PLAYLIST_NAME_INVALID("Playlist name is invalid!"),
     PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),

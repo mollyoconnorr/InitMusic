@@ -156,6 +156,7 @@ public class UserServiceImpl implements UserService {
     public User saveUser(String username,String password,String email,String firstName,String lastName) {
         log.info("saveUser: Saving new user with username '{}'", username);
 
+        //Make sure all information is there
         if(username.isBlank() ||  email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()){
             log.warn("saveUser: Failed to save user, information is missing: " +
                     "Username: {} | Email: {} | Password: {} | firstName: {} | lastName: {}", username.isBlank(),
@@ -167,6 +168,12 @@ public class UserServiceImpl implements UserService {
         email = email.strip();
         firstName = firstName.strip();
         lastName = lastName.strip();
+
+        //After stripping, if there are any spaces, the username is not valid
+        if(username.contains(" ") || email.contains(" ")){
+            log.warn("saveUser: Username '{}' or email contains spaces", username);
+            return null;
+        }
 
         final User newUser = new User();  // Create a new User object inside the method
         newUser.setUsername(username);
@@ -183,7 +190,7 @@ public class UserServiceImpl implements UserService {
         newUser.setQuestion2(null);
         newUser.setAnswer2(null);
 
-        log.info("saveUser: User '{}' saved with email '{}'", newUser.getUsername(), newUser.getEmail());
+        log.info("saveUser: User '{}' saved", newUser.getUsername());
         return userRepository.save(newUser);
     }
 

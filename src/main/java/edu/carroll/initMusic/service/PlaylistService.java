@@ -18,8 +18,9 @@ public interface PlaylistService{
      *
      * @param playlistId ID of playlist to add song to
      * @param song       Song to add to playlist
+     * @return MethodOutcome, the outcome of the method
      */
-    void addSongToPlaylist(Long playlistId, Song song);
+    MethodOutcome addSongToPlaylist(Long playlistId, Song song);
 
     /**
      * Gets a playlist by playlist ID
@@ -32,7 +33,7 @@ public interface PlaylistService{
      * Creates a new playlist under the given user with the given name
      * @param name Name of playlist
      * @param user User who created playlist
-     * @return A responseStatus enum, which tells the outcome of the transaction.
+     * @return MethodOutcome, the outcome of the method
      *
      * @see MethodOutcome
      */
@@ -43,7 +44,7 @@ public interface PlaylistService{
      * @param newName New name of playlist
      * @param playlistID ID of playlist to rename
      * @param user User who created playlist
-     * @return A responseStatus enum, which tells the outcome of the transaction.
+     * @return MethodOutcome, the outcome of the method
      *
      * @see MethodOutcome
      */
@@ -54,7 +55,7 @@ public interface PlaylistService{
      * @param playlistName Name of playlist to delete
      * @param playlistID ID of playlist to delete
      * @param user User who created playlist
-     * @return A responseStatus enum, which tells the outcome of the transaction.
+     * @return MethodOutcome, the outcome of the method
      *
      * @see MethodOutcome
      */
@@ -64,7 +65,7 @@ public interface PlaylistService{
      * Removes the given song from the given playlist
      * @param playlistID ID of playlist song is in
      * @param songID ID of song to remove
-     * @return A responseStatus enum, which tells the outcome of the transaction.
+     * @return MethodOutcome, the outcome of the method
      *
      * @see MethodOutcome
      */

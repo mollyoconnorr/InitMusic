@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -31,12 +32,17 @@ public class LoginController {
      * the login form and adds it to the model.
      * </p>
      *
+     * @param error Any errors that have occurred
      * @param model the model to be used in the view.
      * @return the name of the login view (Thymeleaf template).
      */
     @GetMapping("/login")
-    public String loginGet(Model model) {
+    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         log.info("loginGet: Get login page");
+        if (error != null) {
+            log.warn("loginGet: Error while logging in, Invalid username or password.");
+            model.addAttribute("errorMsg", "Invalid username or password. Please try again.");
+        }
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
