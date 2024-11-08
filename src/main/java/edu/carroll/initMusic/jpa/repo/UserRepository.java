@@ -39,5 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.playlists WHERE u.userID = :id")
     User findByIdWithPlaylists(@Param("id") Long id);
 
+    void deleteByEmail(String email);
+
     void deleteAll();
 }
