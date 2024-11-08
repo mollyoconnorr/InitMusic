@@ -15,9 +15,6 @@ public class UserServiceTests {
     @Autowired
     private UserServiceImpl userService;
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
-
     /*
      * First testing invalid usernames
      */
@@ -268,13 +265,13 @@ public class UserServiceTests {
     @Test
     public void checkUniqueUsernameNotUniqueVeryLong() {
         final String username = "veryLongDuplicateUsername1234567890!@#$";
-        userServiceImpl.saveUser(username,"password","JDoe1@email.com","John","Doe");
+        userService.saveUser(username,"password","JDoe1@email.com","John","Doe");
         assertSame(userService.uniqueUserName(username), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (very long)");
     }
 
     @Test
     public void checkUniqueUsernameNotUniqueWithNumbersAtEnd() {
-        userServiceImpl.saveUser("user456","password","JDoe2@email.com","John","Doe");
+        userService.saveUser("user456","password","JDoe2@email.com","John","Doe");
 
         assertSame(userService.uniqueUserName("user456"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
     }

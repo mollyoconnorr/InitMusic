@@ -152,6 +152,9 @@ public class SongServiceDeezerImpl implements SongService{
      */
     @Override
     public Set<Song> getLocalCache(String query) {
+        if(query == null || query.isEmpty()){
+            return null;
+        }
         query = query.strip().toLowerCase();
         final List<QueryCache> queryCacheList = queryCacheRepository.findQueryCacheByQueryIgnoreCase(query);
         if (queryCacheList != null && !queryCacheList.isEmpty()) {
@@ -169,7 +172,13 @@ public class SongServiceDeezerImpl implements SongService{
      *
      * @see QueryCache
      */
-    public void createCache(String query, Set<Song> songs){
+    public boolean createCache(String query, Set<Song> songs){
+        if(query == null || query.isEmpty() || songs == null){
+            return false;
+        }
+        if(queryCacheRepository == null){
+            return false;
+        }
         final QueryCache newCache;
 
         //Check if there is already a cache with the given query, if so, rewrite its data
@@ -220,5 +229,6 @@ public class SongServiceDeezerImpl implements SongService{
         queryCacheRepository.save(newCache);
 
         log.info("Saved new cache with associated songs {}", newCache);
+        return true;
     }
 }

@@ -8,12 +8,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +46,9 @@ class SongServiceTests {
     /** Service we are testing */
     @InjectMocks
     private SongServiceDeezerImpl songService;
+
+    @Autowired
+    private SongServiceDeezerImpl songServiceDeezer;
 
     /** Mock Http Client */
     @Mock
@@ -193,4 +199,118 @@ class SongServiceTests {
         //verify that the send method was called once
         verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
     }
+
+    /*
+     * Testing getLocalCache
+     */
+    @Test
+    public void checkGetLocalCacheReturnsNullWhenNoCacheInDBWithQuery(){
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache("query");
+        assertNull(songsFound, "songsFound should be null when no cache is found after trying to get cache!");
+    }
+
+    @Test
+    public void checkGetLocalCacheReturnsNullWhenNullQueryPassed(){
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache(null);
+        assertNull(songsFound, "songsFound should be null when a null query passed!");
+    }
+
+    @Test
+    public void checkGetLocalCacheReturnsNullWhenEmptyQueryPassed(){
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache("");
+        assertNull(songsFound, "songsFound should be null when a empty query passed!");
+    }
+
+    @Test
+    @Transactional
+    public void checkGetLocalCacheReturnsCacheWithValidQueryPassed(){
+        final String query = "query";
+        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
+        final Set<Song> songs = new HashSet<>();
+        songs.add(song);
+        songServiceDeezer.createCache(query,songs);
+
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
+        final Song firstSong = (Song)songsFound.toArray()[0];
+        assertNotNull(songsFound, "songsFound should not be null when a valid query is passed and there is a local cache in DB!");
+        assertEquals(songsFound.size(), 1, "songsFound should have a size of 1 when a valid query is passed and there is a local cache with one song in DB!");
+        assertEquals(firstSong.getSongID(),song.getSongID(),"Cache song set should contain given song after getting Cache!");
+    }
+
+    @Test
+    @Transactional
+    public void checkGetLocalCacheReturnsNoCacheWithValidQueryPassedButNoCacheWithPassedQueryInDB(){
+        final String query = "query2";
+        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
+        final Set<Song> songs = new HashSet<>();
+        songs.add(song);
+        songServiceDeezer.createCache(query,songs);
+
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query + 1);
+        assertNull(songsFound, "songsFound should be null when a valid query is passed and but no cache with that query in DB!");
+    }
+
+    /*
+     * Testing CreateCache
+     */
+
+    @Test
+    public void checkCreateCacheNullQuery(){
+        final Set<Song> songs = new HashSet<>();
+
+        assertFalse(songServiceDeezer.createCache(null,songs),"No Cache should be created when query is null!");
+    }
+
+    @Test
+    public void checkCreateCacheEmptyQuery(){
+        final Set<Song> songs = new HashSet<>();
+
+        assertFalse(songServiceDeezer.createCache("",songs),"No Cache should be created when query is empty!");
+    }
+
+    @Test
+    public void checkCreateCacheNullResults(){
+        assertFalse(songServiceDeezer.createCache("Query",null),"No Cache should be created when query is empty!");
+    }
+
+    @Test
+    @Transactional
+    public void checkCreateCacheSucceedsWhenQueryAndResultsValid(){
+        final String query = "query3";
+        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
+        final Set<Song> songs = new HashSet<>();
+        songs.add(song);
+        songServiceDeezer.createCache(query,songs);
+
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
+        assertNotNull(songsFound, "songsFound should not be null when a valid query and results set is passed!");
+        assertEquals(songsFound,songs,"Songs in cache should match those passed in createCache!");
+    }
+
+    @Test
+    @Transactional
+    public void checkCreateCacheSucceedsWhenOldCacheIsOverwritten(){
+        final String query = "query3";
+        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
+        final Song song2 = new Song(2324L,"Name",232,"Nick",2323L,"Album",45454L);
+        final Set<Song> songs = new HashSet<>();
+        songs.add(song);
+
+        //Assume this worked this one time
+        songServiceDeezer.createCache(query,songs);
+        final Set<Song> songsFoundOldCache = songServiceDeezer.getLocalCache(query);
+
+        //Add a song to set songs so its different from first caches song set
+        final Set<Song> songs2 = new HashSet<>();
+        songs2.add(song2);
+        songs2.add(song);
+
+        songServiceDeezer.createCache(query,songs2);
+
+        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
+        assertNotNull(songsFound, "songsFound should not be null when a valid query and results set is passed!");
+        assertEquals(songsFoundOldCache.size(),songsFound.size(),"Old cache with same query should have same size set as updated cache!");
+    }
+
+
 }
