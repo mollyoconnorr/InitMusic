@@ -169,6 +169,60 @@ public class SearchController {
     }
 
     /**
+     * Gets the /searchWithAPI endpoint, which is after a user
+     * searches uses an external API
+     * @param model Model to use
+     * @param authentication Current authenticated user token, if any
+     * @return Search page
+     */
+    @GetMapping("/searchWithAPI")
+    public String getSearchWithAPI(Model model, Authentication authentication,HttpSession session){
+        //Retrieve the current user from the session
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userDetails.getUser();
+
+        //Fetch user with playlists
+        final User fullUser = userService.findByIdWithPlaylists(user.getuserID());
+
+        log.info("getSearchWithAPI: {} went to searchWithAPI endpoint", fullUser.getuserID());
+
+        //Add the user and their playlists to the model
+        model.addAttribute("currentUser", fullUser);
+        model.addAttribute("playlists", fullUser.getPlaylists());
+
+        /*
+          Result is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a empty hashset
+         */
+        if(session.getAttribute("results") instanceof Set<?> && session.getAttribute("results") != null) {
+            model.addAttribute("results", session.getAttribute("results"));
+        }else{
+            model.addAttribute("results", new HashSet<>());
+        }
+
+        /*
+          query is stored in the httpSession so its available after adding song to a playlist.
+          When a user first goes to search page, there is no results yet, so set it to a new song form
+         */
+        if(session.getAttribute("query") != null) {
+            model.addAttribute("query", session.getAttribute("query"));
+        }else{
+            model.addAttribute("query", null);
+        }
+
+        if(session.getAttribute("localQuery") != null) {
+            model.addAttribute("localQuery", session.getAttribute("localQuery"));
+        }else{
+            model.addAttribute("localQuery", false);
+        }
+
+        model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+
+        return "search"; // Return to the search page
+    }
+
+    /**
      * Searches with the 'searchForSongs' method in SongService, which should search using an
      * api and return a set of songs found related to query
      * @param query String to search for
