@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -270,5 +270,21 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return user.getFirst();
+    }
+
+    @Transactional // ensures that a transaction is available when the method executes
+    public boolean deleteByEmail(String email) {
+        try {
+            if (userRepository.findByEmailIgnoreCase(email).isEmpty()) {
+                log.info("deleteByEmail: No user found with email {}", email);
+                return false; // No user to delete
+            }
+            userRepository.deleteByEmail(email);
+            log.info("deleteByEmail: {} deleted from initMusic", email);
+            return true;
+        } catch (Exception e) {
+            log.error("deleteByEmail: Failed to delete {} from initMusic", email, e);
+            return false;
+        }
     }
 }
