@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository used for managing and retrieving the Song Entity
+ * Repository used for retrieving Song Entities
  *
  * @author Nick Clouse
  *
@@ -14,9 +14,9 @@ import java.util.List;
  */
 public interface SongRepository extends JpaRepository<Song, Long> {
     /**
-     * Finds songs containing the given name, ignoring the case, and ordered by song name
-     * @param name Name of song to search for
-     * @return List of songs found with name or similar names
+     * Finds song objects by id
+     * @param id ID to search for
+     * @return List of Song objects found with given id (Should only be one, since each ID is unique)
      */
-    List<Song> findBySongNameContainingIgnoreCaseOrderBySongName(String name);
+    List<Song> findBySongID(Long id);
 }

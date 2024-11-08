@@ -34,6 +34,9 @@ public class Song {
     @ManyToMany(mappedBy = "songs", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Playlist> playlists = new HashSet<>();
 
+    @ManyToMany(mappedBy = "results", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<QueryCache> queryCaches = new HashSet<>();
+
     /** Name of song */
     @Column(name = "name", nullable=false)
     private String songName;
@@ -248,7 +251,7 @@ public class Song {
      * Sets id of artist
      * @param artistID Id to set
      */
-    public void setArtistID(long artistID) {
+    public void setArtistID(Long artistID) {
         this.artistID = artistID;
     }
 
@@ -280,8 +283,32 @@ public class Song {
      * Sets Deezer ID of songs' album
      * @param albumID ID to set
      */
-    public void setAlbumID(long albumID) {
+    public void setAlbumID(Long albumID) {
         this.albumID = albumID;
+    }
+
+    /**
+     * Gets query cache set
+     * @return Set of queryCaches song is in
+     */
+    public Set<QueryCache> getQueryCaches() {
+        return queryCaches;
+    }
+
+    /**
+     * Sets query cache set
+     * @param queryCaches New set of queryCaches song to set
+     */
+    public void setQueryCaches(Set<QueryCache> queryCaches) {
+        this.queryCaches = queryCaches;
+    }
+
+    /**
+     * Adds a queryCache to this song
+     * @param queryCache queryCache to add
+     */
+    public void addQueryCache(QueryCache queryCache) {
+        this.queryCaches.add(queryCache);
     }
 
     /**
