@@ -78,7 +78,7 @@ public class SecurityConfig {
         http.formLogin(formLogin ->
                 formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/search",true)
+                        .defaultSuccessUrl("/playlists",true)
                         .failureUrl("/login?error")
                         .permitAll()
         );
