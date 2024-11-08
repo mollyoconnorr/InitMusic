@@ -62,6 +62,17 @@
   <div th:if="${results != null and #lists.size(results) > 0}">
     <h2>Results for "<span th:text="${query}"></span>"</h2>
 
+    <!--  If localQuery is true, tell user that results are from local cache  -->
+    <div th:if="${localQuery}" class="localQueryDiv">
+      <p>The songs shown below were found in our local database. Don't see the song your looking for? Click
+        <a href="#" onclick="document.getElementById('postForm').submit();">here</a>
+        to search globally</p>
+    </div>
+    <!--  Hidden form used to submit post mapping to do a search with api  -->
+    <form id="postForm" action="/searchWithAPI" method="POST" style="display: none;">
+      <input type="hidden" name="query" th:value="${query}">
+    </form>
+
     <div class="list-group">
       <div th:each="item : ${results}">
         <div class="list-group-item list-group-item-action">

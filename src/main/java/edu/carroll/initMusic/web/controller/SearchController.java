@@ -104,6 +104,12 @@ public class SearchController {
             model.addAttribute("query", null);
         }
 
+        if(session.getAttribute("localQuery") != null) {
+            model.addAttribute("localQuery", session.getAttribute("localQuery"));
+        }else{
+            model.addAttribute("localQuery", false);
+        }
+
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
@@ -133,8 +139,18 @@ public class SearchController {
             return "search"; // Return to the search page with error message
         }
 
-        Set<Song> results = songService.searchForSongs(query);
+        Set<Song> results = songService.getLocalCache(query);
 
+        //If no cache found, then do global search
+        if(results == null){
+            results = songService.searchForSongs(query);
+        }else{
+            //Local cache found, set these to true so message displays on search page that search was local
+            model.addAttribute("localQuery", true);
+            session.setAttribute("localQuery",true);
+        }
+
+        //If no songs found
         if(results.isEmpty()) {
             model.addAttribute("searchError", String.format("No songs found for query '%s'", query));
             return "search";
@@ -149,7 +165,51 @@ public class SearchController {
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
-        return "search"; // Return the search template
+        return "search";
+    }
+
+    /**
+     * Searches with the 'searchForSongs' method in SongService, which should search using an
+     * api and return a set of songs found related to query
+     * @param query String to search for
+     * @param model Model to use
+     * @param authentication Current authenticated user token, if any
+     * @return Updated search page
+     *
+     * @see SongService#searchForSongs(String)
+     */
+    @PostMapping("/searchWithAPI")
+    public String searchWithAPI(@RequestParam(value = "query") String query, Model model, Authentication authentication, HttpSession session){
+        //Reload user details
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
+
+        //Search for songs
+        final Set<Song> results = songService.searchForSongs(query);
+
+        //If no songs found
+        if(results.isEmpty()) {
+            model.addAttribute("searchError", String.format("No songs found for query '%s'", query));
+            return "search";
+        }
+
+        //Add query, results to session
+        session.setAttribute("results", results);
+        session.setAttribute("query", query);
+
+        //Set local query to false bc this was not local search
+        session.setAttribute("localQuery",false);
+        model.addAttribute("localQuery",false);
+
+        //Reload model attributes
+        model.addAttribute("results", results);
+        model.addAttribute("query", query);
+        model.addAttribute("currentUser", user);
+        model.addAttribute("playlists",user.getPlaylists());
+        model.addAttribute("newSongForm", new NewSongForm());
+        model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
+
+        return "search";
     }
 
     /**

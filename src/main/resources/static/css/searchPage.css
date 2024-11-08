@@ -290,3 +290,8 @@ button.btn-primary:hover {
     text-align: center;
     color: red;
 }
+
+.localQueryDiv{
+    text-align: center;
+    font-weight: bold;
+}
