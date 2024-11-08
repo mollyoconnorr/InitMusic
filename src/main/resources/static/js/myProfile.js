@@ -2,10 +2,6 @@ function confirmDelete() {
     return confirm("Are you sure you want to delete your account? This action cannot be undone.");
 }
 
-function confirmLogout() {
-    return confirm("Are you sure you want to logout?");
-}
-
 /**
  * Shows a popup message that makes user confirm logout, and then fetches post for /logout and logs user out
  */
@@ -36,3 +32,10 @@ function logout() {
             });
     }
 }
+//add an event listener to the button
+document.getElementById('logoutButton').addEventListener('click', logout);
+
+function confirmLogout() {
+    return confirm("Are you sure you want to logout?");
+}
+
