@@ -79,4 +79,12 @@ public interface UserService {
      * @return The user object found, if any
      */
     User getUser(String username);
+
+    /**
+     * Deletes the specified user from the database.
+     *
+     * @param username The username of the user to delete.
+     * @return true if the user was successfully deleted, false otherwise.
+     */
+    boolean deleteByEmail(String email);
 }
