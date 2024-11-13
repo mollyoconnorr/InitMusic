@@ -266,7 +266,7 @@ public class UserServiceImpl implements UserService {
      * @param username Username to use for search
      * @return User object found, {@code null} if nothing found, or too many were found.
      */
-    public User getUser(String username){
+    public User findByUsername(String username){
         final List<User> user = userRepository.findByUsernameIgnoreCase(username);
         if(user.size() != 1){
             return null;

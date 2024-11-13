@@ -76,7 +76,7 @@ public interface UserService {
      * @param username Username to search by
      * @return The user object found, null if not found
      */
-    User getUser(String username);
+    User findByUsername(String username);
 
     /**
      * Deletes the specified user from the database.
