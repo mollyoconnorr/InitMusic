@@ -44,6 +44,9 @@ function popModalWithButtonData() {
         document.getElementById('albumID').value = buttonData.albumId;
         document.getElementById('songImg').value = buttonData.songImg;
         document.getElementById('songPreview').value = buttonData.songPreview;
+
+        document.getElementById("addToPlaylistModalLabel").textContent =
+            "Adding '" + buttonData.songName + "' by " + buttonData.artistName;
     } else {
         console.log("No button data found in sessionStorage.");
     }
@@ -107,7 +110,7 @@ window.addEventListener('load', function() {
         popModalWithButtonData();
         myModal.show();
 
-        // lear the flag after showing the modal
+        // clear the flag after showing the modal
         sessionStorage.removeItem('showModal');
     }
 });
