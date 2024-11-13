@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.web.form;
 
+import edu.carroll.initMusic.jpa.model.Playlist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -76,7 +77,7 @@ public class NewSongForm {
     /**
      * Id's of playlists the song will be added to
      */
-    private List<Long> selectedPlaylists = new ArrayList<>();
+    private List<Playlist> selectedPlaylists = new ArrayList<>();
 
     /**
      * Gets the songs deezer id
@@ -223,18 +224,18 @@ public class NewSongForm {
     }
 
     /**
-     * Gets the list of playlist ids that the song will be added to
-     * @return List of playlist ID's
+     * Gets the list of playlist that the song will be added to
+     * @return List of playlists
      */
-    public List<Long> getSelectedPlaylists() {
+    public List<Playlist> getSelectedPlaylists() {
         return selectedPlaylists;
     }
 
     /**
-     * Sets the list of playlist ids that the song will be added to
+     * Sets the list of playlist that the song will be added to
      * @param selectedPlaylists List to set
      */
-    public void setSelectedPlaylists(List<Long> selectedPlaylists) {
+    public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
         this.selectedPlaylists = selectedPlaylists;
     }
 }

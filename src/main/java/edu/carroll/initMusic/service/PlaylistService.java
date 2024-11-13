@@ -16,11 +16,11 @@ public interface PlaylistService{
     /**
      * Adds a song to the given playlist.
      *
-     * @param playlistId ID of playlist to add song to
+     * @param playlist playlist to add song to
      * @param song       Song to add to playlist
      * @return MethodOutcome, the outcome of the method
      */
-    MethodOutcome addSongToPlaylist(Long playlistId, Song song);
+    MethodOutcome addSongToPlaylist(Playlist playlist, Song song);
 
     /**
      * Gets a playlist by playlist ID

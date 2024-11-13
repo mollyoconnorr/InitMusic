@@ -28,7 +28,7 @@ function saveButtonData(button) {
     sessionStorage.setItem('clickedButtonData', JSON.stringify(buttonData));
 }
 
-//Populate the ids gotten with the data from SessionStorage
+//Populate modal song data the data from SessionStorage
 function popModalWithButtonData() {
     //Parse data
     const buttonData = JSON.parse(sessionStorage.getItem('clickedButtonData'));

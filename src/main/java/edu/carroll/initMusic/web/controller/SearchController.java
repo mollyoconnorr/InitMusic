@@ -2,6 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
+import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
@@ -270,6 +271,12 @@ public class SearchController {
      * Handles adding a song to a playlist. Since we can't
      * pass a Song object through the form, we need to pass
      * all the params needed for a song and create a new object.
+     *
+     * @param newSongForm Form that contains data needed to add song to playlist
+     * @param result Result of binding
+     * @param attrs RedirectAttributes
+     * @param session Current httpSession
+     * @return Redirect to search page
      */
     @SuppressWarnings("unchecked")
     @PostMapping("/addSongToPlaylist")
@@ -279,21 +286,22 @@ public class SearchController {
             attrs.addFlashAttribute("searchError", result.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/search";
         }
-        final List<Long> selectedPlaylists = newSongForm.getSelectedPlaylists();
+        final List<Playlist> selectedPlaylists = newSongForm.getSelectedPlaylists();
 
+        //Convert data in form to song obj
         final Song song = getSong(newSongForm);
 
         final List<String> errorMessages = new ArrayList<>();
         final List<String> successMessages = new ArrayList<>();
 
         // Handle the logic for adding the song to the selected playlists
-        for (Long playlistId : selectedPlaylists) {
-            log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
-            final MethodOutcome outcome = playlistService.addSongToPlaylist(playlistId, song);
+        for (Playlist playlist : selectedPlaylists) {
+            log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlist.getPlaylistID());
+            final MethodOutcome outcome = playlistService.addSongToPlaylist(playlist, song);
             if(outcome.failed()){
-                errorMessages.add(String.format("Error adding %s to playlist: %s", song.getSongName(),outcome.getMessage()));
+                errorMessages.add(String.format("Error adding %s to %s: %s", song.getSongName(),playlist.getPlaylistName(),outcome.getMessage()));
             }else{
-                successMessages.add(String.format("Added %s to playlist %s", song.getSongName(), playlistId));
+                successMessages.add(String.format("Added %s to %s", song.getSongName(), playlist.getPlaylistName()));
             }
         }
 
@@ -305,6 +313,7 @@ public class SearchController {
             attrs.addFlashAttribute("addingSuccesses", successMessages);
         }
 
+        //If there are results in the httpsession, add them back to search page so they get displayed again
         if(session.getAttribute("results") instanceof Set<?>){
             //Add results and query to flash attributes so they can be redisplayed again
             final Set<Song> results = (Set<Song>) session.getAttribute("results");
