@@ -1,13 +1,13 @@
 package edu.carroll.initMusic.jpa.model;
 
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * This class is used to represent Playlist objects, and maps to our database table.
@@ -22,7 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "playlist")
 public class Playlist {
     /** Serial version ID */
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionID = 2L;
 
     /** Playlist's id number, used as primary key */
     @Id

@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.jpa.service;
+package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.service.SongServiceDeezerImpl;

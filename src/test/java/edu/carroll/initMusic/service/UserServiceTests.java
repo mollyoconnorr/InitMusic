@@ -1,8 +1,7 @@
-package edu.carroll.initMusic.jpa.service;
+package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,27 +20,27 @@ public class UserServiceTests {
 
     @Test
     public void checkUniqueUsername4NumbersTooShortUsername(){
-        assertNotEquals(userService.uniqueUserName("1234"), MethodOutcome.SUCCESS, "Username should not be available because its too short (4 Numbers)");
+        assertEquals(userService.uniqueUserName("1234"), MethodOutcome.USER_TOO_SHORT, "Username should not be available because its too short (4 Numbers)");
     }
 
     @Test
     public void checkUniqueUsername3NumbersTooShortUsername(){
-        assertNotEquals(userService.uniqueUserName("123"), MethodOutcome.SUCCESS, "Username should not be available because its too short (3 Numbers)");
+        assertEquals(userService.uniqueUserName("123"), MethodOutcome.USER_TOO_SHORT, "Username should not be available because its too short (3 Numbers)");
     }
 
     @Test
     public void checkUniqueUsername2NumbersTooShortUsername(){
-        assertNotEquals(userService.uniqueUserName("12"), MethodOutcome.SUCCESS, "Username should not be available because its too short (2 Numbers)");
+        assertEquals(userService.uniqueUserName("12"), MethodOutcome.USER_TOO_SHORT, "Username should not be available because its too short (2 Numbers)");
     }
 
     @Test
     public void checkUniqueUsername1NumberTooShortUsername(){
-        assertNotEquals(userService.uniqueUserName("1"), MethodOutcome.SUCCESS, "Username should not be available because its too short (1 Number)");
+        assertEquals(userService.uniqueUserName("1"), MethodOutcome.USER_TOO_SHORT, "Username should not be available because its too short (1 Number)");
     }
 
     @Test
     public void checkUniqueUsername1LetterTooShortUsername(){
-        assertNotEquals(userService.uniqueUserName("a"), MethodOutcome.SUCCESS, "Username should not be available because its too short (1 Character)");
+        assertEquals(userService.uniqueUserName("a"), MethodOutcome.USER_TOO_SHORT, "Username should not be available because its too short (1 Character)");
     }
 
     @Test

@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.jpa.service;
+package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.service.CustomUserDetailsService;
 import edu.carroll.initMusic.service.UserServiceImpl;

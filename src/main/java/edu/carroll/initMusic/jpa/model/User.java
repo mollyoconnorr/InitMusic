@@ -1,21 +1,13 @@
 package edu.carroll.initMusic.jpa.model;
 
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import jakarta.persistence.CascadeType;
 
 
 /**
@@ -36,7 +28,7 @@ import jakarta.persistence.CascadeType;
 @EntityListeners(AuditingEntityListener.class)
 public class User {
     /** Serial version ID */
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionID = 3L;
 
     /** User's id number, used as primary key */
     @Id
