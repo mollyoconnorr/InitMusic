@@ -7,15 +7,12 @@ import edu.carroll.initMusic.jpa.model.User;
  * Interface for UserService, defines methods related to user transactions like
  * creating and updating user objects, and creating and updating playlist objects
  * for users.
- *
- * @author Nick Clouse
- *
- * @since October 21, 2024
  */
 public interface UserService {
 
     /**
      * Checks if given username is unique
+     *
      * @param username Username to check
      * @return MethodOutcome Enum that tells outcome of method.
      */
@@ -46,7 +43,7 @@ public interface UserService {
      * @param answer1 First answer
      * @param question2 Second security question
      * @param answer2 Second answer
-     * @return true if security questions were updated, false otherwise
+     * @return {@code true} if security questions were updated, {@code false} otherwise
      */
     boolean updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2);
 
@@ -54,6 +51,7 @@ public interface UserService {
      * Updates the users password
      * @param user User to update
      * @param newPassword New password to use
+     * @return {@code true} if password was updated, {@code false} otherwise
      */
     boolean updatePassword(User user, String newPassword);
 
@@ -65,25 +63,25 @@ public interface UserService {
     User findByEmail(String email);
 
     /**
-     * Finds user by id, will also eagerly fetch
+     * Finds user by id, should also eagerly fetch
      * the users playlists in case operations are needed
      * to be done on them.
      * @param userId User id to search by
-     * @return The user object found, if any
+     * @return The user object found, null if not found
      */
     User findByIdWithPlaylists(Long userId);
 
     /**
      * Gets user by username
      * @param username Username to search by
-     * @return The user object found, if any
+     * @return The user object found, null if not found
      */
     User getUser(String username);
 
     /**
      * Deletes the specified user from the database.
      *
-     * @param username The username of the user to delete.
+     * @param email The email of the user to delete.
      * @return true if the user was successfully deleted, false otherwise.
      */
     boolean deleteByEmail(String email);
