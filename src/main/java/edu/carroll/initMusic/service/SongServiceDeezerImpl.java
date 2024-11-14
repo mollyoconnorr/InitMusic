@@ -202,7 +202,7 @@ public class SongServiceDeezerImpl implements SongService{
 
         //Go through each song and check if its in repository yet
         for (Song song : songs) {
-            final List<Song> songFound = songRepository.findBySongID(song.getSongID());
+            final List<Song> songFound = songRepository.findByDeezerID(song.getDeezerID());
 
             if (songFound.isEmpty()) {  //Song is new
                 newSongs.add(song);

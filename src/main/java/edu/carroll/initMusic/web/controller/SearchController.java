@@ -296,7 +296,7 @@ public class SearchController {
 
         // Handle the logic for adding the song to the selected playlists
         for (Playlist playlist : selectedPlaylists) {
-            log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlist.getPlaylistID());
+            log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getDeezerID(), playlist.getPlaylistID());
             final MethodOutcome outcome = playlistService.addSongToPlaylist(playlist, song);
             if(outcome.failed()){
                 errorMessages.add(String.format("Error adding %s to %s: %s", song.getSongName(),playlist.getPlaylistName(),outcome.getMessage()));

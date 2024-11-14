@@ -135,7 +135,7 @@ public class Playlist {
      */
     public boolean removeSong(Long songID){
         for (Song song : this.songs) {
-            if (song.getSongID().equals(songID)) {
+            if (song.getDeezerID().equals(songID)) {
                 this.numberOfSongs--;
                 this.totalSongLength -= song.getLength();
                 this.songs.remove(song);
@@ -153,7 +153,7 @@ public class Playlist {
      */
     public boolean containsSong(Song song) {
         for(Song s: this.songs){
-            if(s.getSongID().equals(song.getSongID())){
+            if(s.getDeezerID().equals(song.getDeezerID())){
                 return true;
             }
         }

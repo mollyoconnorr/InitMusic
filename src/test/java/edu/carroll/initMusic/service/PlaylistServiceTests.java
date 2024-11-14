@@ -275,7 +275,7 @@ public class PlaylistServiceTests {
         assertTrue(playlist.getSongs().contains(song), "The song should be present in the playlist before removal");
 
         // Remove the song
-        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getSongID());
+        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getDeezerID());
         assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed successfully");
 
         // Refresh the playlist from the repository to ensure we have the latest state

@@ -224,12 +224,12 @@ public class PlaylistServiceImpl implements PlaylistService{
     public MethodOutcome addSongToPlaylist(Playlist playlist, Song song) {
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
-            log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}",playlist.getPlaylistID(),playlist.getAuthor().getuserID(),song.getSongID());
+            log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}",playlist.getPlaylistID(),playlist.getAuthor().getuserID(),song.getDeezerID());
             return MethodOutcome.PLAYLIST_ALREADY_CONTAINS_SONG; //Song is already in the playlist
         }
 
         //Attempt to find the song in the repository
-        final Optional<Song> songFound = songRepository.findById(song.getSongID());
+        final Optional<Song> songFound = songRepository.findById(song.getDeezerID());
         if (songFound.isPresent()) {
             //Add the managed song to the playlist
             playlist.addSong(songFound.get());
@@ -244,7 +244,7 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
 
-        log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getSongID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
+        log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getDeezerID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
         return MethodOutcome.SUCCESS;
     }
 }
