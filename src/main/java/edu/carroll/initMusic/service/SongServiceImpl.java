@@ -22,6 +22,12 @@ import java.util.Set;
  */
 @Service
 public class SongServiceImpl implements SongService{
+    /** Maximum length a query can be */
+    private static final int MAX_QUERY_LENGTH = 40;
+
+    /** Minimum length a query can be */
+    private static final int MIN_QUERY_LENGTH = 3;
+
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
@@ -47,10 +53,13 @@ public class SongServiceImpl implements SongService{
      * given query. If there is, the set of songs is returned. If not, uses the songSearchService
      * to search externally for songs using an API.
      * @param query Query to search for
-     * @return Set of songs related to the query, null if no songs were found
+     * @return Set of songs related to the query, empty set if no songs were found
      * @see SongSearchService
      */
     public Set<Song> searchForSongs(String query) {
+        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
+            return new HashSet<>();
+        }
         //Check for local cache
         Set<Song> songsFound = getLocalCache(query);
         //if there was no cache found, search externally
@@ -71,7 +80,7 @@ public class SongServiceImpl implements SongService{
      */
     @Override
     public Set<Song> getLocalCache(String query) {
-        if(query == null || query.isEmpty()){
+        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
             return null;
         }
         query = query.strip().toLowerCase();

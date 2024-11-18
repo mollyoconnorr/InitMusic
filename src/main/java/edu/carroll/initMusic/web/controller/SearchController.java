@@ -40,6 +40,11 @@ import java.util.Set;
  */
 @Controller
 public class SearchController {
+    /** Maximum length a query can be */
+    private static final int MAX_QUERY_LENGTH = 40;
+
+    /** Minimum length a query can be */
+    private static final int MIN_QUERY_LENGTH = 3;
 
     /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
@@ -129,11 +134,12 @@ public class SearchController {
         log.info("search: {} searched for songs with query '{}'", user.getUsername(), query);
 
         //If query doesnt have any text
-        if (query.trim().isEmpty() || query.length() < 3) {
+        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
             //For whatever reason, when this if statement is triggered, the model is missing the
             //new playlist form, so we have to add it again here
             model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-            model.addAttribute("searchError", "Search term must be at least 3 characters long.");
+            model.addAttribute("searchError", "Search term must be between " + MIN_QUERY_LENGTH + " and " + MAX_QUERY_LENGTH + " characters long.");
+            log.error("search: User id#{} searched using an invalid query", user.getUsername());
             return "search"; // Return to the search page with error message
         }
 

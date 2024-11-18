@@ -27,6 +27,12 @@ import java.util.Set;
  */
 @Service
 public class SongSearchDeezerImpl implements SongSearchService{
+    /** Maximum length a query can be */
+    private static final int MAX_QUERY_LENGTH = 40;
+
+    /** Minimum length a query can be */
+    private static final int MIN_QUERY_LENGTH = 3;
+
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongSearchDeezerImpl.class);
 
@@ -42,7 +48,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
     public Set<Song> externalSearchForSongs(String query) {
 
         //Make sure there is text in query
-        if (query == null || query.trim().isEmpty() || query.length() < 3) {
+        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
             return new HashSet<>();
         }
 
