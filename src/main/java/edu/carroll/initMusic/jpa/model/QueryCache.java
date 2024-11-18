@@ -64,8 +64,7 @@ public class QueryCache {
      * @return {@code true} if cache is expired, {@code false} if not
      */
     public boolean isExpired(){
-//        return lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, LocalDateTime.now()) > EXPIRATION_DURATION_DAYS;
-        return lastUpdated == null || ChronoUnit.SECONDS.between(lastUpdated, LocalDateTime.now()) > 30;
+        return lastUpdated == null || ChronoUnit.DAYS.between(lastUpdated, LocalDateTime.now()) > EXPIRATION_DURATION_DAYS;
     }
 
     /**
