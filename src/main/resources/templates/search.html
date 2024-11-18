@@ -57,11 +57,6 @@
   <!-- Display Results if Search is Performed -->
   <div th:if="${results != null and #lists.size(results) > 0}">
     <h2>Results for "<span th:text="${query}"></span>"</h2>
-    
-    <!--  Hidden form used to submit post mapping to do a search with api  -->
-    <form id="postForm" action="/searchWithAPI" method="POST" style="display: none;">
-      <input type="hidden" name="query" th:value="${query}">
-    </form>
 
     <div class="list-group">
       <div th:each="item : ${results}">
