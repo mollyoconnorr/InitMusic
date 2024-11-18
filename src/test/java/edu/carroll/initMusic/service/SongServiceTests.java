@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests methods in the SongServiceDeezerImpl class
+ * Tests methods in the SongServiceImpl class
  *
  * @author Nick Clouse
  *
@@ -44,10 +44,10 @@ class SongServiceTests {
 
     /** Service we are testing */
     @InjectMocks
-    private SongServiceDeezerImpl songService;
+    private SongServiceImpl songService;
 
     @Autowired
-    private SongServiceDeezerImpl songServiceDeezer;
+    private SongServiceImpl songServiceDeezer;
 
     /** Mock Http Client */
     @Mock

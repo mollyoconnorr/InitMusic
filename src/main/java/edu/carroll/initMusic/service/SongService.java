@@ -13,6 +13,13 @@ import java.util.Set;
  */
 public interface SongService {
     /**
+     * Searches for songs related to the given query
+     * @param query Query to search for
+     * @return Set of songs related to the query
+     */
+    Set<Song> searchForSongs(String query);
+
+    /**
      * Gets the local cache of songs related to the given query, if any
      * @param query Query to use to check for local cache
      * @return Set of songs found, if any

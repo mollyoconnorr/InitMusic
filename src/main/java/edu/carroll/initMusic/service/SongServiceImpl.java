@@ -20,9 +20,9 @@ import java.util.Set;
  * @since September 30, 2024
  */
 @Service
-public class SongServiceDeezerImpl implements SongService{
+public class SongServiceImpl implements SongService{
     /** Logger object used for logging */
-    private static final Logger log = LoggerFactory.getLogger(SongServiceDeezerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
     /** QueryCache repository */
     private final QueryCacheRepository queryCacheRepository;
@@ -30,12 +30,34 @@ public class SongServiceDeezerImpl implements SongService{
     /** Song repository */
     private final SongRepository songRepository;
 
+    private final SongSearchService songSearchService;
+
     /**
      * Constructor
      */
-    public SongServiceDeezerImpl(QueryCacheRepository queryCacheRepository, SongRepository songRepository) {
+    public SongServiceImpl(QueryCacheRepository queryCacheRepository, SongRepository songRepository, SongSearchService songSearchService) {
         this.queryCacheRepository = queryCacheRepository;
         this.songRepository = songRepository;
+        this.songSearchService = songSearchService;
+    }
+
+    /**
+     * Searches for songs related to the given query. First checks if there is a cache with the
+     * given query. If there is, the set of songs is returned. If not, uses the songSearchService
+     * to search externally for songs using an API.
+     * @param query Query to search for
+     * @return Set of songs related to the query, null if no songs were found
+     * @see SongSearchService
+     */
+    public Set<Song> searchForSongs(String query) {
+        //Check for local cache
+        Set<Song> songsFound = getLocalCache(query);
+        //if there was no cache found, search externally
+        if (songsFound == null) {
+            songsFound = songSearchService.externalSearchForSongs(query);
+        }
+        log.info("searchForSongs: Found {} songs related to query '{}'", songsFound.size(),query);
+        return songsFound;
     }
 
     /**

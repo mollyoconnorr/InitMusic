@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.Set;
  *
  * @see <a href="https://developers.deezer.com/api">Deezer API</a>
  */
+@Service
 public class SongSearchDeezerImpl implements SongSearchService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongSearchDeezerImpl.class);
