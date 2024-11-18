@@ -94,16 +94,16 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     songsFound.add(newSong);
                 }
             } else {
-                log.error("searchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());
+                log.error("externalSearchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());
             }
 
         } catch (IOException | InterruptedException e) {
-            log.error("searchForSongs: Network error occurred during search with query {}", query, e);
+            log.error("externalSearchForSongs: Network error occurred during search with query {}", query, e);
         } catch (JSONException e) {
-            log.error("searchForSongs: JSON parsing error occurred with query {}", query, e);
+            log.error("externalSearchForSongs: JSON parsing error occurred with query {}", query, e);
         }
 
-        log.info("searchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
+        log.info("externalSearchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
         return songsFound;
     }
 }

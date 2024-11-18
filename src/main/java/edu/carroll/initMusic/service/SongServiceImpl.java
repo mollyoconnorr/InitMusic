@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class SongServiceImpl implements SongService{
         //if there was no cache found, search externally
         if (songsFound == null) {
             songsFound = songSearchService.externalSearchForSongs(query);
+            createCache(query, songsFound);
         }
         log.info("searchForSongs: Found {} songs related to query '{}'", songsFound.size(),query);
         return songsFound;
@@ -76,7 +78,16 @@ public class SongServiceImpl implements SongService{
         final List<QueryCache> queryCacheList = queryCacheRepository.findQueryCacheByQueryIgnoreCase(query);
         if (queryCacheList != null && !queryCacheList.isEmpty()) {
             log.info("getLocalCache: Found query cache for {} with {} songs found", query, queryCacheList.getFirst().getResults().size());
-            return queryCacheList.getFirst().getResults();
+
+            //If the cache is expired (has been more then a week since last queried, return null
+            //So the cache data is rewritten/updated
+            final QueryCache foundCache = queryCacheList.getFirst();
+            if(foundCache.isExpired()){
+                log.info("getLocalCache: Query cache for query '{}' is expired",queryCacheList.getFirst().getQuery());
+                return null;
+            }
+
+            return foundCache.getResults();
         }
 
         return null;
@@ -84,8 +95,9 @@ public class SongServiceImpl implements SongService{
 
     /**
      * Creates a new QueryCache with the given query and songs
-     * @param query Query String
+     * @param query Query that was searched for
      * @param songs Songs found related to query
+     * @return {@code true} if cache was created, {@code false} if not
      *
      * @see QueryCache
      */
@@ -130,6 +142,9 @@ public class SongServiceImpl implements SongService{
                 allSongsForCache.add(existingSong);  //Add existing song to final set for cache
             }
         }
+
+        //Update the time the query was last updated
+        newCache.setLastUpdated(LocalDateTime.now());
 
         //Save the new cache, have to do this here as well
         //as below so each song doesn't try to save a new queryCache with the same data
