@@ -83,7 +83,7 @@ public class SongServiceDeezerImpl implements SongService{
         final HttpRequest request;
         // Encode the query to handle special characters
         final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        final String url = "https://api.deezer.com/search?q=" + encodedQuery;
+        final String url = "https://api.deezer.com/search?q=" + encodedQuery+"&order=RATING_ASC&limit=50";
 
         // Build the HTTP request
         request = HttpRequest.newBuilder()
