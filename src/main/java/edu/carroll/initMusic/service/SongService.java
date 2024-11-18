@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
 
 import java.util.Set;
@@ -25,4 +26,14 @@ public interface SongService {
      * @return Set of songs found, if any
      */
     Set<Song> getLocalCache(String query);
+
+    /**
+     * Creates a new QueryCache with the given query and songs
+     * @param query Query that was searched for
+     * @param songs Songs found related to query
+     * @return {@code true} if cache was created, {@code false} if not
+     *
+     * @see QueryCache
+     */
+    boolean createCache(String query, Set<Song> songs);
 }
