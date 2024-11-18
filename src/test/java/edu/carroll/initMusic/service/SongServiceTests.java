@@ -1,7 +1,6 @@
 package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.jpa.model.Song;
-import edu.carroll.initMusic.service.SongServiceDeezerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -234,7 +233,7 @@ class SongServiceTests {
         final Song firstSong = (Song)songsFound.toArray()[0];
         assertNotNull(songsFound, "songsFound should not be null when a valid query is passed and there is a local cache in DB!");
         assertEquals(songsFound.size(), 1, "songsFound should have a size of 1 when a valid query is passed and there is a local cache with one song in DB!");
-        assertEquals(firstSong.getSongID(),song.getDeezerID(),"Cache song set should contain given song after getting Cache!");
+        assertEquals(firstSong.getDeezerID(),song.getDeezerID(),"Cache song set should contain given song after getting Cache!");
     }
 
     @Test
