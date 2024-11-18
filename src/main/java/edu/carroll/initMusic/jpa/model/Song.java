@@ -58,16 +58,16 @@ public class Song {
     private String artistName;
 
     /** Deezer ID of artist */
-    @Column(name = "artist_id", nullable=false)
-    private Long artistID;
+    @Column(name = "artist_deezer_id", nullable=false)
+    private Long artistDeezerID;
 
     /** Name of album this song is in */
     @Column(name = "album_name", nullable=false)
     private String albumName;
 
     /** Deezer ID of album */
-    @Column(name = "album_id", nullable=false)
-    private Long albumID;
+    @Column(name = "album_deezer_id", nullable=false)
+    private Long albumDeezerID;
 
     /** Link to songs cover art */
     @Column(name = "song_img")
@@ -90,18 +90,18 @@ public class Song {
      * @param songName Name of song
      * @param length Length of song in seconds
      * @param artistName Artist who made song
-     * @param artistID Deezer id of artist
+     * @param artistDeezerID Deezer id of artist
      * @param albumName Album song is in
-     * @param albumID Deezer id of album
+     * @param albumDeezerID Deezer id of album
      */
-    public Song(Long songID, String songName, int length, String artistName, long artistID, String albumName, long albumID) {
+    public Song(Long songID, String songName, int length, String artistName, long artistDeezerID, String albumName, long albumDeezerID) {
         this.deezerID = songID;
         this.songName = songName;
         this.length = length;
         this.artistName = artistName;
-        this.artistID = artistID;
+        this.artistDeezerID = artistDeezerID;
         this.albumName = albumName;
-        this.albumID = albumID;
+        this.albumDeezerID = albumDeezerID;
     }
 
     /**
@@ -228,16 +228,16 @@ public class Song {
      * Gets Deezer id of artist
      * @return Deezer id of artist
      */
-    public Long getArtistID() {
-        return artistID;
+    public Long getArtistDeezerID() {
+        return artistDeezerID;
     }
 
     /**
      * Sets id of artist
-     * @param artistID Id to set
+     * @param artistDeezerID Id to set
      */
-    public void setArtistID(Long artistID) {
-        this.artistID = artistID;
+    public void setArtistDeezerID(Long artistDeezerID) {
+        this.artistDeezerID = artistDeezerID;
     }
 
     /**
@@ -260,16 +260,16 @@ public class Song {
      * Gets Deezer ID of songs' album
      * @return ID of album
      */
-    public Long getAlbumID() {
-        return albumID;
+    public Long getAlbumDeezerID() {
+        return albumDeezerID;
     }
 
     /**
      * Sets Deezer ID of songs' album
-     * @param albumID ID to set
+     * @param albumDeezerID ID to set
      */
-    public void setAlbumID(Long albumID) {
-        this.albumID = albumID;
+    public void setAlbumDeezerID(Long albumDeezerID) {
+        this.albumDeezerID = albumDeezerID;
     }
 
     /**
@@ -307,8 +307,8 @@ public class Song {
         if (o == null || getClass() != o.getClass()) return false;
         final Song song = (Song) o;
         return length == song.length &&
-                Objects.equals(artistID, song.artistID) &&
-                Objects.equals(albumID, song.albumID) &&
+                Objects.equals(artistDeezerID, song.artistDeezerID) &&
+                Objects.equals(albumDeezerID, song.albumDeezerID) &&
                 Objects.equals(deezerID, song.deezerID) &&
                 Objects.equals(songName, song.songName) &&
                 Objects.equals(artistName, song.artistName) &&
@@ -323,7 +323,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songName, length, deezerID,artistName, artistID, albumID);
+        return Objects.hash(songName, length, deezerID,artistName, artistDeezerID, albumDeezerID);
     }
 
     /**
@@ -335,9 +335,9 @@ public class Song {
         return "Song{" + "songName='" + songName + '\'' +
                 ", deezerID=" + deezerID +
                 ", artistName='" + artistName + '\'' +
-                ", artistID=" + artistID +
+                ", artistDeezerID=" + artistDeezerID +
                 ", albumName='" + albumName + '\'' +
-                ", albumID=" + albumID +
+                ", albumDeezerID=" + albumDeezerID +
                 ", length=" + length +
                 ", songImg='" + songImg + '\'' +
                 ", songPreview='" + songPreview + '\'' +

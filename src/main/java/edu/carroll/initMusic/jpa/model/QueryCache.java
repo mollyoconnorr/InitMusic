@@ -100,7 +100,7 @@ public class QueryCache {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QueryCache that = (QueryCache) o;
-        return QueryCacheID == that.QueryCacheID && Objects.equals(query, that.query) && Objects.equals(results, that.results);
+        return Objects.equals(query, that.query) && Objects.equals(results, that.results);
     }
 
     /**
@@ -109,7 +109,7 @@ public class QueryCache {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(QueryCacheID, query);
+        return Objects.hash(query);
     }
 
     /**
