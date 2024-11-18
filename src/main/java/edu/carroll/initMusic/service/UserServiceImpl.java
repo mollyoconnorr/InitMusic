@@ -170,6 +170,11 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
+        //Make sure email and username are unique
+        if(uniqueEmail(email).failed() || uniqueUserName(username).failed()){
+            return null;
+        }
+
         final User newUser = new User();  // Create a new User object inside the method
         newUser.setUsername(username);
         newUser.setEmail(email);

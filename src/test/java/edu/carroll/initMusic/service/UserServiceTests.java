@@ -170,15 +170,15 @@ public class UserServiceTests {
 
     @Test
     public void checkUniqueUsernameWithUniqueUsername() {
-        assertSame(userService.uniqueUserName("newUser"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("newUser"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameWithNotUniqueUsername() {
-        final User savedUser = userService.saveUser("testuser12","password","email12@email.com","John","Doe");
+        final User savedUser = userService.saveUser("testuser1234","password","email12@email.com","John","Doe");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameWithNotUniqueUsername!");
 
-        assertNotSame(userService.uniqueUserName("testuser12"), MethodOutcome.SUCCESS, "Username should already exist");
+        assertNotEquals(userService.uniqueUserName("testuser1234"), MethodOutcome.SUCCESS, "Username should already exist");
     }
 
     @Test
@@ -206,50 +206,50 @@ public class UserServiceTests {
         };
 
         for (String name : validUsernames) {
-            assertSame(userService.uniqueUserName(name), MethodOutcome.SUCCESS,
+            assertEquals(userService.uniqueUserName(name), MethodOutcome.SUCCESS,
                     String.format("Username '%s' is valid and shouldn't already exist", name));
         }
     }
 
     @Test
     public void checkUniqueUsernameValidWithNumbers() {
-        assertSame(userService.uniqueUserName("validUser123"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("validUser123"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithSpecialCharacters() {
-        assertSame(userService.uniqueUserName("user!@#"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("user!@#"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithAlphanumericAndSpecialCharacters() {
-        assertSame(userService.uniqueUserName("User123!@"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("User123!@"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithUnderscore() {
-        assertSame(userService.uniqueUserName("user_name"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("user_name"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithDash() {
-        assertSame(userService.uniqueUserName("user-name"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("user-name"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidWithMixedCase() {
-        assertSame(userService.uniqueUserName("UsEr123"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("UsEr123"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidLongUsername() {
         final String username = "validUserWithLongLength123!@#"; // 30 characters
-        assertSame(userService.uniqueUserName(username), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName(username), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     @Test
     public void checkUniqueUsernameValidMixedCharacters() {
-        assertSame(userService.uniqueUserName("user_123$%^&*"), MethodOutcome.SUCCESS, "Username should be available");
+        assertEquals(userService.uniqueUserName("user_123$%^&*"), MethodOutcome.SUCCESS, "Username should be available");
     }
 
     /*
@@ -261,7 +261,7 @@ public class UserServiceTests {
         final User savedUser = userService.saveUser("duplicateUser1","password","email3@email.com","First","Last");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameNotUniqueWithSameCase!");
 
-        assertSame(userService.uniqueUserName("duplicateUser1"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (same case)");
+        assertEquals(userService.uniqueUserName("duplicateUser1"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (same case)");
     }
 
     @Test
@@ -269,7 +269,7 @@ public class UserServiceTests {
         final User savedUser = userService.saveUser("duplicateUser2","password","email2@email.com","First","Last");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameNotUniqueWithDifferentCase!");
 
-        assertSame(userService.uniqueUserName("DUPLICATEUSER2"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (different case)");
+        assertEquals(userService.uniqueUserName("DUPLICATEUSER2"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (different case)");
     }
 
     @Test
@@ -277,7 +277,7 @@ public class UserServiceTests {
         final User savedUser = userService.saveUser("user!!duplicate","password","email18@email.com","John","Doe");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameNotUniqueWithConsecutiveSpecialCharacters!");
 
-        assertSame(userService.uniqueUserName("user!!duplicate"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with consecutive special characters");
+        assertEquals(userService.uniqueUserName("user!!duplicate"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with consecutive special characters");
     }
 
     @Test
@@ -286,7 +286,7 @@ public class UserServiceTests {
         final User savedUser = userService.saveUser(username,"password","JDoe1@email.com","John","Doe");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameNotUniqueVeryLong!");
 
-        assertSame(userService.uniqueUserName(username), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (very long)");
+        assertEquals(userService.uniqueUserName(username), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist (very long)");
     }
 
     @Test
@@ -294,7 +294,7 @@ public class UserServiceTests {
         final User savedUser = userService.saveUser("user456","password","JDoe2@email.com","John","Doe");
         assertNotNull(savedUser, "User should've been saved in database when testing checkUniqueUsernameNotUniqueWithNumbersAtEnd!");
 
-        assertSame(userService.uniqueUserName("user456"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
+        assertEquals(userService.uniqueUserName("user456"), MethodOutcome.USER_ALREADY_EXISTS, "Username should already exist with numbers at the end");
     }
 
     @Test
@@ -305,7 +305,7 @@ public class UserServiceTests {
         final User savedUserTwo = userService.saveUser("user343433","password","JDoe23433@email.com","John","Doe");
         assertNotNull(savedUserTwo, "User should've been saved in database when testing checkUniqueUsernameUniqueWithOtherUsersInDatabase!");
 
-        assertSame(userService.uniqueUserName("username323"),MethodOutcome.SUCCESS, "Username should not exist in database yet");
+        assertEquals(userService.uniqueUserName("username323"),MethodOutcome.SUCCESS, "Username should not exist in database yet");
     }
 
 
@@ -554,16 +554,17 @@ public class UserServiceTests {
         assertTrue(deletedUser,"User should've been deleted in saveUserSaveUserDeleteUserThenSaveAgainShouldSaveUser");
 
         final User savedUserAgain = userService.saveUser(username, "password123","favUser@example.com", "John", "Doe");
-        assertNotNull(userService.findByUsername(username), "User should exist in database after saving user, deleting user, then saveUser is called again!");
+        assertNotNull(userService.findByUsername(savedUserAgain.getUsername()), "User should exist in database after saving user, deleting user, then saveUser is called again!");
     }
 
+    @Test
     public void saveUserSaveSameUserTwiceShouldFailSecondTime(){
         final String username = "favoriteUser2";
         final User savedUser = userService.saveUser(username, "password123","favUse2r@example.com", "John", "Doe");
-        assertNotNull(userService.findByUsername(username), "User should exist in database after saveUser is called!");
+        assertNotNull(userService.findByUsername(savedUser.getUsername()), "User should exist in database after saveUser is called!");
 
         final String usernameTwo = "favoriteUser2";
-        final User savedUserAgain = userService.saveUser(username, "password123","favUse2r@example.com", "John", "Doe");
+        final User savedUserAgain = userService.saveUser(usernameTwo, "password123","favUse2r@example.com", "John", "Doe");
         assertNull(savedUserAgain, "saveUser should return null when a user with the same information is already stored!");
     }
 
