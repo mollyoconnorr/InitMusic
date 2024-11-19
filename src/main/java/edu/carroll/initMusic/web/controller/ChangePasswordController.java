@@ -1,6 +1,5 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPasswordForm;
@@ -12,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpServletRequest;
+
 
 /**
  * Controller for handling password change requests for users who have successfully
@@ -22,10 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @since October 8, 2024
  */
 @Controller
-public class NewPasswordController {
+public class ChangePasswordController {
 
     /** Logger object used for logging actions within this controller. */
-    private static final Logger log = LoggerFactory.getLogger(NewPasswordController.class);
+    private static final Logger log = LoggerFactory.getLogger(ChangePasswordController.class);
 
     /** Service for user-related operations such as updating user passwords. */
     private final UserService userService;
@@ -35,7 +36,7 @@ public class NewPasswordController {
      *
      * @param userService the service used for user-related operations such as updating passwords.
      */
-    public NewPasswordController(UserService userService) {
+    public ChangePasswordController(UserService userService) {
         this.userService = userService;
     }
 
@@ -46,10 +47,16 @@ public class NewPasswordController {
      * It serves the page containing the form where users can input their new password.
      * </p>
      *
+     * @param request the HTTP request object to retrieve the referer header.
      * @return the name of the Thymeleaf template for the password change page.
      */
     @GetMapping("/changePassword")
-    public String showChangePasswordEmailPage() {
+    public String showChangePasswordEmailPage(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        if (referer == null || !referer.endsWith("/passSecurity")) {
+            // Redirect to an error page or login page if the user did not come from the expected page
+            return "redirect:/login";
+        }
         return "changePassword";  // Thymeleaf template for the password change page
     }
 
@@ -62,20 +69,19 @@ public class NewPasswordController {
      * </p>
      *
      * @param passwordForm the form containing the user's new password.
-     * @param authentication  the current authentication token, if any
-     * @param model        the model to store attributes for the view.
+     * @param session the HTTP session object that holds the current user's session data.
+     * @param model the model to store attributes for the view.
      * @return the name of the view to render (either the success page or a redirect).
      */
     @PostMapping("/changePassword")
     public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession session, Model model) {
-
         User currentUser = (User) session.getAttribute("currentUser");
 
         if (currentUser != null) {
-            //Retrieve the current user
+            // Retrieve the current user
             log.info("handleSecuritySubmission: Password changed for {}", currentUser.getUsername());
             final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
-            if(!passwordUpdated) {
+            if (!passwordUpdated) {
                 model.addAttribute("errorMessage", "Password update failed");
             }
             return "passwordChanged";  // Redirect to the password changed confirmation page
