@@ -1,25 +1,35 @@
 package edu.carroll.initMusic.web.controller;
 
-import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.web.form.PassSQuestionsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling user security questions validation.
+ * <p>
  * This class manages the process of verifying the user's answers to
  * pre-set security questions and redirecting to the password change page upon success.
+ * </p>
+ *
+ * <p>
+ * This controller ensures that only users who correctly answer their security questions
+ * can proceed to change their password.
+ * </p>
+ *
+ * <p>
+ * Handles both displaying the security questions page and processing
+ * the user's answers.
+ * </p>
  *
  * @author Molly O'Connor
- *
  * @since October 8, 2024
  */
 @Controller
@@ -32,13 +42,21 @@ public class PassSecurityController {
      * Displays the security questions page.
      * <p>
      * This method serves the page where users can answer their security questions
-     * to verify their identity.
+     * to verify their identity. It checks the referrer to ensure that users arrive
+     * at this page through the intended flow.
      * </p>
      *
-     * @return the name of the Thymeleaf template for the security questions page.
+     * @param request the HTTP servlet request, used to obtain the referrer header.
+     * @return the name of the Thymeleaf template for the security questions page,
+     *         or a redirect to the login page if the referrer is invalid.
      */
     @GetMapping("/passSecurity")
-    public String showChangePasswordEmailPage() {
+    public String showChangePasswordEmailPage(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        if (referer == null || !referer.endsWith("/changePasswordEmail")) {
+            // Redirect to an error page or login page
+            return "redirect:/login";
+        }
         return "passSecurity";  // Thymeleaf template for the security questions page
     }
 
@@ -53,8 +71,8 @@ public class PassSecurityController {
      * </p>
      *
      * @param passSecurityForm the form containing the user's answers to the security questions.
-     * @param authentication      the  current authentication token, if any
      * @param model            the model to store attributes for the view.
+     * @param session          the HTTP session, used to retrieve the currently logged-in user.
      * @return the name of the view to render (either the password change page or the security questions page with errors).
      */
     @PostMapping("/passSecurity")
@@ -83,4 +101,3 @@ public class PassSecurityController {
         }
     }
 }
-
