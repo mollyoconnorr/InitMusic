@@ -49,7 +49,7 @@ public class SecurityQuestionsController {
      * Displays the form where users can set up or answer security questions.
      * This method is primarily used during user registration or account recovery.
      *
-     * @param model   the model to be used in the view.
+     * @param model the model to be used in the view.
      * @param request the HTTP request to check the referer header.
      * @return the name of the Thymeleaf template for the security questions view.
      */
