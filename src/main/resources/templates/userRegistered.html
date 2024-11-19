@@ -4,13 +4,14 @@
     <title>User Registered</title>
     <link rel="stylesheet" href="/css/styles.css">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="refresh" th:if="${username == null || username.isEmpty()}" content="0; URL=/login" />
 </head>
 <body class="body1">
-<div class="centered-box">
-    <p class="p1" th:text="'Welcome ' + ${username} + '!'"></p> <!-- Dynamic username -->
+<div class="centered-box" th:if="${username != null && !username.isEmpty()}">
+    <p class="p1" th:text="'Welcome ' + ${username} + '!'"></p>
     <p class="p2">We're happy to have you.</p>
     <br/>
-    <p class="p2">Return to <a href="/login">login</a> to get started!</p> <!-- Link to login page -->
+    <p class="p2">Return to <a href="/login">login</a> to get started!</p>
 </div>
 </body>
 </html>
