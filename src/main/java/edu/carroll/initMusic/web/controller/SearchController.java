@@ -2,6 +2,7 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
+import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.PlaylistService;
@@ -290,10 +291,16 @@ public class SearchController {
         for (Long playlistId : selectedPlaylists) {
             log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getSongID(), playlistId);
             final MethodOutcome outcome = playlistService.addSongToPlaylist(playlistId, song);
+            Playlist playlist = playlistService.getPlaylist(playlistId);
+            // Fetch playlist name
+            String playlistName = playlist.getPlaylistName();
+            if (playlistName == null) {
+                playlistName = "Unknown Playlist"; // Fallback if playlist name cannot be fetched
+            }
             if(outcome.failed()){
                 errorMessages.add(String.format("Error adding %s to playlist: %s", song.getSongName(),outcome.getMessage()));
             }else{
-                successMessages.add(String.format("Added %s to playlist %s", song.getSongName(), playlistId));
+                successMessages.add(String.format("Added %s to playlist '%s'", song.getSongName(), playlistName));
             }
         }
 
