@@ -2,10 +2,8 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.CheckUserEmailForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,73 +13,80 @@ import jakarta.servlet.http.HttpSession;
 
 
 /**
- * Controller for handling password changes via email verification.
- * This controller manages the flow where users can input their email to change their password.
- * If the email is valid, it redirects to the security question validation page.
+ * Controller for handling password change requests for users who have successfully
+ * passed security checks and are changing their password.
  *
  * @author Molly O'Connor
  *
  * @since October 8, 2024
  */
 @Controller
-public class ChangePasswordEmailController {
+public class ChangePasswordController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
-    private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
+    /** Logger object used for logging actions within this controller. */
+    private static final Logger log = LoggerFactory.getLogger(ChangePasswordController.class);
 
-    /** Service for user-related operations such as finding users by email. */
+    /** Service for user-related operations such as updating user passwords. */
     private final UserService userService;
 
     /**
-     * Constructs a new ChangePasswordEmailController.
+     * Constructs a NewPasswordController with the specified UserService.
      *
-     * @param userService the service that handles user operations
+     * @param userService the service used for user-related operations such as updating passwords.
      */
-    public ChangePasswordEmailController(UserService userService) {
+    public ChangePasswordController(UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * Displays the email input form for changing the password.
+     * Displays the password change form page.
+     * <p>
+     * This method is invoked when a user requests to change their password.
+     * It serves the page containing the form where users can input their new password.
+     * </p>
      *
-     * This method is invoked when the user requests the password reset page.
-     *
-     * @return the name of the Thymeleaf template for the email input page
+     * @param request the HTTP request object to retrieve the referer header.
+     * @return the name of the Thymeleaf template for the password change page.
      */
-    @GetMapping("/changePasswordEmail")
-    public String showChangePasswordEmailPage() {
-        log.info("Request mapping for /changePasswordEmail GET method is called.");
-        return "changePasswordEmail"; // Thymeleaf template for the email input page
+    @GetMapping("/changePassword")
+    public String showChangePasswordEmailPage(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        if (referer == null || !referer.endsWith("/passSecurity")) {
+            log.info("Unauthorized user trying to access page, didn't come from passSecurity");
+            // Redirect to an error page or login page if the user did not come from the expected page
+            return "redirect:/login";
+        }
+        return "changePassword";  // Thymeleaf template for the password change page
     }
 
     /**
-     * Handles the email form submission for password change.
+     * Processes the password change form submission.
      * <p>
-     * This method checks if the email exists in the system. If the email is valid,
-     * it redirects the user to the security questions page. Otherwise, it shows an error.
+     * This method handles the POST request when a user submits their new password.
+     * It checks if a user is stored in the session, and if so, updates their password.
+     * If no user is found, it redirects the user to the login page.
      * </p>
-     * @param emailForm the form containing the email to check
-     * @param authentication the authentication token
-     * @param model the model used to pass data back to the view
-     * @return the view to display next, either the security questions page or the email input page with an error
+     *
+     * @param passwordForm the form containing the user's new password.
+     * @param session the HTTP session object that holds the current user's session data.
+     * @param model the model to store attributes for the view.
+     * @return the name of the view to render (either the success page or a redirect).
      */
-    @PostMapping("/changePasswordEmail")
-    public String handleEmailSubmission(@ModelAttribute CheckUserEmailForm emailForm, Model model, HttpSession session) {
-        User currentUser = userService.findByEmail(emailForm.getEmail()); // Method to find user by email
+    @PostMapping("/changePassword")
+    public String handleSecuritySubmission(@ModelAttribute NewPasswordForm passwordForm, HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+
         if (currentUser != null) {
-            // Pass user's security questions to the model for rendering on the next page
-            model.addAttribute("question1", currentUser.getQuestion1());
-            model.addAttribute("question2", currentUser.getQuestion2());
-            session.setAttribute("currentUser", currentUser);
-            return "passSecurity";
+            // Retrieve the current user
+            log.info("handleSecuritySubmission: Password changed for {}", currentUser.getUsername());
+            final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
+            if (!passwordUpdated) {
+                model.addAttribute("errorMessage", "Password update failed");
+            }
+            return "passwordChanged";  // Redirect to the password changed confirmation page
         } else {
-            // Log the situation and show an error message if the email isn't found
-            log.info("handleEmailSubmission: No user found with email: {}", emailForm.getEmail());
-            model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again.");
-            return "changePasswordEmail"; // Reload the form with an error message
+            log.error("handleSecuritySubmission: No user found in session.");
+            return "redirect:/login";  // Redirect to the login page if no user is found in the session
         }
     }
 }
-
