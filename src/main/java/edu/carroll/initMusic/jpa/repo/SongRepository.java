@@ -18,5 +18,5 @@ public interface SongRepository extends JpaRepository<Song, Long> {
      * @param id ID to search for
      * @return List of Song objects found with given id (Should only be one, since each ID is unique)
      */
-    List<Song> findBySongID(Long id);
+    List<Song> findByDeezerID(Long id);
 }

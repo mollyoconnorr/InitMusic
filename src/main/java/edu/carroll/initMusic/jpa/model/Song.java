@@ -21,11 +21,19 @@ public class Song {
     private static final long serialVersionID = 1L;
 
     /**
-     * ID number for song. A songs id is its deezer ID,
-     * makes it easier to check if a song is in database or not.
+     * Each song id is generated when the song is inserted
+     * into our database and all are unique.
      */
     @Id
-    private Long songID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ID;
+
+    /**
+     * Stores the songs deezerID, which is given to the song
+     * using the deezer api. Helpful when keeping track of songs
+     * in our database and preventing duplicates
+     */
+    private Long deezerID;
 
     /**
      * Set that keeps track of what playlists this song is in.
@@ -41,13 +49,6 @@ public class Song {
     @Column(name = "name", nullable=false)
     private String songName;
 
-    /**
-     * Release date of song,
-     * Has length of 10 for YYYY/MM/DD format
-     */
-    @Column(name = "release_date", length = 10)
-    private String releaseDate;
-
     /** Length of song in seconds */
     @Column(name = "length", nullable=false)
     private int length;
@@ -57,16 +58,16 @@ public class Song {
     private String artistName;
 
     /** Deezer ID of artist */
-    @Column(name = "artist_id", nullable=false)
-    private Long artistID;
+    @Column(name = "artist_deezer_id", nullable=false)
+    private Long artistDeezerID;
 
     /** Name of album this song is in */
     @Column(name = "album_name", nullable=false)
     private String albumName;
 
     /** Deezer ID of album */
-    @Column(name = "album_id", nullable=false)
-    private Long albumID;
+    @Column(name = "album_deezer_id", nullable=false)
+    private Long albumDeezerID;
 
     /** Link to songs cover art */
     @Column(name = "song_img")
@@ -89,34 +90,34 @@ public class Song {
      * @param songName Name of song
      * @param length Length of song in seconds
      * @param artistName Artist who made song
-     * @param artistID Deezer id of artist
+     * @param artistDeezerID Deezer id of artist
      * @param albumName Album song is in
-     * @param albumID Deezer id of album
+     * @param albumDeezerID Deezer id of album
      */
-    public Song(Long songID, String songName, int length, String artistName, long artistID, String albumName, long albumID) {
-        this.songID = songID;
+    public Song(Long songID, String songName, int length, String artistName, long artistDeezerID, String albumName, long albumDeezerID) {
+        this.deezerID = songID;
         this.songName = songName;
         this.length = length;
         this.artistName = artistName;
-        this.artistID = artistID;
+        this.artistDeezerID = artistDeezerID;
         this.albumName = albumName;
-        this.albumID = albumID;
+        this.albumDeezerID = albumDeezerID;
     }
 
     /**
      * Gets the songs ID number
      * @return Song's ID number
      */
-    public Long getSongID() {
-        return songID;
+    public Long getDeezerID() {
+        return deezerID;
     }
 
     /**
      * Sets the song ID
      * @param songID ID to set
      */
-    public void setSongID(Long songID) {
-        this.songID = songID;
+    public void setDeezerID(Long songID) {
+        this.deezerID = songID;
     }
 
     /**
@@ -157,22 +158,6 @@ public class Song {
      */
     public void setSongName(String songName) {
         this.songName = songName;
-    }
-
-    /**
-     * Gets release date of song
-     * @return Release date of song
-     */
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    /**
-     * Sets release date of the song
-     * @param releaseDate Release date to set
-     */
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     /**
@@ -243,16 +228,16 @@ public class Song {
      * Gets Deezer id of artist
      * @return Deezer id of artist
      */
-    public Long getArtistID() {
-        return artistID;
+    public Long getArtistDeezerID() {
+        return artistDeezerID;
     }
 
     /**
      * Sets id of artist
-     * @param artistID Id to set
+     * @param artistDeezerID Id to set
      */
-    public void setArtistID(Long artistID) {
-        this.artistID = artistID;
+    public void setArtistDeezerID(Long artistDeezerID) {
+        this.artistDeezerID = artistDeezerID;
     }
 
     /**
@@ -275,16 +260,16 @@ public class Song {
      * Gets Deezer ID of songs' album
      * @return ID of album
      */
-    public Long getAlbumID() {
-        return albumID;
+    public Long getAlbumDeezerID() {
+        return albumDeezerID;
     }
 
     /**
      * Sets Deezer ID of songs' album
-     * @param albumID ID to set
+     * @param albumDeezerID ID to set
      */
-    public void setAlbumID(Long albumID) {
-        this.albumID = albumID;
+    public void setAlbumDeezerID(Long albumDeezerID) {
+        this.albumDeezerID = albumDeezerID;
     }
 
     /**
@@ -322,9 +307,9 @@ public class Song {
         if (o == null || getClass() != o.getClass()) return false;
         final Song song = (Song) o;
         return length == song.length &&
-                artistID == song.artistID &&
-                albumID == song.albumID &&
-                Objects.equals(songID, song.songID) &&
+                Objects.equals(artistDeezerID, song.artistDeezerID) &&
+                Objects.equals(albumDeezerID, song.albumDeezerID) &&
+                Objects.equals(deezerID, song.deezerID) &&
                 Objects.equals(songName, song.songName) &&
                 Objects.equals(artistName, song.artistName) &&
                 Objects.equals(albumName, song.albumName) &&
@@ -338,7 +323,7 @@ public class Song {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(songName, length, songID,artistName, artistID, albumID);
+        return Objects.hash(songName, length, deezerID,artistName, artistDeezerID, albumDeezerID);
     }
 
     /**
@@ -347,17 +332,15 @@ public class Song {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Song{");
-        sb.append("songName='").append(songName).append('\'');
-        sb.append(", songID=").append(songID);
-        sb.append(", artistName='").append(artistName).append('\'');
-        sb.append(", artistID=").append(artistID);
-        sb.append(", albumName='").append(albumName).append('\'');
-        sb.append(", albumID=").append(albumID);
-        sb.append(", length=").append(length);
-        sb.append(", songImg='").append(songImg).append('\'');
-        sb.append(", songPreview='").append(songPreview).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Song{" + "songName='" + songName + '\'' +
+                ", deezerID=" + deezerID +
+                ", artistName='" + artistName + '\'' +
+                ", artistDeezerID=" + artistDeezerID +
+                ", albumName='" + albumName + '\'' +
+                ", albumDeezerID=" + albumDeezerID +
+                ", length=" + length +
+                ", songImg='" + songImg + '\'' +
+                ", songPreview='" + songPreview + '\'' +
+                '}';
     }
 }

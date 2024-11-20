@@ -1,20 +1,21 @@
-package edu.carroll.initMusic.jpa.service;
+package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.Playlist;
-import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.model.Song;
+import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
 import edu.carroll.initMusic.jpa.repo.SongRepository;
+import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import edu.carroll.initMusic.service.PlaylistService;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 
@@ -268,14 +269,14 @@ public class PlaylistServiceTests {
         Playlist playlist = testUser.getPlaylists().iterator().next();
 
         // Add the song to the playlist
-        playlistService.addSongToPlaylist(playlist.getPlaylistID(), song);
+        playlistService.addSongToPlaylist(playlist, song);
         playlistRepository.save(playlist); // Ensure the playlist is saved
 
         // Verify the song was added
         assertTrue(playlist.getSongs().contains(song), "The song should be present in the playlist before removal");
 
         // Remove the song
-        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getSongID());
+        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getDeezerID());
         assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed successfully");
 
         // Refresh the playlist from the repository to ensure we have the latest state

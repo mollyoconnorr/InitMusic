@@ -17,11 +17,6 @@ import java.util.regex.Pattern;
  * This class provides methods for saving user information, checking unique usernames/emails,
  * updating security questions, and managing passwords.
  * </p>
- *
- * @author Nick Clouse
- * @author Molly O'Connor
- *
- * @since October 4, 2024
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,7 +30,7 @@ public class UserServiceImpl implements UserService {
     /** BCrypt password encoder used for hashing passwords.*/
     private final BCryptPasswordEncoder passwordEncoder;
 
-    //Define a regular expression for a valid email format
+    /** Define a regular expression for a valid email format */
     private final String emailRegex = "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     //Compile the regex pattern
@@ -151,7 +146,7 @@ public class UserServiceImpl implements UserService {
      * @param email Email of user
      * @param firstName First name of user
      * @param lastName Last name of user
-     * @return the saved {@link User} object
+     * @return The saved {@link User} object, null if user was not saved
      */
     public User saveUser(String username,String password,String email,String firstName,String lastName) {
         log.info("saveUser: Saving new user with username '{}'", username);
@@ -172,6 +167,11 @@ public class UserServiceImpl implements UserService {
         //After stripping, if there are any spaces, the username is not valid
         if(username.contains(" ") || email.contains(" ")){
             log.warn("saveUser: Username '{}' or email contains spaces", username);
+            return null;
+        }
+
+        //Make sure email and username are unique
+        if(uniqueEmail(email).failed() || uniqueUserName(username).failed()){
             return null;
         }
 
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
      * @param answer1 First answer
      * @param question2 Second security question
      * @param answer2 Second answer
-     * @return true if security questions were updated, false otherwise
+     * @return {@code true} if security questions were updated, {@code false} otherwise
      */
     public boolean updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2) {
         if(question1.isBlank() | question2.isBlank() | answer1.isBlank() | answer2.isBlank()){
@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
      * Finds a user by email address, ignoring case sensitivity.
      *
      * @param email the email address to search for
-     * @return the user if found, otherwise null
+     * @return the user if found, {@code null} if not
      */
     public User findByEmail(String email) {
         log.info("findByEmail: Finding user by email '{}'", email);
@@ -259,7 +259,7 @@ public class UserServiceImpl implements UserService {
      * playlists the user has so operations can be performed on them
      * if needed.
      * @param userId ID to search by
-     * @return The user object found, if any
+     * @return The user object found, {@code null} if no object found
      */
     public User findByIdWithPlaylists(Long userId) {
         return userRepository.findByIdWithPlaylists(userId);
@@ -269,9 +269,9 @@ public class UserServiceImpl implements UserService {
      * Gets user object from inputted username. All usernames are unique, so
      * there should only be 1 username found
      * @param username Username to use for search
-     * @return User object found, null if nothing found, or too many were found.
+     * @return User object found, {@code null} if nothing found, or too many were found.
      */
-    public User getUser(String username){
+    public User findByUsername(String username){
         final List<User> user = userRepository.findByUsernameIgnoreCase(username);
         if(user.size() != 1){
             return null;
@@ -279,9 +279,15 @@ public class UserServiceImpl implements UserService {
         return user.getFirst();
     }
 
+    /**
+     * Deletes a user object from the database by email
+     * @param email Email to delete by
+     * @return {@code true} if user was removed from database, {@code false} if not
+     */
     @Transactional // ensures that a transaction is available when the method executes
     public boolean deleteByEmail(String email) {
         try {
+            //Check if user was found in repository
             if (userRepository.findByEmailIgnoreCase(email).isEmpty()) {
                 log.info("deleteByEmail: No user found with email {}", email);
                 return false; // No user to delete

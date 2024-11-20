@@ -90,7 +90,6 @@ public class SecurityConfig {
                     .logoutSuccessUrl("/login?logout")
                     .permitAll();
         });
-        http.csrf().disable();
 
         return http.build();
     }

@@ -33,9 +33,25 @@
   </div>
 </nav>
 
+  <h1>Search for a Song</h1>
+
   <form action="#" th:action="@{/search}" method="post">
-    <input type="text" id="search" name="query" placeholder="Search for a song...">
-    <button type="submit">Search</button>
+
+    <div class="container text-center">
+      <div class="row align-items-start">
+        <div class="col">
+          <label for="songSearch">Song Name:</label>
+          <input type="text" id="songSearch" name="songSearch" placeholder="Song name...">
+        </div>
+        <div class="col">
+          <label for="artistSearch">Artist Name:</label>
+          <input type="text" id="artistSearch" name="artistSearch" placeholder="Artist name...">
+        </div>
+        <div class="col" id="searchBtnContainer">
+          <button type="submit" id="searchBtn">Search</button>
+        </div>
+      </div>
+    </div>
   </form>
 
   <!--  Success messages after adding song to playlist(s)-->
@@ -57,17 +73,6 @@
   <!-- Display Results if Search is Performed -->
   <div th:if="${results != null and #lists.size(results) > 0}">
     <h2>Results for "<span th:text="${query}"></span>"</h2>
-
-    <!--  If localQuery is true, tell user that results are from local cache  -->
-    <div th:if="${localQuery}" class="localQueryDiv">
-      <p>The songs shown below were found in our local database. Don't see the song your looking for? Click
-        <a href="#" onclick="document.getElementById('postForm').submit();">here</a>
-        to search globally</p>
-    </div>
-    <!--  Hidden form used to submit post mapping to do a search with api  -->
-    <form id="postForm" action="/searchWithAPI" method="POST" style="display: none;">
-      <input type="hidden" name="query" th:value="${query}">
-    </form>
 
     <div class="list-group">
       <div th:each="item : ${results}">
@@ -100,13 +105,13 @@
           <button type="button" class="btn btn-primary"
                   data-bs-toggle="modal"
                   data-bs-target="#addToPlaylistModal"
-                  th:data-song-id="${item.getSongID()}"
+                  th:data-song-id="${item.getDeezerID()}"
                   th:data-song-name="${item.getSongName()}"
                   th:data-song-length="${item.getLength()}"
                   th:data-artist-name="${item.getArtistName()}"
-                  th:data-artist-id="${item.getArtistID()}"
+                  th:data-artist-id="${item.getArtistDeezerID()}"
                   th:data-album-name="${item.getAlbumName()}"
-                  th:data-album-id="${item.getAlbumID()}"
+                  th:data-album-id="${item.getAlbumDeezerID()}"
                   th:data-song-img="${item.getSongImg()}"
                   th:data-song-pre="${item.getSongPreview()}"
                   onclick="populateModal(this)">
@@ -127,7 +132,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title fs-5" id="addToPlaylistModalLabel">Adding Song to Playlist</h5>
+          <h5 class="modal-title fs-5" id="addToPlaylistModalLabel"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body addPlaylistModelBody">
