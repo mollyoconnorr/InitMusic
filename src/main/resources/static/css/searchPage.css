@@ -51,7 +51,8 @@ input[type="text"] {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ced4da;
-    width: 70%;
+    /*width: 70%;*/
+    width: 15vw;
 }
 
 button[type="submit"] {
@@ -291,7 +292,14 @@ button.btn-primary:hover {
     color: red;
 }
 
-.localQueryDiv{
-    text-align: center;
+button#searchBtn {
+    margin-top: 20px;
+}
+
+h1{
     font-weight: bold;
+}
+
+.align-items-start{
+    flex-wrap: nowrap;
 }

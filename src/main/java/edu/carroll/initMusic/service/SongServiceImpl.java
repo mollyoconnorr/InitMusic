@@ -41,6 +41,8 @@ public class SongServiceImpl implements SongService{
      */
     private static String getString(String songName, String artistName) {
         String query = "";
+        songName = songName.trim();
+        artistName = artistName.trim();
         /*
         'Song' or 'Artist' is added before the strings so if a user searches for a song named 'song'
         it'll have a different cache than if a user searched for a artist named 'song'.
@@ -52,7 +54,7 @@ public class SongServiceImpl implements SongService{
             query = "Song:"+ songName;
             //Add artist in front of artist name
         }else if(!artistName.isEmpty()) {
-            query = "Artist"+ artistName;
+            query = "Artist:"+ artistName;
         }
         return query;
     }
@@ -107,7 +109,7 @@ public class SongServiceImpl implements SongService{
         //Check for local cache
         Set<Song> songsFound = getLocalCache(query);
         //if there was no cache found, search externally
-        if (songsFound == null) {
+        if (songsFound == null || songsFound.isEmpty()) {
             songsFound = songSearchService.externalSearchForSongs(songName, artistName);
             createCache(query, songsFound);
             return songsFound;

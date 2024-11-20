@@ -119,34 +119,47 @@ public class SearchController {
     /**
      * Performs the search for all songs related to the query param, and displays them
      * on the page. Sets up the model so the user can add songs to a playlist if they wish
-     * @param query Query to search for
+     * @param songSearch Song name to search for
+     * @param artistSearch Artist name to search for
      * @param model Model to use
      * @param authentication Current authenticated user token, if any
      * @return Updated search page
      */
     @PostMapping("/search")
     @Transactional
-    public String search(@RequestParam(value = "query") String query, Model model, Authentication authentication, HttpSession session) {
+    public String search(@RequestParam(value = "songSearch") String songSearch,
+                         @RequestParam(value = "artistSearch") String artistSearch, Model model, Authentication authentication, HttpSession session) {
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userService.findByIdWithPlaylists(userDetails.getUser().getuserID());
 
-        log.info("search: {} searched for songs with query '{}'", user.getUsername(), query);
+        //Put the query into a format suitable for logging and displaying back to user
+        String query = "";
+        if(!songSearch.isEmpty() && !artistSearch.isEmpty()) {
+            query = songSearch + " by " + artistSearch;
+        }else if(!songSearch.isEmpty()) {
+            query = songSearch;
+        }else if(!artistSearch.isEmpty()) {
+            query = artistSearch;
+        }
 
-        //If query doesnt have any text
-        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
+        log.info("search: {} searched for songs with query '{}'", user.getuserID(), query);
+
+        //If either query isn't valid according to our criteria
+        if (!songService.isValidQuery(songSearch) && !songService.isValidQuery(artistSearch)) {
             //For whatever reason, when this if statement is triggered, the model is missing the
             //new playlist form, so we have to add it again here
             model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
-            model.addAttribute("searchError", "Search term must be between " + MIN_QUERY_LENGTH + " and " + MAX_QUERY_LENGTH + " characters long.");
+            model.addAttribute("searchError", "Song and Artist name both must be between " + MIN_QUERY_LENGTH + " and " + MAX_QUERY_LENGTH + " characters long, and" +
+                    " there must be a song or artist name present.");
             log.error("search: User id#{} searched using an invalid query", user.getUsername());
             return "search"; // Return to the search page with error message
         }
 
-        final Set<Song> results = songService.searchForSongs(query);
+        final Set<Song> results = songService.searchForSongs(songSearch,artistSearch);
 
         //If no songs found
-        if(results.isEmpty()) {
+        if(results == null || results.isEmpty()) {
             //For whatever reason, when this if statement is triggered, the model is missing the
             //new playlist form, so we have to add it again here
             model.addAttribute("NewPlaylistForm", new NewPlaylistForm());

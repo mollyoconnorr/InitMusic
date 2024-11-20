@@ -79,7 +79,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     .append("\" ");
         }
 
-        //Only add artist name to url if a artist name was passed
+        //Only add artist name to url if an artist name was passed
         if (!artistSearch.isEmpty()) {
             // Add the artist name to the query
             urlBuilder.append("artist:\"")
@@ -94,8 +94,18 @@ public class SongSearchDeezerImpl implements SongSearchService{
 
          This is the api call that will be used in the http request.
          */
-        String url = "https://api.deezer.com/search?q=" +
+        final String url = "https://api.deezer.com/search?q=" +
                 URLEncoder.encode(urlBuilder.toString().trim()+"&strict=on", StandardCharsets.UTF_8).replace("+", "%20");
+
+        /*
+        Since the first url has 'strict=on', it doesn't return any matches if the given strings
+        don't exactly match any songs/artists found. We call the api again here without 'strict=on' (Default is off)
+        So it searches for any songs/artists with a close match to the given strings. It's not perfect,
+        as some queries don't return results when we think they should, but it improves the functionality.
+         */
+        final String urlNoStrict = "https://api.deezer.com/search?q=" +
+                URLEncoder.encode(urlBuilder.toString().trim(), StandardCharsets.UTF_8).replace("+", "%20");
+
 
         //String that contains query information, used for logging
         final String query = "Song: " + songSearch + " | Artist: " + artistSearch;
@@ -105,9 +115,16 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 .uri(URI.create(url))
                 .build();
 
+        // Build secondary HTTP request
+        final HttpRequest requestNoStrict = HttpRequest.newBuilder()
+                .uri(URI.create(urlNoStrict))
+                .build();
+
         final HttpResponse<String> response;
 
-        SortedSet<Song> songsFound;
+        final HttpResponse<String> responseNoStrict;
+
+        final SortedSet<Song> songsFound;
 
         //If at least a song name was given, sort by song name
         if(!songSearch.isEmpty()) {
@@ -125,7 +142,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 return s1.getDeezerID().compareTo(s2.getDeezerID());
             });
             log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Song name",songSearch,artistSearch);
-            //If just a artist name was given, sort by artist name
+            //If just an artist name was given, sort by artist name
         }else if(!artistSearch.isEmpty()) {
             /*
             Creates a new tree set, which is a sorted set, and make a custom comparator that
@@ -142,7 +159,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
             });
             log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Artist name",songSearch,artistSearch);
             //If somehow no names were given (Should never happen here, but just in case) return
-            //a empty set
+            //an empty set
         }else{
             log.error("externalSearchForSongs: No query was given to me and somehow that got passed the initial checks :( I don't work without a query...");
             return new HashSet<>();
@@ -151,13 +168,17 @@ public class SongSearchDeezerImpl implements SongSearchService{
         try {
             // Send the HTTP request and get the response
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            responseNoStrict = HttpClient.newHttpClient().send(requestNoStrict, HttpResponse.BodyHandlers.ofString());
 
             // Check if the response status code is 200 (OK)
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == 200 && responseNoStrict.statusCode() == 200) {
                 final JSONObject jsonResponse = new JSONObject(response.body());
-
+                final JSONObject jsonResponseNoStrict = new JSONObject(responseNoStrict.body());
                 // Parse the JSON response
-                JSONArray dataArray = jsonResponse.getJSONArray("data");
+                final JSONArray dataArray = jsonResponse.getJSONArray("data");
+
+                //Add the secondary response data
+                dataArray.putAll(jsonResponseNoStrict.getJSONArray("data"));
 
                 //Take each object in the data array and convert it to a song object
                 for (int i = 0; i < dataArray.length(); i++) {
@@ -179,9 +200,6 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     final Song newSong = new Song(id,title,duration,artistName,artistID,albumName,albumID);
                     newSong.setSongImg(songImg);
                     newSong.setSongPreview(songPreview);
-                    System.out.println(newSong);
-                    System.out.println(jaroWinkler.apply(newSong.getArtistName(), artistSearch));
-                    System.out.println(songsFound.add(newSong));
                 }
             } else {
                 log.error("externalSearchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());
