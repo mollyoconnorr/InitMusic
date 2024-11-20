@@ -66,6 +66,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
     public Set<Song> externalSearchForSongs(String songSearch,String artistSearch) {
         //Make sure there is text in query
         if((!isValidQuery(songSearch) || !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
+            log.warn("externalSearchForSongs: Invalid query: Song:{} | Artist:{}", songSearch, artistSearch);
             return new HashSet<>();
         }
         final StringBuilder urlBuilder = new StringBuilder();
@@ -123,6 +124,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 // If distances are the same, compare by deezer id (always unique)
                 return s1.getDeezerID().compareTo(s2.getDeezerID());
             });
+            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Song name",songSearch,artistSearch);
             //If just a artist name was given, sort by artist name
         }else if(!artistSearch.isEmpty()) {
             /*
@@ -138,9 +140,11 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 // If distances are the same, compare by deezer id (always unique)
                 return s1.getDeezerID().compareTo(s2.getDeezerID());
             });
+            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Artist name",songSearch,artistSearch);
             //If somehow no names were given (Should never happen here, but just in case) return
             //a empty set
         }else{
+            log.error("externalSearchForSongs: No query was given to me and somehow that got passed the initial checks :( I don't work without a query...");
             return new HashSet<>();
         }
 
@@ -194,6 +198,23 @@ public class SongSearchDeezerImpl implements SongSearchService{
         return songsFound;
     }
 
+    /**
+     * Checks if the given query is valid.
+     * <p>
+     *     A query is valid if:
+     *     <ul>
+     *         <li>It's not null</li>
+     *         <li>It's not empty</li>
+     *         <li>It's length is greater than MIN_QUERY_LENGTH</li>
+     *         <li>It's length is less than MAX_QUERY_LENGTH</li>
+     *     </ul>
+     * </p>
+     * @param query Query to check if valid
+     * @return  {@code true} if query is valid, {@code false} otherwise.
+     *
+     * @see #MAX_QUERY_LENGTH
+     * @see #MIN_QUERY_LENGTH
+     */
     public boolean isValidQuery(String query) {
         return query != null && !query.trim().isEmpty() && !(query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH);
     }
