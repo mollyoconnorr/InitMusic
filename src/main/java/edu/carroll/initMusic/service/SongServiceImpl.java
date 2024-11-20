@@ -4,6 +4,7 @@ import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.repo.QueryCacheRepository;
 import edu.carroll.initMusic.jpa.repo.SongRepository;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This services handles Searching for songs using the deezer api.
@@ -31,13 +33,43 @@ public class SongServiceImpl implements SongService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
+    /**
+     * Formats the given song name and artist name into a format like 'Song:{songName}+Artist:{artistName}'
+     * @param songName Song name
+     * @param artistName Artist name
+     * @return Formatted String
+     */
+    private static String getString(String songName, String artistName) {
+        String query = "";
+        /*
+        'Song' or 'Artist' is added before the strings so if a user searches for a song named 'song'
+        it'll have a different cache than if a user searched for a artist named 'song'.
+         */
+        if(!songName.isEmpty() && !artistName.isEmpty()) {
+            query = "Song:" + songName + "+" + "Artist:"+ artistName;
+            //Add song in front of song name
+        }else if(!songName.isEmpty()) {
+            query = "Song:"+ songName;
+            //Add artist in front of artist name
+        }else if(!artistName.isEmpty()) {
+            query = "Artist"+ artistName;
+        }
+        return query;
+    }
+
     /** QueryCache repository */
     private final QueryCacheRepository queryCacheRepository;
 
     /** Song repository */
     private final SongRepository songRepository;
 
+    /** Service used to search externally for songs */
     private final SongSearchService songSearchService;
+
+    /** JaroWinklerDistance object for calculating differences between strings. Used
+     * when sorting songs returned from the database so they maintain a order. */
+    private final JaroWinklerDistance jaroWinkler = new JaroWinklerDistance();
+
 
     /**
      * Constructor
@@ -52,23 +84,73 @@ public class SongServiceImpl implements SongService{
      * Searches for songs related to the given query. First checks if there is a cache with the
      * given query. If there is, the set of songs is returned. If not, uses the songSearchService
      * to search externally for songs using an API.
-     * @param query Query to search for
+     *
+     * <p>
+     *     If a cache is found, its set of songs gets converted to a tree set so it can be sorted. The set is sorted by the JaroWinklerDistance the song name or artist name is from the target song name or artist name.
+     *     If the distance is the same, it compares the Deezer ID of each song, which is always unique. Same sorting
+     *     logic as in {@link SongSearchDeezerImpl#externalSearchForSongs(String, String)}.
+     * </p>
+     * @param songName Name of song to look for
+     * @param artistName Name of artist to look for
      * @return Set of songs related to the query, empty set if no songs were found
      * @see SongSearchService
      */
-    public Set<Song> searchForSongs(String query) {
-        if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
+    public Set<Song> searchForSongs(String songName,String artistName) {
+        if (!isValidQuery(songName) || !isValidQuery(artistName)) {
             return new HashSet<>();
         }
+
+        //Create query string, used for logging and caching queries
+        final String query = getString(songName, artistName);
+        log.info("searchForSongs: Used searched for query: {}",query);
+
         //Check for local cache
         Set<Song> songsFound = getLocalCache(query);
         //if there was no cache found, search externally
         if (songsFound == null) {
-            songsFound = songSearchService.externalSearchForSongs(query);
+            songsFound = songSearchService.externalSearchForSongs(songName, artistName);
             createCache(query, songsFound);
+            return songsFound;
+        }else{
+            //If at least a song name was given, sort by song name
+            if(!songName.isEmpty()) {
+                /*
+                Creates a new tree set, which is a sorted set, and make a custom comparator that
+                compares the song names and how different they are from the target name (songSearch)
+                If they are the same, they are compared by deezerID, which should always be different
+                 */
+                final Set<Song> sortedSongsFound = new TreeSet<>((s1, s2) -> {
+                    int distanceComparison = Double.compare(jaroWinkler.apply(s1.getSongName(), songName), jaroWinkler.apply(s2.getSongName(), songName));
+                    if (distanceComparison != 0) {
+                        return distanceComparison;
+                    }
+                    // If distances are the same, compare by song name
+                    return s1.getDeezerID().compareTo(s2.getDeezerID());
+                });
+                sortedSongsFound.addAll(songsFound);
+                return sortedSongsFound;
+                //If a artist name was given, sort by artist name
+            }else if(!artistName.isEmpty()) {
+                /*
+                Creates a new tree set, which is a sorted set, and make a custom comparator that
+                compares the artist names and how different they are from the target name (artistSearch)
+                If they are the same, they are compared by deezerID, which should always be different
+                 */
+                final Set<Song> sortedSongsFound= new TreeSet<>((s1, s2) -> {
+                    int distanceComparison = Double.compare(jaroWinkler.apply(s1.getArtistName(), artistName), jaroWinkler.apply(s2.getArtistName(), artistName));
+                    if (distanceComparison != 0) {
+                        return distanceComparison;
+                    }
+                    // If distances are the same, compare by deezer id (always unique)
+                    return s1.getDeezerID().compareTo(s2.getDeezerID());
+                });
+                sortedSongsFound.addAll(songsFound);
+                return sortedSongsFound;
+                //If both queries are empty, return a empty set
+            }else{
+                return new HashSet<>();
+            }
         }
-        log.info("searchForSongs: Found {} songs related to query '{}'", songsFound.size(),query);
-        return songsFound;
     }
 
     /**
@@ -84,6 +166,7 @@ public class SongServiceImpl implements SongService{
             return null;
         }
         query = query.strip().toLowerCase();
+        //Search for cache
         final List<QueryCache> queryCacheList = queryCacheRepository.findQueryCacheByQueryIgnoreCase(query);
         if (queryCacheList != null && !queryCacheList.isEmpty()) {
             log.info("getLocalCache: Found query cache for {} with {} songs found", query, queryCacheList.getFirst().getResults().size());
@@ -171,5 +254,28 @@ public class SongServiceImpl implements SongService{
 
         log.info("Saved new cache with associated songs {}", newCache);
         return true;
+    }
+
+    /**
+     * Checks if the given query is valid.
+     * <p>
+     *     A query is valid if:
+     *     <ul>
+     *         <li>It's not null</li>
+     *         <li>It's not empty</li>
+     *         <li>It's length is greater than MIN_QUERY_LENGTH</li>
+     *         <li>It's length is less than MAX_QUERY_LENGTH</li>
+     *     </ul>
+     * </p>
+     * Same method as in {@link SongSearchDeezerImpl}, didn't really feel the need to make something separate
+     * to reduce duplicate code since it's just used in two services.
+     * @param query Query to check if valid
+     * @return  {@code true} if query is valid, {@code false} otherwise.
+     *
+     * @see #MAX_QUERY_LENGTH
+     * @see #MIN_QUERY_LENGTH
+     */
+    public boolean isValidQuery(String query) {
+        return query != null && !query.trim().isEmpty() && !(query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH);
     }
 }
