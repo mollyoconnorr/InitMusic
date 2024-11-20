@@ -65,7 +65,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
     @Transactional
     public Set<Song> externalSearchForSongs(String songSearch,String artistSearch) {
         //Make sure there is text in query
-        if((!isValidQuery(songSearch) || !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
+        if((!isValidQuery(songSearch) && !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
             log.warn("externalSearchForSongs: Invalid query: Song:{} | Artist:{}", songSearch, artistSearch);
             return new HashSet<>();
         }

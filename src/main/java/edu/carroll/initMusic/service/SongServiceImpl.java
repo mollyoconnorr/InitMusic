@@ -96,7 +96,7 @@ public class SongServiceImpl implements SongService{
      * @see SongSearchService
      */
     public Set<Song> searchForSongs(String songName,String artistName) {
-        if (!isValidQuery(songName) || !isValidQuery(artistName)) {
+        if (!isValidQuery(songName) && !isValidQuery(artistName)) {
             return new HashSet<>();
         }
 
