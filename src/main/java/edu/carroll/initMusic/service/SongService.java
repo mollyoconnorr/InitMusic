@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
 
@@ -32,11 +33,11 @@ public interface SongService {
      * Creates a new QueryCache with the given query and songs
      * @param query Query that was searched for
      * @param songs Songs found related to query
-     * @return {@code true} if cache was created, {@code false} if not
+     * @return A MethodOutcome enum, which represents the outcome of the method
      *
      * @see QueryCache
      */
-    boolean createCache(String query, Set<Song> songs);
+    MethodOutcome createCache(String query, Set<Song> songs);
 
     /**
      * Checks if the given query is valid according to given standards

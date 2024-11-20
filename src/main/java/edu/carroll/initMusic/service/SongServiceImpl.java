@@ -1,5 +1,6 @@
 package edu.carroll.initMusic.service;
 
+import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.repo.QueryCacheRepository;
@@ -111,7 +112,10 @@ public class SongServiceImpl implements SongService{
         //if there was no cache found, search externally
         if (songsFound == null || songsFound.isEmpty()) {
             songsFound = songSearchService.externalSearchForSongs(songName, artistName);
-            createCache(query, songsFound);
+            final MethodOutcome cacheCreated = createCache(query, songsFound);
+            if(cacheCreated.failed()) {
+                log.error("searchForSongs: An error occurred when trying to create cache with query '{}' | {}",query,cacheCreated.getMessage());
+            }
             return songsFound;
         }else{
             //If at least a song name was given, sort by song name
@@ -191,17 +195,15 @@ public class SongServiceImpl implements SongService{
      * Creates a new QueryCache with the given query and songs
      * @param query Query that was searched for
      * @param songs Songs found related to query
-     * @return {@code true} if cache was created, {@code false} if not
+     * @return A MethodOutcome enum, which represents the outcome of the method
      *
      * @see QueryCache
      */
-    public boolean createCache(String query, Set<Song> songs){
+    public MethodOutcome createCache(String query, Set<Song> songs){
         if(query == null || query.isEmpty() || songs == null){
-            return false;
+            return MethodOutcome.QUERY_EMPTY;
         }
-        if(queryCacheRepository == null){
-            return false;
-        }
+
         final QueryCache newCache;
 
         //Check if there is already a cache with the given query, if so, rewrite its data
@@ -255,7 +257,7 @@ public class SongServiceImpl implements SongService{
         queryCacheRepository.save(newCache);
 
         log.info("createCache: Saved new cache {}", newCache);
-        return true;
+        return MethodOutcome.SUCCESS;
     }
 
     /**

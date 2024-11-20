@@ -6,6 +6,11 @@ import java.util.Set;
 
 /**
  * Defines methods related to searching for songs using an API
+ *
+ * <p>
+ *     NOTE: Since the method in this class uses an API to perform a search, it can't be
+ *     tested, so there are no tests for it.
+ * </p>
  */
 public interface SongSearchService {
 
