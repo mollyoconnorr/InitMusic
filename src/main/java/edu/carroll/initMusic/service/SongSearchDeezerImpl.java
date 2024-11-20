@@ -18,10 +18,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of the SongSearchService Interface that uses the Deezer API
@@ -48,21 +45,28 @@ public class SongSearchDeezerImpl implements SongSearchService{
      * Searches for songs related to given query. Using the Deezer API, this
      * searches for anything related to the query on Deezer. The API returns a
      * HttpResponse, and this function takes the body of it, and parses the data into song objects,
-     * and returns a list of songs found related to the query. The method takes two parameters, the name
+     * and returns a set of songs found related to the query. The method takes two parameters, the name
      * of the song and the name of the artist. At least one of them needs to be a non-empty string for the
      * search to be executed.
-     * @param songSearch Name of song to search for
-     * @param artistSearch Name of artist to search for
-     * @return Array of songs related to query, sorted either by song name or artist name. If a song name
+     *
+     * <p>
+     *     If songs are found related to the given params, they are put into a tree set, which is a sorted
+     *     set. The set is sorted by the JaroWinklerDistance the song name or artist name is from the target song name or artist name.
+     *     If the distance is the same, it compares the Deezer ID of each song, which is always unique.
+     * </p>
+     * @param songSearch Name of song to search for (Target song name)
+     * @param artistSearch Name of artist to search for (Target artist name)
+     * @return Set of songs related to query, sorted either by song name or artist name. If a song name
      * was passed, sorted by song name. If just an artist name was passed, sorted by artist
+     *
+     * @see TreeSet
+     * @see JaroWinklerDistance
      */
     @Transactional
-    public Song[] externalSearchForSongs(String songSearch,String artistSearch) {
-        StringUtils.isAlphanumeric(songSearch);
-
+    public Set<Song> externalSearchForSongs(String songSearch,String artistSearch) {
         //Make sure there is text in query
-        if(!isValidQuery(songSearch) && !isValidQuery(artistSearch) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
-            return null;
+        if((!isValidQuery(songSearch) || !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
+            return new HashSet<>();
         }
         final StringBuilder urlBuilder = new StringBuilder();
 
@@ -102,7 +106,43 @@ public class SongSearchDeezerImpl implements SongSearchService{
 
         final HttpResponse<String> response;
 
-        final Set<Song> songsFound = new HashSet<>();
+        SortedSet<Song> songsFound;
+
+        //If at least a song name was given, sort by song name
+        if(!songSearch.isEmpty()) {
+            /*
+            Creates a new tree set, which is a sorted set, and make a custom comparator that
+            compares the song names and how different they are from the target name (songSearch)
+            If they are the same, they are compared by deezerID, which should always be different
+             */
+            songsFound = new TreeSet<>((s1, s2) -> {
+                int distanceComparison = Double.compare(jaroWinkler.apply(s1.getSongName(), songSearch), jaroWinkler.apply(s2.getSongName(), songSearch));
+                if (distanceComparison != 0) {
+                    return distanceComparison;
+                }
+                // If distances are the same, compare by deezer id (always unique)
+                return s1.getDeezerID().compareTo(s2.getDeezerID());
+            });
+            //If just a artist name was given, sort by artist name
+        }else if(!artistSearch.isEmpty()) {
+            /*
+            Creates a new tree set, which is a sorted set, and make a custom comparator that
+            compares the artist names and how different they are from the target name (artistSearch)
+            If they are the same, they are compared by deezerID, which should always be different
+             */
+            songsFound = new TreeSet<>((s1, s2) -> {
+                int distanceComparison = Double.compare(jaroWinkler.apply(s1.getArtistName(), artistSearch), jaroWinkler.apply(s2.getArtistName(), artistSearch));
+                if (distanceComparison != 0) {
+                    return distanceComparison;
+                }
+                // If distances are the same, compare by deezer id (always unique)
+                return s1.getDeezerID().compareTo(s2.getDeezerID());
+            });
+            //If somehow no names were given (Should never happen here, but just in case) return
+            //a empty set
+        }else{
+            return new HashSet<>();
+        }
 
         try {
             // Send the HTTP request and get the response
@@ -135,7 +175,9 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     final Song newSong = new Song(id,title,duration,artistName,artistID,albumName,albumID);
                     newSong.setSongImg(songImg);
                     newSong.setSongPreview(songPreview);
-                    songsFound.add(newSong);
+                    System.out.println(newSong);
+                    System.out.println(jaroWinkler.apply(newSong.getArtistName(), artistSearch));
+                    System.out.println(songsFound.add(newSong));
                 }
             } else {
                 log.error("externalSearchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());
@@ -149,39 +191,10 @@ public class SongSearchDeezerImpl implements SongSearchService{
 
         log.info("externalSearchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
 
-        //If at least a song name was given, sort by song name
-        if(!songSearch.isEmpty()) {
-            final Song[] sortedSongs = Arrays.stream(songsFound.toArray(new Song[0]))
-                    .sorted(Comparator.comparingDouble(s -> jaroWinkler.apply(s.getSongName(), songSearch)))
-                    .toArray(Song[]::new);
-
-            return sortedSongs;
-            //If a artist name was given, sort by artist name
-        }else if(!artistSearch.isEmpty()) {
-            final Song[] sortedSongs = Arrays.stream(songsFound.toArray(new Song[0]))
-                    .sorted(Comparator.comparingDouble(s -> jaroWinkler.apply(s.getArtistName(), artistSearch)))
-                    .toArray(Song[]::new);
-
-            return sortedSongs;
-            //Nothing was given, so return null
-        }else{
-            return null;
-        }
+        return songsFound;
     }
 
     public boolean isValidQuery(String query) {
         return query != null && !query.trim().isEmpty() && !(query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH);
-    }
-
-    public static void main(String[] args){
-        SongSearchDeezerImpl sd = new SongSearchDeezerImpl();
-
-        Song[] songsFound = sd.externalSearchForSongs("!@##$%","");
-
-        if(songsFound != null) {
-            for (Song s : songsFound) {
-                System.out.println(s.getSongName() + " | " + s.getArtistName());
-            }
-        }
     }
 }

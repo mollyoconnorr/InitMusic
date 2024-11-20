@@ -2,6 +2,8 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.jpa.model.Song;
 
+import java.util.Set;
+
 /**
  * Defines methods related to searching for songs using an API
  */
@@ -14,7 +16,7 @@ public interface SongSearchService {
      * music API.
      * @param songName Name of song to search for
      * @param artistName Name of artist to search for
-     * @return Array of songs related to query
+     * @return Set of songs related to query
      */
-    Song[] externalSearchForSongs(String songName,String artistName);
+    Set<Song> externalSearchForSongs(String songName, String artistName);
 }
