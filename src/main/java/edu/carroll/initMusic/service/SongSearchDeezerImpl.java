@@ -200,6 +200,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     final Song newSong = new Song(id,title,duration,artistName,artistID,albumName,albumID);
                     newSong.setSongImg(songImg);
                     newSong.setSongPreview(songPreview);
+                    songsFound.add(newSong);
                 }
             } else {
                 log.error("externalSearchForSongs: Error response from Deezer API: Status Code {}", response.statusCode());

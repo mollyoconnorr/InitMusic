@@ -227,7 +227,7 @@ public class SongServiceImpl implements SongService{
         for (Song song : songs) {
             final List<Song> songFound = songRepository.findByDeezerID(song.getDeezerID());
 
-            if (songFound.isEmpty()) {  //Song is new
+            if (songFound == null || songFound.isEmpty()) {  //Song is new
                 newSongs.add(song);
                 song.addQueryCache(newCache);  //Link new song to new cache
             } else {  //Song exists in DB
@@ -254,7 +254,7 @@ public class SongServiceImpl implements SongService{
         newCache.setResults(allSongsForCache);
         queryCacheRepository.save(newCache);
 
-        log.info("Saved new cache with associated songs {}", newCache);
+        log.info("createCache: Saved new cache {}", newCache);
         return true;
     }
 

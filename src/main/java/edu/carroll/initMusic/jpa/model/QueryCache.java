@@ -34,7 +34,7 @@ public class QueryCache {
     /** Songs found related to query, many-to-many relationship with Songs */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
-            name="results_song",
+            name="query_cache_song",
             joinColumns={@JoinColumn(name="QueryCacheID")},
             inverseJoinColumns = {@JoinColumn(name="SongId")}
 
