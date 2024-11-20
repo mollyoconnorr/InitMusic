@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/searchPage.css">
-  <link rel="stylesheet" href="/css/viewPlaylistPage.css">
+  <title th:text="${playlistName}">Your Playlist</title>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" rel="stylesheet">
+  <link href="/css/searchPage.css" rel="stylesheet">
+  <link href="/css/viewPlaylistPage.css" rel="stylesheet">
 </head>
 <body>
 <!--NAV BAR-->
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">initMusic</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -34,99 +36,102 @@
   </div>
 </nav>
 
-  <h1 th:text="${playlistName}"></h1>
-  <div class="container text-center">
-    <div class="row align-items-start">
-      <div class="col">
-        <!--Empty column makes it easier to position other 2 columns-->
-      </div>
-      <div class="col">
-        <h3 th:text="'Created by: '+${playlistAuthor}"></h3>
-      </div>
-      <div class="col btnCol">
-        <button type="button" class="btn btn-primary addSongBtn"
-                onclick="window.location.href='/search';">Add song</button>
-      </div>
+<h1 th:text="${playlistName}"></h1>
+<div class="container text-center">
+  <div class="row align-items-start">
+    <div class="col">
+      <!--Empty column makes it easier to position other 2 columns-->
+    </div>
+    <div class="col">
+      <h3 th:text="'Created by: '+${playlistAuthor}"></h3>
+    </div>
+    <div class="col btnCol">
+      <button class="btn btn-primary addSongBtn" onclick="window.location.href='/search';"
+              type="button">Add song
+      </button>
     </div>
   </div>
+</div>
 
 <div th:if="${error}">
-    <p class="errorMsg" th:text="${error}"></p>
-  </div>
+  <p class="errorMsg" th:text="${error}"></p>
+</div>
 
-  <div th:if="${successMsg}">
-    <h3 class="successMsg" th:text="${successMsg}"></h3>
-  </div>
+<div th:if="${successMsg}">
+  <h3 class="successMsg" th:text="${successMsg}"></h3>
+</div>
 
-  <div class="list-group2 playlistItem">
-    <div class="list-group-item-container" th:each="song : ${playlistSongs}">
-      <div class="list-group-item list-group-item-action">
+<div class="list-group2 playlistItem">
+  <div class="list-group-item-container" th:each="song : ${playlistSongs}">
+    <div class="list-group-item list-group-item-action">
 
-        <!-- Container holding the song image and text -->
-        <div class="song-info">
-          <!-- Image for the song -->
-          <img class="songImg" th:src="${song.getSongImg()}" alt="Image for ${song.getSongName()}" />
+      <!-- Container holding the song image and text -->
+      <div class="song-info">
+        <!-- Image for the song -->
+        <img alt="Image for ${song.getSongName()}" class="songImg" th:src="${song.getSongImg()}"/>
 
-          <!-- Song details container -->
-          <div class="song-details">
-            <!-- Song title -->
-            <span class="songText" th:text="${song.getSongName()}"></span>
+        <!-- Song details container -->
+        <div class="song-details">
+          <!-- Song title -->
+          <span class="songText" th:text="${song.getSongName()}"></span>
 
-            <!-- Artist name -->
-            <span class="artistText" th:text="${song.getArtistName()}"></span>
+          <!-- Artist name -->
+          <span class="artistText" th:text="${song.getArtistName()}"></span>
 
-            <span class="songTime"
-                  th:text="${(song.getLength() / 60) + ':' + (song.getLength() % 60 < 10 ? '0' + (song.getLength() % 60) : song.getLength() % 60)}"></span>
+          <span class="songTime"
+                th:text="${(song.getLength() / 60) + ':' + (song.getLength() % 60 < 10 ? '0' + (song.getLength() % 60) : song.getLength() % 60)}"></span>
 
-            <!-- Song preview as a link -->
-            <a th:href="${song.getSongPreview()}" title="Preview"
-               th:data-url="${song.getSongPreview()}" class="preview-link">
-              Preview
-            </a>
-          </div>
-
-          <!-- Button trigger modal for deleting a song from playlist -->
-          <button type="button" class="btn btn-primary" id="deleteSongBtn" data-bs-toggle="modal"
-                  data-bs-target="#deleteSongModal"
-                  th:data-playlist-name="${playlistName}"
-                  th:data-playlist-id="${playlistID}"
-                  th:data-song-name="${song.getSongName()}"
-                  th:data-song-id="${song.getDeezerID()}">
-            Remove
-          </button>
-        </div> <!-- Close song-info div -->
-      </div> <!-- Close list-group-item div -->
-    </div> <!-- Close list-group-item-container div -->
-  </div> <!-- Close list-group playlistItem div -->
-
-  <!-- Modal for deleting a playlist -->
-  <div class="modal fade" id="deleteSongModal" tabindex="-1" aria-labelledby="deleteSongModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fs-5" id="deleteSongModalLabel">Delete Song</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <!-- Song preview as a link -->
+          <a class="preview-link" th:data-url="${song.getSongPreview()}"
+             th:href="${song.getSongPreview()}" title="Preview">
+            Preview
+          </a>
         </div>
-        <div class="modal-body">
-          Are you sure you want to delete (Song name) from (Playlist name)?
-        </div>
-        <form th:action="@{/deleteSongFromPlaylist}" method="post" th:object="${deleteSongFromPlaylistForm}">
-          <input type="hidden" id="playlistID" th:field="*{playlistID}">
-          <input type="hidden" id="songID" th:field="*{songID}">
-          <input type="hidden" id="playlistName" th:field="*{playlistName}">
-          <input type="hidden" id="songName" th:field="*{songName}">
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Yes</button>
-          </div>
-        </form>
+        <!-- Button trigger modal for deleting a song from playlist -->
+        <button class="btn btn-primary" data-bs-target="#deleteSongModal" data-bs-toggle="modal" id="deleteSongBtn"
+                th:data-playlist-id="${playlistID}"
+                th:data-playlist-name="${playlistName}"
+                th:data-song-id="${song.getDeezerID()}"
+                th:data-song-name="${song.getSongName()}"
+                type="button">
+          Remove
+        </button>
+      </div> <!-- Close song-info div -->
+    </div> <!-- Close list-group-item div -->
+  </div> <!-- Close list-group-item-container div -->
+</div> <!-- Close list-group playlistItem div -->
+
+<!-- Modal for deleting a playlist -->
+<div aria-hidden="true" aria-labelledby="deleteSongModalLabel" class="modal fade" id="deleteSongModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-5" id="deleteSongModalLabel">Delete Song</h5>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
       </div>
+      <div class="modal-body">
+        Are you sure you want to delete (Song name) from (Playlist name)?
+      </div>
+      <form method="post" th:action="@{/deleteSongFromPlaylist}" th:object="${deleteSongFromPlaylistForm}">
+        <input id="playlistID" th:field="*{playlistID}" type="hidden">
+        <input id="songID" th:field="*{songID}" type="hidden">
+        <input id="playlistName" th:field="*{playlistName}" type="hidden">
+        <input id="songName" th:field="*{songName}" type="hidden">
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">No</button>
+          <button class="btn btn-primary" type="submit">Yes</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
 
-  <script src="/js/viewPlaylistPage.js"></script>
-  <script src="/js/logoutFunc.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="/js/viewPlaylistPage.js"></script>
+<script src="/js/logoutFunc.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

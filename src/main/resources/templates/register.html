@@ -1,56 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <script>
-        function validatePassword() {
-            var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link href="/css/styles.css" rel="stylesheet">
+  <script>
+      function validatePassword() {
+          var password = document.getElementById("password").value;
+          var confirmPassword = document.getElementById("confirmPassword").value;
 
-            // Check if the passwords match
-            if (password !== confirmPassword) {
-                document.getElementById("passwordError").innerHTML = "Passwords do not match!";
-                return false; // Prevent form submission
-            } else {
-                document.getElementById("passwordError").innerHTML = ""; // Clear error if passwords match
-            }
-            return true;
-        }
-    </script>
+          // Check if the passwords match
+          if (password !== confirmPassword) {
+              document.getElementById("passwordError").innerHTML = "Passwords do not match!";
+              return false; // Prevent form submission
+          } else {
+              document.getElementById("passwordError").innerHTML = ""; // Clear error if passwords match
+          }
+          return true;
+      }
+  </script>
 </head>
 <body class="body2">
 <div class="centered-box">
-<h2>Register</h2>
-    <!-- Display error message if it exists -->
-    <div th:if="${errorMessage}" style="color: red;">
-        <p th:text="${errorMessage}"></p>
-    </div>
-<form th:action="@{/register}" th:object="${registrationForm}" method="post" onsubmit="return validatePassword()">
+  <h2>Register</h2>
+  <!-- Display error message if it exists -->
+  <div style="color: red;" th:if="${errorMessage}">
+    <p th:text="${errorMessage}"></p>
+  </div>
+  <form method="post" onsubmit="return validatePassword()" th:action="@{/register}" th:object="${registrationForm}">
     <label for="firstName">First Name:</label><br>
-    <input type="text" id="firstName" th:field="*{firstName}" required><br><br>
+    <input id="firstName" required th:field="*{firstName}" type="text"><br><br>
 
     <label for="lastName">Last Name:</label><br>
-    <input type="text" id="lastName" th:field="*{lastName}" required><br><br>
+    <input id="lastName" required th:field="*{lastName}" type="text"><br><br>
 
     <label for="email">Email:</label><br>
-    <input type="email" id="email" th:field="*{email}" required><br><br>
+    <input id="email" required th:field="*{email}" type="email"><br><br>
 
     <label for="username">Username:</label><br>
-    <input type="text" id="username" th:field="*{username}" minlength="5" required><br><br>
+    <input id="username" minlength="5" required th:field="*{username}" type="text"><br><br>
 
     <label for="password">Password (at least 8 characters):</label><br>
-    <input type="password" id="password" th:field="*{password}" minlength="8" required><br><br>
+    <input id="password" minlength="8" required th:field="*{password}" type="password"><br><br>
 
     <label for="confirmPassword">Retype Password:</label><br>
-    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" minlength="8" required><br><br>
+    <input id="confirmPassword" minlength="8" required th:field="*{confirmPassword}" type="password"><br><br>
 
     <!-- Display error message if passwords don't match -->
     <span id="passwordError" style="color:red;"></span><br>
 
     <input type="submit" value="Register">
-</form>
+  </form>
 </div>
 </body>
 </html>
