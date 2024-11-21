@@ -109,6 +109,10 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
     public MethodOutcome renamePlaylist(String newName, Long playlistID, User user){
+        if (playlistRepository.findByPlaylistIDEquals(playlistID).isEmpty()) {
+            log.warn("renamePlaylist: Attempted to rename playlist, but playlist ID {} doesn't exist", playlistID);
+            return MethodOutcome.PLAYLIST_NOT_FOUND;
+        }
         if(user.getPlaylist(newName) != null){
             log.warn("renamePlaylist: Attempted to rename playlist, but a Playlist with name '{}' already exists for user id#{}", newName, user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_EXISTS;
@@ -126,8 +130,14 @@ public class PlaylistServiceImpl implements PlaylistService{
         }
 
         //If string is empty or blank
-        if(newName.isBlank()){
+        if(newName.isBlank()) {
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist with a blank String", user.getuserID());
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
+        }
+
+        //If string is extremely long
+        if (newName.length() > MAX_NAME_LENGTH) {
+            log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist with to many characters", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
@@ -152,6 +162,10 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
     public MethodOutcome deletePlaylist(String playlistName, Long playlistID, User user){
+        if (playlistName == null || playlistName.isBlank() || playlistName.length() > MAX_NAME_LENGTH){
+            log.warn("deletePlaylist: Attempted to delete playlist, but playlist name invalid");
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
+        }
         //If user doesn't exist
         if(!userRepository.existsById(user.getuserID())){
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't exist", user.getuserID());
@@ -195,6 +209,16 @@ public class PlaylistServiceImpl implements PlaylistService{
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
     public MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID){
+        if (playlistID == null){
+            log.warn("removeSongFromPlaylist: Attempted to remove a song from a playlist, but playlist id was null");
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
+        }
+
+        if (songID == null){
+            log.warn("removeSongFromPlaylist: Attempted to remove a song from a playlist, but song id was null");
+            return MethodOutcome.INVALID_SONG;
+        }
+
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         //If there was 0 or more than 1 playlist found
@@ -202,6 +226,7 @@ public class PlaylistServiceImpl implements PlaylistService{
             log.warn("removeSongFromPlaylist: Playlist id#{} not found",playlistID);
             return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
+
         final Playlist playlist = playlistsFound.getFirst();
 
         final boolean songRemoved = playlist.removeSong(songID);
