@@ -4,9 +4,6 @@ import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.jpa.repo.PlaylistRepository;
-import edu.carroll.initMusic.jpa.repo.SongRepository;
-import edu.carroll.initMusic.jpa.repo.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +39,6 @@ public class PlaylistServiceTests {
         songService.clearRepo();
         playlistService.clearRepo();;
         userService.clearRepo();
-        // Use other services
         // Create a test user and save it in the repository
         testUser = new User("username", "hashedPassword", "firstName", "lastName", "email@example.com", "question1", "question2", "answer1", "answer2");
         testUser.setAccountCreationDate(LocalDateTime.of(2024, 11, 20, 15, 30, 0));
@@ -310,281 +306,595 @@ public class PlaylistServiceTests {
         assertEquals(0, songService.getRepoSize(), "No songs should be added to the repository");
     }
 
-///**
-// * Unit tests for the PlaylistService class.
-// * This class tests the functionality of playlist creation, renaming, and deletion.
-// */
-//@Transactional
-//@SpringBootTest
-//public class PlaylistServiceTests {
-//
-//    @Autowired
-//    private PlaylistService playlistService;
-//
-//    @Autowired
-//    private UserService userService;
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private PlaylistRepository playlistRepository;
-//
-//    @Autowired
-//    private SongRepository songRepository;
-//
-//    private User testUser;
-//
-//    /**
-//     * Sets up a test user and an initial playlist before each test.
-//     * This method is executed before each test case to ensure a clean state.
-//     */
-//    @BeforeEach
-//    void setUp() {
-//        // Create a test user and save it in the repository
-//        userRepository.deleteAll();
-//        testUser = new User("username", "hashedPassword", "firstName", "lastName", "email", "question1", "question2", "answer1", "answer2");
-//        Playlist playlist = new Playlist(testUser, "My Playlist"); // Assuming playlist has a constructor that takes a user
-//        testUser.addPlaylist(playlist);
-//        userRepository.save(testUser); // Save user to the test database
-//    }
-//
-//    /**
-//     * Tests the successful creation of a playlist.
-//     */
-//    @Test
-//    void testCreatePlaylistSuccess() {
-//        MethodOutcome status = playlistService.createPlaylist("Test Playlist", testUser);
-//        assertEquals(MethodOutcome.SUCCESS, status, "Playlist should be created successfully");
-//    }
-//
-//    /**
-//     * Tests that the created playlist is retrievable from the repository.
-//     */
-//    @Test
-//    void testRetrieveCreatedPlaylist() {
-//        playlistService.createPlaylist("Test Playlist", testUser);
-//        List<Playlist> playlists = playlistRepository.findAll();
-//        assertEquals(1, playlists.size(), "There should be one playlist in the repository");
-//        assertEquals("Test Playlist", playlists.get(0).getPlaylistName(), "The playlist name should match the created name");
-//    }
-//
-//    /**
-//     * Tests that the count of playlists is correct after creation.
-//     */
-//    @Test
-//    void testPlaylistCountAfterCreation() {
-//        playlistService.createPlaylist("Test Playlist", testUser);
-//        long count = playlistRepository.count();
-//        assertEquals(1, count, "There should be one playlist in the repository after creation");
-//    }
-//
-//    /**
-//     * Tests that the count of playlists is correct after creation of two playlists.
-//     */
-//    @Test
-//    void testDoublePlaylistCountAfterCreation() {
-//        playlistService.createPlaylist("Test Playlist", testUser);
-//        playlistService.createPlaylist("Second Test Playlist", testUser);
-//        long count = playlistRepository.count();
-//        assertEquals(2, count, "There should be two playlists in the repository after creation");
-//    }
-//
-//    /**
-//     * Tests that creating a duplicate playlist name doesn't work.
-//     */
-//    @Test
-//    void testCreateDuplicatePlaylistName() {
-//        // Create the initial playlist
-//        MethodOutcome status = playlistService.createPlaylist("Test Playlist", testUser);
-//        assertEquals(MethodOutcome.SUCCESS, status); // Ensure the first creation is successful
-//
-//        // Attempt to create a duplicate playlist
-//        MethodOutcome duplicateStatus = playlistService.createPlaylist("Test Playlist", testUser);
-//
-//        // Assert that the response status is PLAYLIST_NAME_EXISTS
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_EXISTS, duplicateStatus,
-//                "Creating a duplicate playlist should return PLAYLIST_NAME_EXISTS");
-//    }
-//
-//    /**
-//     * Tests the successful renaming of a playlist.
-//     * Asserts that the playlist is renamed successfully and the change is reflected in the repository.
-//     */
-//    @Test
-//    void testRenamePlaylistSuccess() {
-//        playlistService.createPlaylist("Old Playlist", testUser);
-//
-//        Playlist playlist = testUser.getPlaylists().iterator().next();
-//        MethodOutcome status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), testUser);
-//        assertEquals(MethodOutcome.SUCCESS, status);
-//
-//        Playlist renamedPlaylist = playlistRepository.findById(playlist.getPlaylistID()).orElse(null);
-//        assertNotNull(renamedPlaylist);
-//        assertEquals("New Playlist", renamedPlaylist.getPlaylistName());
-//    }
-//
-//    /**
-//     * Tests the renaming of a playlist to a name that already exists.
-//     * Asserts that the appropriate response status is returned when attempting to rename to an existing name.
-//     */
-//    @Test
-//    void testRenamePlaylistNameExists() {
-//        playlistService.createPlaylist("Playlist One", testUser);
-//        playlistService.createPlaylist("Playlist Two", testUser);
-//
-//        Playlist playlistOne = testUser.getPlaylist("Playlist One");
-//        MethodOutcome status = playlistService.renamePlaylist("Playlist Two", playlistOne.getPlaylistID(), testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_EXISTS, status);
-//    }
-//
-//    /**
-//     * Tests the successful deletion of a playlist.
-//     * Asserts that the playlist is deleted successfully and is no longer found in the repository.
-//     */
-//    @Test
-//    void testDeletePlaylistSuccess() {
-//        // Create and save the playlist in the database
-//        MethodOutcome status = playlistService.createPlaylist("Delete Me", testUser);
-//        assertEquals(MethodOutcome.SUCCESS, status);
-//
-//        // Retrieve the playlist from the user's list or directly from the repository
-//        Playlist playlist = testUser.getPlaylists().stream()
-//                .filter(p -> "Delete Me".equals(p.getPlaylistName()))
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(playlist, "Playlist should not be null after creation");
-//
-//        // Perform the delete operation using the actual persisted playlist ID
-//        status = playlistService.deletePlaylist("Delete Me", playlist.getPlaylistID(), testUser);
-//        assertEquals(MethodOutcome.SUCCESS, status);
-//
-//        // Assert that the playlist is no longer found in the repository
-//        assertTrue(playlistRepository.findById(playlist.getPlaylistID()).isEmpty());
-//    }
-//
-//    /**
-//     * Tests the deletion of a playlist that does not exist.
-//     * Asserts that the appropriate response status is returned when attempting to delete a non-existent playlist.
-//     */
-//    @Test
-//    void testDeletePlaylistNotFound() {
-//        MethodOutcome status = playlistService.deletePlaylist("Nonexistent Playlist", 1L, testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status);
-//    }
-//
-//    /**
-//     * Tests that attempting to create a playlist with an empty name returns the appropriate error status.
-//     */
-//    @Test
-//    void testCreatePlaylistEmptyName() {
-//        MethodOutcome status = playlistService.createPlaylist("", testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Empty playlist name should return PLAYLIST_NAME_INVALID");
-//    }
-//
-//    /**
-//     * Tests that attempting to create a playlist with a null name returns the appropriate error status.
-//     */
-//    @Test
-//    void testCreatePlaylistNullName() {
-//        MethodOutcome status = playlistService.createPlaylist(null, testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Null playlist name should return PLAYLIST_NAME_INVALID");
-//    }
-//
-//    /**
-//     * Tests that renaming a playlist to an empty name returns the appropriate error status.
-//     * Assumes an existing playlist is present for renaming.
-//     */
-//    @Test
-//    void testRenamePlaylistEmptyName() {
-//        playlistService.createPlaylist("Existing Playlist", testUser);
-//        Playlist playlist = testUser.getPlaylists().iterator().next();
-//        MethodOutcome status = playlistService.renamePlaylist("", playlist.getPlaylistID(), testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming to an empty name should return PLAYLIST_NAME_INVALID");
-//    }
-//
-//    /**
-//     * Tests that renaming a playlist to a null name returns the appropriate error status.
-//     * Assumes an existing playlist is present for renaming.
-//     */
-//    @Test
-//    void testRenamePlaylistNullName() {
-//        playlistService.createPlaylist("Existing Playlist", testUser);
-//        Playlist playlist = testUser.getPlaylists().iterator().next();
-//        MethodOutcome status = playlistService.renamePlaylist(null, playlist.getPlaylistID(), testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming to a null name should return PLAYLIST_NAME_INVALID");
-//    }
-//
-//    /**
-//     * Tests that attempting to delete a playlist with an invalid ID returns the appropriate error status.
-//     */
-//    @Test
-//    void testDeletePlaylistInvalidID() {
-//        MethodOutcome status = playlistService.deletePlaylist("Invalid Playlist", 999L, testUser);
-//        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Deleting with an invalid playlist ID should return PLAYLIST_NOT_FOUND");
-//    }
-//
-//    /**
-//     * Tests that initially there are no playlists for the user in the repository.
-//     */
-//    @Test
-//    void testRetrievePlaylistsNoPlaylists() {
-//        List<Playlist> playlists = playlistRepository.findAll();
-//        assertTrue(playlists.isEmpty(), "There should be no playlists for the user initially");
-//    }
-//
-//    /**
-//     * Tests that multiple playlists can be created and verifies that they are retrievable from the repository.
-//     */
-//    @Test
-//    void testCreateMultiplePlaylistsAndCheckRetrieval() {
-//        playlistService.createPlaylist("Playlist One", testUser);
-//        playlistService.createPlaylist("Playlist Two", testUser);
-//
-//        List<Playlist> playlists = playlistRepository.findAll();
-//        assertEquals(2, playlists.size(), "There should be two playlists in the repository");
-//
-//        assertTrue(playlists.stream().anyMatch(p -> "Playlist One".equals(p.getPlaylistName())), "Playlist One should exist");
-//        assertTrue(playlists.stream().anyMatch(p -> "Playlist Two".equals(p.getPlaylistName())), "Playlist Two should exist");
-//    }
-//
-//    /**
-//     * Tests the successful removal of a song from a playlist.
-//     * Assumes the song and playlist already exist in the repository.
-//     */
-//    @Test
-//    void testRemoveSongFromPlaylistSuccess() {
-//        // Create and save the song to the repository
-//        Song song = new Song(1L, "Song Title", 3, "Album", 2021L, "Genre", 0L);
-//        songRepository.save(song);
-//
-//        // Create the playlist and add the song
-//        playlistService.createPlaylist("Test Playlist", testUser);
-//        Playlist playlist = testUser.getPlaylists().iterator().next();
-//
-//        // Add the song to the playlist
-//        playlistService.addSongToPlaylist(playlist, song);
-//        playlistRepository.save(playlist); // Ensure the playlist is saved
-//
-//        // Verify the song was added
-//        assertTrue(playlist.getSongs().contains(song), "The song should be present in the playlist before removal");
-//
-//        // Remove the song
-//        MethodOutcome status = playlistService.removeSongFromPlaylist(playlist.getPlaylistID(), song.getDeezerID());
-//        assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed successfully");
-//
-//        // Refresh the playlist from the repository to ensure we have the latest state
-//        Playlist updatedPlaylist = playlistRepository.findById(playlist.getPlaylistID()).orElseThrow();
-//
-//        // Assert that the song is no longer in the playlist
-//        assertFalse(updatedPlaylist.getSongs().contains(song), "The song should be removed from the playlist");
-//    }
-//
-//    /**
-//     * Tests that attempting to remove a song from a non-existent playlist returns the appropriate error status.
-//     */
-//    @Test
-//    void testRemoveSongFromNonExistentPlaylist() {
-//        MethodOutcome status = playlistService.removeSongFromPlaylist(999L, 1L);
-//        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Removing a song from a non-existent playlist should return PLAYLIST_NOT_FOUND");
-//    }
+    // Happy Paths for getPlaylist
+
+    /**
+     * Tests the success scenario when retrieving a playlist by ID.
+     */
+    @Transactional
+    @Test
+    void testGetPlaylistSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        // This calls getPlaylist, but the function is part of UserService not the one we are currently testing
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        Playlist getPlaylist = playlistService.getPlaylist(testPlaylist.getPlaylistID());
+        assertNotNull( getPlaylist, "Should successfully retrieve the same playlist.");
+    }
+
+    /**
+     * Tests the success scenario when retrieving two playlists by ID.
+     */
+    @Transactional
+    @Test
+    void testGetPlaylistForTwoPlaylistsSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        playlistService.createPlaylist("Test Playlist2", testUser);
+        Playlist testPlaylist2 = testUser.getPlaylist("Test Playlist");
+        Playlist getPlaylist = playlistService.getPlaylist(testPlaylist.getPlaylistID());
+        assertEquals(testPlaylist, getPlaylist, "Should successfully retrieve the same playlist.");
+        Playlist getPlaylist2 = playlistService.getPlaylist(testPlaylist2.getPlaylistID());
+        assertEquals(testPlaylist2, getPlaylist2, "Should successfully retrieve the second playlist.");
+    }
+
+
+    // Crappy Paths for getPlaylist
+
+    /**
+     * Tests the scenario where the user has no playlists.
+     */
+    @Transactional
+    @Test
+    void testGetPlaylistForUserWithNoPlaylists() {
+        // Create a test user but do not add any playlists
+        testUser = userService.findByUsername("username");
+        // Attempt to retrieve a playlist for a user with no playlists
+        Playlist playlist = playlistService.getPlaylist(1L);
+        assertNull(playlist, "Should return null when attempting to get a playlist from a user with no playlists.");
+    }
+
+    /**
+     * Tests the scenario where the user doesn't have the playlist that is trying to be retrieved.
+     */
+    @Transactional
+    @Test
+    void testGetPlaylistForUserWithNonExistentPlaylists() {
+        // Create a test user but do not add any playlists
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = playlistService.getPlaylist(8000L);
+        assertNull(playlist, "Should return null for a playlists ID that doesn't exist even if there are other playlists there");
+    }
+
+    // Crazy Paths for getPlaylist
+
+    /**
+     * Tests the scenario where the user retrieves 'null'.
+     */
+    @Transactional
+    @Test
+    void testGetPlaylistWithNullNameFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist getPlaylist = playlistService.getPlaylist(null);
+        assertNull(getPlaylist, "Should successfully return null for retrieving a 'null' playlist");
+    }
+
+    // Happy Path for renamePlaylist
+
+    /**
+     * Tests the successful renaming of a playlist.
+     */
+    @Transactional
+    @Test
+    void testRenamePlaylistSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Old Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Old Playlist");
+        MethodOutcome status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.SUCCESS, status, "Renaming should be successful.");
+        assertNotNull(testUser.getPlaylist("New Playlist"), "User should have new playlist");
+        assertEquals("New Playlist", playlist.getPlaylistName(), "Playlist name should be updated.");
+    }
+
+    /**
+     * Tests the successful renaming of two playlists.
+     */
+    @Transactional
+    @Test
+    void testRenameTwoPlaylistsSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Old Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Old Playlist");
+        playlistService.createPlaylist("Old Playlist2", testUser);
+        Playlist playlist2 = testUser.getPlaylist("Old Playlist2");
+        MethodOutcome status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), testUser);
+        MethodOutcome status2 = playlistService.renamePlaylist("New Playlist2", playlist2.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.SUCCESS, status, "Renaming should be successful.");
+        assertEquals(MethodOutcome.SUCCESS, status2, "Renaming of second playlist should be successful.");
+        assertNotNull(testUser.getPlaylist("New Playlist"), "User should have new playlist");
+        assertNotNull(testUser.getPlaylist("New Playlist2"), "User should have second new playlist");
+        assertEquals("New Playlist", playlist.getPlaylistName(), "Playlist name should be updated.");
+        assertEquals("New Playlist2", playlist2.getPlaylistName(), "Second playlist name should be updated.");
+    }
+
+    // Crappy path for renamePlaylist
+
+    /**
+     * Tests renaming a playlist to a duplicate name.
+     */
+    @Transactional
+    @Test
+    void testRenamePlaylistToDuplicateNameFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist One", testUser);
+        playlistService.createPlaylist("Playlist Two", testUser);
+        Playlist playlist = testUser.getPlaylist("Playlist One");
+        MethodOutcome status = playlistService.renamePlaylist("Playlist Two", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_EXISTS, status, "Renaming should fail when using a duplicate name.");
+        assertNotNull(testUser.getPlaylist("Playlist One"), "User should have original playlist");
+        assertNotNull(testUser.getPlaylist("Playlist Two"), "User should have still have second playlist that was unable to be renamed");
+    }
+
+    /**
+     * Tests renaming a playlist that does not exist.
+     */
+    @Transactional
+    @Test
+    void testRenameNonExistentPlaylistFailure() {
+        testUser = userService.findByUsername("username");
+        MethodOutcome status = playlistService.renamePlaylist("Nonexistent Playlist", 9999L, testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Renaming should fail for a non-existent playlist.");
+        assertNull(testUser.getPlaylist("NonexistentPlaylist"), "User shouldn't have any playlists.");
+    }
+
+    /**
+     * Tests renaming a playlist for a user that does not exist.
+     */
+    @Transactional
+    @Test
+    void testRenameNonExistentUserFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist One", testUser);
+        // playlistService.createPlaylist("Playlist Two", testUser);
+        Playlist playlist = testUser.getPlaylist("Playlist One");
+        User fakeUser = new User("username", "hashedPassword", "firstName", "lastName", "email@example.com", "question1", "question2", "answer1", "answer2");
+        fakeUser.setAccountCreationDate(LocalDateTime.of(2024, 11, 20, 15, 30, 0));
+        fakeUser.setuserID(6L);
+        MethodOutcome status = playlistService.renamePlaylist("New Playlist", playlist.getPlaylistID(), fakeUser);
+        assertEquals(MethodOutcome.USER_NOT_FOUND, status, "Renaming should fail for a non-existent user.");
+        assertNull(fakeUser.getPlaylist("New Playlist"), "User shouldn't have any playlists.");
+    }
+
+    // Crazy paths for renamePlaylist
+
+    /**
+     * Tests renaming a playlist null.
+     */
+    @Transactional
+    @Test
+    void testRenamePlaylistNullFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Old Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Old Playlist");
+        MethodOutcome status = playlistService.renamePlaylist(null, playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming should be unsuccessful.");
+        assertNull(testUser.getPlaylist(null), "User shouldn't have a new playlist");
+    }
+
+    /**
+     * Tests renaming a playlist blank.
+     */
+    @Transactional
+    @Test
+    void testRenamePlaylistBlankFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Old Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Old Playlist");
+        MethodOutcome status = playlistService.renamePlaylist("", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming should be unsuccessful.");
+        assertNull(testUser.getPlaylist(""), "User shouldn't have a new playlist");
+    }
+
+    /**
+     * Tests renaming an excessively long name.
+     */
+    @Transactional
+    @Test
+    void testRenameExcessivelyLongPlaylistNameFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Old Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Old Playlist");
+        String longName = "A".repeat(5000);
+        MethodOutcome status = playlistService.renamePlaylist(longName, playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Renaming should be unsuccessful.");
+        assertNull(testUser.getPlaylist(longName), "User shouldn't have a new playlist");
+    }
+
+    // Happy Path for deletePlaylist
+
+    /**
+     * Tests the successful deletion of a playlist.
+     */
+    @Transactional
+    @Test
+    void testDeletePlaylistSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Test Playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Should be one playlist in repo before deleting.");
+        MethodOutcome status = playlistService.deletePlaylist("Test Playlist", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.SUCCESS, status, "Deleting should be successful.");
+        assertNull(testUser.getPlaylist("Test Playlist"), "User should not have new playlist");
+        assertEquals(0, playlistService.getRepoSize(), "Should be no more playlists in repo.");
+    }
+
+    /**
+     * Tests the successful deletion of two playlists.
+     */
+    @Transactional
+    @Test
+    void testDeleteTwoPlaylistsSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Test Playlist");
+        playlistService.createPlaylist("Test Playlist2", testUser);
+        Playlist playlist2 = testUser.getPlaylist("Test Playlist2");
+        assertEquals(2, playlistService.getRepoSize(), "Should be two playlists in repo before deleting.");
+        MethodOutcome status = playlistService.deletePlaylist("Test Playlist", playlist.getPlaylistID(), testUser);
+        assertEquals(1, playlistService.getRepoSize(), "Should be one playlist in repo.");
+        MethodOutcome status2 = playlistService.deletePlaylist("Test Playlist2", playlist2.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.SUCCESS, status, "Deleting should be successful.");
+        assertEquals(MethodOutcome.SUCCESS, status, "Deleting for second playlist should be successful.");
+        assertNull(testUser.getPlaylist("Test Playlist"), "User should not have deleted playlist");
+        assertNull(testUser.getPlaylist("Test Playlist2"), "User should not have deleted playlist");
+        assertEquals(0, playlistService.getRepoSize(), "Should be no more playlists in repo.");
+    }
+
+    // Crappy path for renamePlaylist
+
+
+    /**
+     * Tests deleting a playlist that does not exist.
+     */
+    @Transactional
+    @Test
+    void testDeleteNonExistentPlaylistFailure() {
+        testUser = userService.findByUsername("username");
+        MethodOutcome status = playlistService.deletePlaylist("Nonexistent Playlist", 9999L, testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NOT_FOUND, status, "Deleting should fail for a non-existent playlist.");
+    }
+
+    /**
+     * Tests deleting a playlist for a user that does not exist.
+     */
+    @Transactional
+    @Test
+    void testDeletePlaylistNonExistentUserFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist One", testUser);
+        Playlist playlist = testUser.getPlaylist("Playlist One");
+        User fakeUser = new User("username", "hashedPassword", "firstName", "lastName", "email@example.com", "question1", "question2", "answer1", "answer2");
+        fakeUser.setAccountCreationDate(LocalDateTime.of(2024, 11, 20, 15, 30, 0));
+        fakeUser.setuserID(6L);
+        MethodOutcome status = playlistService.deletePlaylist("New Playlist", playlist.getPlaylistID(), fakeUser);
+        assertEquals(MethodOutcome.USER_NOT_FOUND, status, "Renaming should fail for a non-existent user.");
+    }
+
+    // Crazy paths for renamePlaylist
+
+    /**
+     * Tests deleting a playlist null.
+     */
+    @Transactional
+    @Test
+    void testDeletePlaylistNullFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Test Playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Playlist should be added successfully, there should be one playlist.");
+        MethodOutcome status = playlistService.deletePlaylist(null, playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Deleting should be unsuccessful.");
+        assertNotNull(testUser.getPlaylist("Test Playlist"), "User shouldn still have a playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Deleting should be unsuccessful, there should still be one playlist.");
+    }
+
+    /**
+     * Tests renaming a playlist blank.
+     */
+    @Transactional
+    @Test
+    void testDeletePlaylistBlankFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Test Playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Playlist should be added successfully, there should be one playlist.");
+        MethodOutcome status = playlistService.deletePlaylist("", playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Deleting should be unsuccessful.");
+        assertNotNull(testUser.getPlaylist("Test Playlist"), "User should still have one playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Deleting should be unsuccessful, there should still be one song.");
+    }
+
+    /**
+     * Tests deleting an excessively long name.
+     */
+    @Transactional
+    @Test
+    void testDeleteExcessivelyLongPlaylistNameFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist playlist = testUser.getPlaylist("Test Playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Playlist should be added successfully, there should be one playlist.");
+        String longName = "A".repeat(5000);
+        MethodOutcome status = playlistService.deletePlaylist(longName, playlist.getPlaylistID(), testUser);
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Deleting should be unsuccessful.");
+        assertNotNull(testUser.getPlaylist("Test Playlist"), "User should still have one playlist");
+        assertEquals(1, playlistService.getRepoSize(), "Deleting should be unsuccessful, there should still be one song.");
+    }
+
+    // Happy Paths for removeSongToPlaylist
+
+    /**
+     * Tests the successful removal of a song from a playlist.
+     */
+    @Transactional
+    @Test
+    void testRemoveSongToPlaylistSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        Song testSong = new Song(1L, "Song Title", 3, "Artist", 2021L, "Album", 0L);
+        playlistService.addSongToPlaylist(testPlaylist, testSong);
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should be one song in the playlist.");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(testPlaylist.getPlaylistID(), testSong.getDeezerID());
+        assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed to playlist");
+        assertEquals(0, testPlaylist.getNumberOfSongs(), "Should be no more songs in the playlist.");
+    }
+
+    /**
+     * Tests the successful removal of two songs from a playlist.
+     */
+    @Transactional
+    @Test
+    void testRemoveTwoSongsToPlaylistSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        Song testSong = new Song(1L, "Song Title", 3, "Artist", 2021L, "Album", 0L);
+        Song testSong2 = new Song(2L, "Song Title2", 3, "Artist", 2022L, "Album", 1L);
+        playlistService.addSongToPlaylist(testPlaylist, testSong);
+        playlistService.addSongToPlaylist(testPlaylist, testSong2);
+        assertEquals(2, testPlaylist.getNumberOfSongs(), "Should be two songs in the playlist.");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(testPlaylist.getPlaylistID(), testSong.getDeezerID());
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "One song should be removed from the playlist.");
+        MethodOutcome status2 = playlistService.removeSongFromPlaylist(testPlaylist.getPlaylistID(), testSong2.getDeezerID());
+        assertEquals(0, testPlaylist.getNumberOfSongs(), "Should be no songs in the playlist.");
+        assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed from playlist");
+        assertEquals(MethodOutcome.SUCCESS, status2, "Second song should be removed from playlist");
+    }
+
+    /**
+     * Tests the successful removal of the same song from two different playlists.
+     */
+    @Transactional
+    @Test
+    void testRemoveSameSongFromTwoPlaylistsSuccess() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        playlistService.createPlaylist("Test Playlist2", testUser);
+        Playlist testPlaylist2 = testUser.getPlaylist("Test Playlist2");
+        Song testSong = new Song(1L, "Song Title", 3, "Artist", 2021L, "Album", 0L);
+        playlistService.addSongToPlaylist(testPlaylist, testSong);
+        playlistService.addSongToPlaylist(testPlaylist2, testSong);
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should be one song in the first playlist.");
+        assertEquals(1, testPlaylist2.getNumberOfSongs(), "Should be one song in the second playlist.");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(testPlaylist.getPlaylistID(), testSong.getDeezerID());
+        assertEquals(0, testPlaylist.getNumberOfSongs(), "Song should be removed from the first playlist.");
+        MethodOutcome status2 = playlistService.removeSongFromPlaylist(testPlaylist2.getPlaylistID(), testSong.getDeezerID());
+        assertEquals(0, testPlaylist2.getNumberOfSongs(), "Song should be removed from the second playlist.");
+        assertEquals(MethodOutcome.SUCCESS, status, "Song should be removed from playlist");
+        assertEquals(MethodOutcome.SUCCESS, status2, "Second song should be removed from playlist");
+    }
+
+    // Crazy Tests for addSongToPlaylist
+
+    /**
+     * Tests the failure scenario when trying to remove a null song from a playlist.
+     */
+    @Transactional
+    @Test
+    void testRemoveNullSongFromPlaylistFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        Song testSong = new Song(1L, "Song Title", 3, "Artist", 2021L, "Album", 0L);
+        playlistService.addSongToPlaylist(testPlaylist, testSong);
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should be one song in the playlist.");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(testPlaylist.getPlaylistID(), null);
+        assertEquals(MethodOutcome.INVALID_SONG, status, "Should fail when attempting to remove a null song.");
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should still be a song in the playlist (nothing got removed).");
+    }
+
+    /**
+     * Tests the failure scenario when trying to remove a song from a null playlist.
+     */
+    @Transactional
+    @Test
+    void testRemoveSongFromNullPlaylistFailure() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        Playlist testPlaylist = testUser.getPlaylist("Test Playlist");
+        Song testSong = new Song(1L, "Song Title", 3, "Artist", 2021L, "Album", 0L);
+        playlistService.addSongToPlaylist(testPlaylist, testSong);
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should be one song in the playlist.");
+        MethodOutcome status = playlistService.removeSongFromPlaylist(null, testSong.getDeezerID());
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, status, "Should fail when attempting to remove from null playlist.");
+        assertEquals(1, testPlaylist.getNumberOfSongs(), "Should still be a song in the non-null playlist.");
+    }
+
+    // Tests for getRepoSize
+
+    /**
+     * Tests that repo size is 0 when nothing has been added
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeEmpty() {
+        playlistService.clearRepo(); // Ensure the repository is empty
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 when no playlists are present.");
+    }
+
+    /**
+     * Tests that repo size is 1 when we add one playlist
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeSinglePlaylist() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+        long size = playlistService.getRepoSize();
+        assertEquals(1, size, "Repository size should be 1 after adding one playlist.");
+    }
+
+    /**
+     * Tests the repository size after adding multiple playlists.
+     * It creates three playlists for the user and verifies that the repository size is 3.
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeMultiplePlaylists() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        playlistService.createPlaylist("Playlist 2", testUser);
+        playlistService.createPlaylist("Playlist 3", testUser);
+        long size = playlistService.getRepoSize();
+        assertEquals(3, size, "Repository size should be 3 after adding three playlists.");
+    }
+
+    /**
+     * Tests the repository size after removing a playlist.
+     * It creates a playlist, removes it, and then verifies that the repository size is 0.
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeAfterRemove() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        Playlist playlist = testUser.getPlaylist("Playlist 1");
+        playlistService.deletePlaylist("Playlist 1", playlist.getPlaylistID(), testUser);
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 after removing the playlist.");
+    }
+
+    /**
+     * Tests the repository size after clearing all playlists from the repository.
+     * It creates two playlists, clears the repository, and verifies that the repository size is 0.
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeAfterClearRepo() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        playlistService.createPlaylist("Playlist 2", testUser);
+        playlistService.clearRepo(); // Clear all playlists
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 after clearing the repository.");
+    }
+
+    /**
+     * Tests the repository size after attempting to create an invalid playlist (null name).
+     * It verifies that the repository size remains 0 after an invalid playlist creation attempt.
+     */
+    @Test
+    @Transactional
+    void testGetRepoSizeAfterInvalidPlaylist() {
+        testUser = userService.findByUsername("username");
+        MethodOutcome outcome = playlistService.createPlaylist(null, testUser); // Invalid playlist creation
+        assertEquals(MethodOutcome.PLAYLIST_NAME_INVALID, outcome, "Playlist creation should fail with a null name.");
+
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should remain 0 after an invalid playlist creation attempt.");
+    }
+
+    // Tests for clearRepo
+
+    /**
+     * Tests the behavior of clearRepo() when the repository is empty.
+     * Verifies that the repository size remains 0 after calling clearRepo() on an empty repository.
+     */
+    @Test
+    @Transactional
+    void testClearRepoWhenEmpty() {
+        playlistService.clearRepo(); // Clear the repository
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should remain 0 when clearing an empty repository.");
+    }
+
+    /**
+     * Tests the behavior of clearRepo() when the repository contains a single playlist.
+     * Verifies that the repository size becomes 0 after clearing the repository with one playlist.
+     */
+    @Test
+    @Transactional
+    void testClearRepoWithSinglePlaylist() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Test Playlist", testUser);
+
+        playlistService.clearRepo(); // Clear the repository
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 after clearing a repository with one playlist.");
+    }
+
+    /**
+     * Tests the behavior of clearRepo() when the repository contains multiple playlists.
+     * Verifies that the repository size becomes 0 after clearing the repository with multiple playlists.
+     */
+    @Test
+    @Transactional
+    void testClearRepoWithMultiplePlaylists() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        playlistService.createPlaylist("Playlist 2", testUser);
+
+        playlistService.clearRepo(); // Clear the repository
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 after clearing a repository with multiple playlists.");
+    }
+
+    /**
+     * Tests the behavior of clearRepo() when called multiple times.
+     * Verifies that calling clearRepo() consecutively doesn't cause any issues and the repository size remains 0.
+     */
+    @Test
+    @Transactional
+    void testClearRepoMultipleCalls() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        playlistService.clearRepo(); // First clear
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should remain 0 after clearRepo() calls.");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        playlistService.clearRepo(); // Second clear
+        assertEquals(0, size, "Repository size should remain 0 after multiple clearRepo() calls.");
+    }
+
+    /**
+     * Tests the behavior of clearRepo() after adding and removing playlists.
+     * Verifies that after adding a playlist, removing it, and calling clearRepo(), the repository size is 0.
+     */
+    @Test
+    @Transactional
+    void testClearRepoAfterAddAndRemove() {
+        testUser = userService.findByUsername("username");
+        playlistService.createPlaylist("Playlist 1", testUser);
+        Playlist playlist = testUser.getPlaylist("Playlist 1");
+        playlistService.deletePlaylist("Playlist 1", playlist.getPlaylistID(), testUser);
+        playlistService.clearRepo(); // Clear the repository
+        long size = playlistService.getRepoSize();
+        assertEquals(0, size, "Repository size should be 0 after clearing a repository where playlists were added and removed.");
+    }
 }
