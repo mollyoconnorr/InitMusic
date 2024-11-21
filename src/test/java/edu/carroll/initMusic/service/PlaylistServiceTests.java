@@ -18,7 +18,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-
 /**
  * Unit tests for the PlaylistService class.
  * This class tests the functionality of playlist creation, renaming, and deletion.

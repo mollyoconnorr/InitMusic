@@ -12,10 +12,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * <p>
  * This class is used to test the User class
  * </p>
- *
- * @author Nick Clouse
- *
- * @since September 19, 2024
  */
 @SpringBootTest
 public class UserTests {
@@ -55,7 +51,7 @@ public class UserTests {
      * Testing user creation and getters
      */
     @Test
-    public void verifyCreationOfUserAndGetters(){
+    public void verifyCreationOfUserAndGetters() {
         final String setUsername = fakeUser.getUsername();
         final String setPassword = fakeUser.getHashedPassword();
         final String setFirstName = fakeUser.getFirstName();
@@ -72,24 +68,24 @@ public class UserTests {
      * Testing functions related to playlists
      */
     @Test
-    public void verifyPlaylistFunctions(){
+    public void verifyPlaylistFunctions() {
         final Playlist playlist = new Playlist();
         playlist.setPlaylistName("playlist");
         fakeUser.addPlaylist(playlist);
         //Testing getPlaylist and getPlaylists
         assertTrue("getPlaylists should be one playlist linked to user", fakeUser.getPlaylists().size() == 1);
-        assertTrue("getPlaylist should return playlist" ,fakeUser.getPlaylist("playlist").equals(playlist));
+        assertTrue("getPlaylist should return playlist", fakeUser.getPlaylist("playlist").equals(playlist));
 
         //Testing playlist removal
         fakeUser.removePlaylist(playlist);
-        assertTrue("Should be no playlists linked to user" , fakeUser.getPlaylists().isEmpty());
+        assertTrue("Should be no playlists linked to user", fakeUser.getPlaylists().isEmpty());
     }
 
     /**
      * Testing equals, hashCode, and two setters.
      */
     @Test
-    public void verifyMiscFunctions(){
+    public void verifyMiscFunctions() {
         //Testing equals
         final User fakeUserTwo = new User(username, password, firstName, lastName, email,
                 "What is your favorite color?", "What is your pet's name?",

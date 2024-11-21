@@ -21,38 +21,42 @@ import static org.mockito.Mockito.*;
  * Tests methods in the SongServiceImpl class
  *
  * <p>
- *     {@link SongService#getSongPreview(Long)} is not tested because all it does is calls the
- *     {@link SongSearchService#getSongPreview(Long)} method, which uses an external api to get
- *     the song link and we can not control the output it gives us.
+ * {@link SongService#getSongPreview(Long)} is not tested because all it does is calls the
+ * {@link SongSearchService#getSongPreview(Long)} method, which uses an external api to get
+ * the song link and we can not control the output it gives us.
  * </p>
  */
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @Transactional
 class SongServiceTests {
-    /** Service we are testing */
+    /**
+     * Set of songs to return when needed
+     */
+    private static final Set<Song> songs = new HashSet<>();
+    /**
+     * Service we are testing
+     */
     @Autowired
     private SongService songService;
-
-    /** Mock the searchService since we can't control what it returns from the api*/
+    /**
+     * Mock the searchService since we can't control what it returns from the api
+     */
     @MockBean
     private SongSearchService searchService;
-
-    /** Set of songs to return when needed */
-    private static final Set<Song> songs = new HashSet<>();
 
     @BeforeEach
     public void setUp() {
         final Random r = new Random();
         songs.clear();
-        for(int i = 1; i <= 5; i++){
+        for (int i = 1; i <= 5; i++) {
             final Song song = new Song();
             song.setSongName("song".repeat(i));
             song.setArtistName("artist".repeat(i));
             song.setAlbumName("album".repeat(i));
-            song.setArtistDeezerID((long) i*i);
-            song.setAlbumDeezerID((long) i*i);
-            song.setDeezerID(r.nextLong(1,Long.MAX_VALUE));
+            song.setArtistDeezerID((long) i * i);
+            song.setAlbumDeezerID((long) i * i);
+            song.setDeezerID(r.nextLong(1, Long.MAX_VALUE));
             song.setLength(0);
             song.setSongPreview("");
             song.setSongImg("");
@@ -64,55 +68,55 @@ class SongServiceTests {
     // Testing searchForSongs first
 
     @Test
-    public void testSearchForSongsEmptyQueries(){
+    public void testSearchForSongsEmptyQueries() {
         final String songName = "";
         final String artistName = "";
-        when(searchService.externalSearchForSongs(songName,artistName)).thenReturn(new HashSet<>());
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        final Set<Song> result = songService.searchForSongs(songName,artistName);
-        assertTrue(result.isEmpty(),"Search for songs should return a empty set when both queries are empty!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are empty!");
 
         //SearchService should never get called, bc 2 empty strings will cause the searchForSongs method to return early
-        verify(searchService, never()).externalSearchForSongs(songName,artistName);
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsNullQueries(){
+    public void testSearchForSongsNullQueries() {
         final String songName = null;
         final String artistName = null;
-        when(searchService.externalSearchForSongs(songName,artistName)).thenReturn(new HashSet<>());
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        final Set<Song> result = songService.searchForSongs(songName,artistName);
-        assertTrue(result.isEmpty(),"Search for songs should return a empty set when both queries are null!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are null!");
 
         //SearchService should never get called, bc 2 null strings will cause the searchForSongs method to return early
-        verify(searchService, never()).externalSearchForSongs(songName,artistName);
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsBothQueriesTooShort(){
+    public void testSearchForSongsBothQueriesTooShort() {
         final String songName = "12";
         final String artistName = "12";
-        when(searchService.externalSearchForSongs(songName,artistName)).thenReturn(new HashSet<>());
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        final Set<Song> result = songService.searchForSongs(songName,artistName);
-        assertTrue(result.isEmpty(),"Search for songs should return a empty set when both queries are too short!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are too short!");
 
         //SearchService should never get called, bc 2 strings that are too short will cause the searchForSongs method to return early
-        verify(searchService, never()).externalSearchForSongs(songName,artistName);
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsBothQueriesTooLong(){
+    public void testSearchForSongsBothQueriesTooLong() {
         final String songName = "a".repeat(51);
         final String artistName = "a".repeat(51);
-        when(searchService.externalSearchForSongs(songName,artistName)).thenReturn(new HashSet<>());
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        final Set<Song> result = songService.searchForSongs(songName,artistName);
-        assertTrue(result.isEmpty(),"Search for songs should return a empty set when both queries are too long!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are too long!");
 
         //SearchService should never get called, bc 2 strings that are too long will cause the searchForSongs method to return early
-        verify(searchService, never()).externalSearchForSongs(songName,artistName);
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
@@ -126,21 +130,21 @@ class SongServiceTests {
         //Since there is no cache, external search should be called once
         verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
 
-        assertTrue(result.containsAll(songs),"Songs found should match those mocked in externalSearchForSongs!");
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
-    public void testSearchForSongsBothValidReturnsSetCacheFound(){
+    public void testSearchForSongsBothValidReturnsSetCacheFound() {
         final String songName = "songNameCool";
         final String artistName = "artistName";
         when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
 
         Set<Song> result = songService.searchForSongs(songName, artistName);
-        assertEquals(result,songs,"Songs should match those mocked in externalSearchForSongs!");
+        assertEquals(result, songs, "Songs should match those mocked in externalSearchForSongs!");
 
         //Now if we call searchForSongs again, externalSearch should never be called bc there is now a cache
         result = songService.searchForSongs(songName, artistName);
-        assertEquals(result,songs,"Songs should match those saved in cache!");
+        assertEquals(result, songs, "Songs should match those saved in cache!");
 
         //We called searchForSongs twice, but externalSearchForSongs should only be called once
         verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
@@ -155,7 +159,7 @@ class SongServiceTests {
         final Set<Song> result = songService.searchForSongs(songName, artistName);
         assertFalse(result.isEmpty(), "Search for songs should return a set of songs when only song name is valid!");
         verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
-        assertTrue(result.containsAll(songs),"Songs found should match those mocked in externalSearchForSongs!");
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
@@ -167,11 +171,11 @@ class SongServiceTests {
         final Set<Song> result = songService.searchForSongs(songName, artistName);
         assertFalse(result.isEmpty(), "Search for songs should return a set of songs when only artist name is valid!");
         verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
-        assertTrue(result.containsAll(songs),"Songs found should match those mocked in externalSearchForSongs!");
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
-    public void testSearchForSongsSearchTwiceUniqueCaches(){
+    public void testSearchForSongsSearchTwiceUniqueCaches() {
         final String songName = "favSong";
         final String artistName = "favArtist";
         when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
@@ -181,7 +185,7 @@ class SongServiceTests {
         //Since there is no cache, external search should be called once
         verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
 
-        assertTrue(result.containsAll(songs),"Songs found should match those mocked in externalSearchForSongs!");
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
 
         //Generate new values for songs set
         setUp();
@@ -194,7 +198,7 @@ class SongServiceTests {
         //Since there is no cache, external search should be called once
         verify(searchService, times(1)).externalSearchForSongs(songNameTwo, artistNameTwo);
 
-        assertTrue(resultTwo.containsAll(songs),"Songs found should match those mocked in externalSearchForSongs!");
+        assertTrue(resultTwo.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
 

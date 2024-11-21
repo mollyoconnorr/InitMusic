@@ -9,10 +9,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * <p>
  * This class is used to test the Song class
  * </p>
- *
- * @author Nick Clouse
- *
- * @since September 19, 2024
  */
 @SpringBootTest
 public class SongTests {
@@ -29,13 +25,13 @@ public class SongTests {
     /**
      * Fake song for testing
      */
-    private final Song fakeSong = new Song(1L,songName,length, "name",1,"album",1);
+    private final Song fakeSong = new Song(1L, songName, length, "name", 1, "album", 1);
 
     /**
      * Testing song creation and getters
      */
     @Test
-    public void verifyCreationOfUserAndGetters(){
+    public void verifyCreationOfUserAndGetters() {
         final String setName = fakeSong.getSongName();
         final int setLength = fakeSong.getLength();
 
