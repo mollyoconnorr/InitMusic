@@ -18,10 +18,6 @@ import java.util.TreeSet;
 
 /**
  * This services handles Searching for songs using the deezer api.
- *
- * @author Nick Clouse
- *
- * @since September 30, 2024
  */
 @Service
 public class SongServiceImpl implements SongService{
@@ -173,7 +169,6 @@ public class SongServiceImpl implements SongService{
      *
      * @see QueryCache
      */
-    @Override
     public Set<Song> getLocalCache(String query) {
         if (query == null || query.trim().isEmpty() || query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH) {
             return null;

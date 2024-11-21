@@ -225,6 +225,9 @@ public class SongSearchDeezerImpl implements SongSearchService{
      * @return String of url
      */
     public String getSongPreview(Long deezerID){
+        if(deezerID == null || deezerID < 0){
+            return "";
+        }
         final String url = "https://api.deezer.com/track/" + deezerID;
         URLEncoder.encode(url, StandardCharsets.UTF_8);
 

@@ -1,17 +1,11 @@
 package edu.carroll.initMusic.service;
 
-import edu.carroll.initMusic.MethodOutcome;
-import edu.carroll.initMusic.jpa.model.QueryCache;
 import edu.carroll.initMusic.jpa.model.Song;
 
 import java.util.Set;
 
 /**
  * Defines methods related to searching for songs
- *
- * @author Nick Clouse
- *
- * @since October 20, 2024
  */
 public interface SongService {
     /**
@@ -21,23 +15,6 @@ public interface SongService {
      * @return Set of songs related to the query, empty set if no songs found
      */
     Set<Song> searchForSongs(String songName,String artistName);
-
-    /**
-     * Gets the local cache of songs related to the given query, if any
-     * @param query Query to use to check for local cache
-     * @return Set of songs found, if any
-     */
-    Set<Song> getLocalCache(String query);
-
-    /**
-     * Creates a new QueryCache with the given query and songs
-     * @param query Query that was searched for
-     * @param songs Songs found related to query
-     * @return A MethodOutcome enum, which represents the outcome of the method
-     *
-     * @see QueryCache
-     */
-    MethodOutcome createCache(String query, Set<Song> songs);
 
     /**
      * Checks if the given query is valid according to given standards
