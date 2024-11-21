@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This services handles Searching for songs using the deezer api.
@@ -280,4 +277,37 @@ public class SongServiceImpl implements SongService{
     public boolean isValidQuery(String query) {
         return query != null && !query.trim().isEmpty() && !(query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH);
     }
+
+    /**
+     * Retrieves the number of songs currently stored in the repository.
+     * @return the size of the song repository.
+     */
+    public long getRepoSize() {
+        long size = songRepository.findAll().size();  // Or use any other method that correctly counts all songs in the repository
+        log.info("getRepoSize: Song repository size is {}", size);
+        return size;
+    }
+
+    /**
+     * Clears all songs from the repository.
+     * This is primarily useful for testing or resetting data.
+     */
+    public void clearRepo() {
+        songRepository.deleteAll();
+        log.info("clearRepo: All songs have been cleared from the repository");
+    }
+
+    public Song findSong(Song song) {
+        final List<Song> songFound = songRepository.findByDeezerID(song.getDeezerID());
+        // Check if the list contains any song
+        if (!songFound.isEmpty()) {
+            log.info("Song found {}", songFound.getFirst());
+            // Return the first song in the list (assuming DeezerID is unique)
+            return songFound.getFirst();
+        } else {
+            log.info("No song found for {}", song);
+            return null;
+        }
+    }
 }
+

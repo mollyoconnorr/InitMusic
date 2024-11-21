@@ -44,4 +44,19 @@ public interface SongService {
      * @return  {@code true} if query is valid, {@code false} otherwise.
      */
     boolean isValidQuery(String query);
+
+    /**
+     * Retrieves the number of songs currently stored in the song repository.
+     * @return the size of the song repository.
+     */
+    long getRepoSize();
+
+    /**
+     * Clears all songs from the repository.
+     * This is primarily useful for testing or resetting data.
+     */
+    void clearRepo();
+
+    Song findSong(Song song);
+
 }
