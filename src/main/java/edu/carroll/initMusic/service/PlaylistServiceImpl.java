@@ -32,6 +32,9 @@ public class PlaylistServiceImpl implements PlaylistService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(PlaylistServiceImpl.class);
 
+    /** Maximum length a query can be */
+    private static final int MAX_NAME_LENGTH = 50;
+
     /** Song repository */
     private final SongRepository songRepository;
 
@@ -70,6 +73,10 @@ public class PlaylistServiceImpl implements PlaylistService{
 
         if (name == null || name.trim().isEmpty()) {
             return MethodOutcome.PLAYLIST_NAME_INVALID;
+        }
+
+        if (name.length() > MAX_NAME_LENGTH) {
+            return MethodOutcome.PLAYLIST_NAME_INVALID; // Add a descriptive error if needed
         }
 
         //If string is empty or blank
@@ -218,10 +225,23 @@ public class PlaylistServiceImpl implements PlaylistService{
      * a playlist object that has already been created.
      *
      * @param playlist playlist to add song to
-     * @param song       Song to add to playlist
+     * @param song Song to add to playlist
      * @return MethodOutcome, the outcome of the method
      */
     public MethodOutcome addSongToPlaylist(Playlist playlist, Song song) {
+        if (song == null) {
+            return MethodOutcome.INVALID_SONG;
+        }
+        if (playlist == null) {
+            return MethodOutcome.PLAYLIST_NOT_FOUND;
+        }
+        log.info("Song info: {}", song.getDeezerID());
+
+        if (playlistRepository.findByPlaylistIDEquals(playlist.getPlaylistID()).isEmpty()) {
+            log.warn("addSongToPlaylist: Playlist id#{} does not exist", playlist.getPlaylistID());
+            return MethodOutcome.PLAYLIST_NOT_FOUND; // Playlist does not exist
+        }
+
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
             log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}",playlist.getPlaylistID(),playlist.getAuthor().getuserID(),song.getDeezerID());
@@ -231,20 +251,41 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Attempt to find the song in the repository
         final Optional<Song> songFound = songRepository.findById(song.getDeezerID());
         if (songFound.isPresent()) {
+            log.info("Song was already found");
             //Add the managed song to the playlist
             playlist.addSong(songFound.get());
             songFound.get().addPlaylist(playlist);
         } else {
+            log.info("Before save: Song repository size is {}", songRepository.findAll().size());
             //If the song does not exist, save it
             songRepository.save(song);
+            log.info("After save: Song repository size is {}", songRepository.findAll().size());
+
             playlist.addSong(song);
             song.addPlaylist(playlist);
         }
 
         //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
-
-        log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getDeezerID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
         return MethodOutcome.SUCCESS;
+    }
+
+    /**
+     * Retrieves the number of playlists currently stored in the playlist repository.
+     * @return the size of the playlist repository.
+     */
+    public long getRepoSize() {
+        long size = playlistRepository.count();
+        log.info("getRepoSize: Playlist repository size is {}", size);
+        return size;
+    }
+
+    /**
+     * Clears all playlists from the repository.
+     * This is primarily useful for testing or resetting data.
+     */
+    public void clearRepo() {
+        playlistRepository.deleteAll();
+        log.info("clearRepo: All playlists have been cleared from the repository");
     }
 }

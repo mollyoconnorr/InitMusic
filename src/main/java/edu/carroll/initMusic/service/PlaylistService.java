@@ -14,10 +14,20 @@ import edu.carroll.initMusic.jpa.model.User;
  */
 public interface PlaylistService{
     /**
+     * Creates a new playlist under the given user with the given name
+     * @param name Name of playlist
+     * @param user User who created playlist
+     * @return MethodOutcome, the outcome of the method
+     *
+     * @see MethodOutcome
+     */
+    MethodOutcome createPlaylist(String name, User user);
+
+    /**
      * Adds a song to the given playlist.
      *
      * @param playlist playlist to add song to
-     * @param song       Song to add to playlist
+     * @param song Song to add to playlist
      * @return MethodOutcome, the outcome of the method
      */
     MethodOutcome addSongToPlaylist(Playlist playlist, Song song);
@@ -28,16 +38,6 @@ public interface PlaylistService{
      * @return The playlist object found, if any
      */
     Playlist getPlaylist(Long playlistID);
-
-    /**
-     * Creates a new playlist under the given user with the given name
-     * @param name Name of playlist
-     * @param user User who created playlist
-     * @return MethodOutcome, the outcome of the method
-     *
-     * @see MethodOutcome
-     */
-    MethodOutcome createPlaylist(String name, User user);
 
     /**
      * Renames the given playlist with the new given name
@@ -70,4 +70,16 @@ public interface PlaylistService{
      * @see MethodOutcome
      */
     MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID);
+
+    /**
+     * Retrieves the number of playlists currently stored in the repository.
+     * @return the size of the playlist repository.
+     */
+    long getRepoSize();
+
+    /**
+     * Clears all playlists from the repository.
+     */
+    void clearRepo();
+
 }
