@@ -177,6 +177,7 @@ Once running, our app runs on **Port 8080**, and you can go to `http://localhost
 While running, log messages will be shown in the console throughout usage of the app, and can help with debugging if needed. A `logs' folder should be created in your directory, and you can see all archived logs by looking in that folder.
 
 ## Testing
+**NOTE: [UserDetailsServiceTests](src/test/java/edu/carroll/initMusic/service/UserDetailsServiceTests.java) is our comprehensive unit test**
 
 We tested our app using JUnit [(User Guide to JUnit)](https://junit.org/junit5/docs/current/user-guide/). To run our tests, you can run the commands below in the console:  
 ```bash
