@@ -300,4 +300,12 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
+    /**
+     * Clears all users from the repository.
+     * This is primarily useful for testing or resetting data.
+     */
+    public void clearRepo() {
+        userRepository.deleteAll();
+        log.info("clearRepo: All users have been cleared from the repository");
+    }
 }

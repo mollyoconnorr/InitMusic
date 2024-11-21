@@ -85,4 +85,9 @@ public interface UserService {
      * @return true if the user was successfully deleted, false otherwise.
      */
     boolean deleteByEmail(String email);
+
+    /**
+     * Clears all users from the repository.
+     */
+    void clearRepo();
 }
