@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTests {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
 
     /*
      * First testing invalid usernames
