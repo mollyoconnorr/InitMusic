@@ -3,6 +3,7 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.CheckUserEmailForm;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling password changes via email verification.
@@ -18,16 +18,19 @@ import jakarta.servlet.http.HttpSession;
  * If the email is valid, it redirects to the security question validation page.
  *
  * @author Molly O'Connor
- *
  * @since October 8, 2024
  */
 @Controller
 public class ChangePasswordEmailController {
 
-    /** Logger object used for logging actions within this controller. */
+    /**
+     * Logger object used for logging actions within this controller.
+     */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
 
-    /** Service for user-related operations such as finding users by email. */
+    /**
+     * Service for user-related operations such as finding users by email.
+     */
     private final UserService userService;
 
     /**
@@ -61,8 +64,8 @@ public class ChangePasswordEmailController {
      * </p>
      *
      * @param emailForm the form containing the email to check.
-     * @param model the model used to pass data back to the view.
-     * @param session the HTTP session used to store the current user data.
+     * @param model     the model used to pass data back to the view.
+     * @param session   the HTTP session used to store the current user data.
      * @return the view to display next, either the security questions page or the email input page with an error.
      */
     @PostMapping("/changePasswordEmail")

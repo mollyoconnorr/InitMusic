@@ -3,6 +3,8 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.SecurityQuestionsForm;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,15 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling the submission and display of security questions.
  * This controller manages the process where users set up their security questions
  * during registration, or answer them as part of their account security process.
  * It interacts with the {@link UserService} to handle user-related operations.
- *
+ * <p>
  * Features include:
  * - Displaying the security questions form during registration or login.
  * - Handling form submissions for setting or answering security questions.
@@ -30,10 +30,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class SecurityQuestionsController {
 
-    /** Logger object used for logging actions within this controller. */
+    /**
+     * Logger object used for logging actions within this controller.
+     */
     private static final Logger log = LoggerFactory.getLogger(SecurityQuestionsController.class);
 
-    /** Service for handling user-related operations. */
+    /**
+     * Service for handling user-related operations.
+     */
     private final UserService userService;
 
     /**
@@ -49,7 +53,7 @@ public class SecurityQuestionsController {
      * Displays the form where users can set up or answer security questions.
      * This method is primarily used during user registration or account recovery.
      *
-     * @param model the model to be used in the view.
+     * @param model   the model to be used in the view.
      * @param request the HTTP request to check the referer header.
      * @return the name of the Thymeleaf template for the security questions view.
      */

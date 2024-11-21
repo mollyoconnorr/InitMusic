@@ -21,31 +21,38 @@ import java.util.Optional;
  *
  * @author Nick Clouse
  * @author Molly O'Connor
- *
- * @since October 23, 2024
- *
  * @see PlaylistService
+ * @since October 23, 2024
  */
 @Service
-public class PlaylistServiceImpl implements PlaylistService{
+public class PlaylistServiceImpl implements PlaylistService {
 
-    /** Logger object used for logging */
+    /**
+     * Logger object used for logging
+     */
     private static final Logger log = LoggerFactory.getLogger(PlaylistServiceImpl.class);
 
-    /** Song repository */
+    /**
+     * Song repository
+     */
     private final SongRepository songRepository;
 
-    /** Playlist repository*/
+    /**
+     * Playlist repository
+     */
     private final PlaylistRepository playlistRepository;
 
-    /** User repository */
+    /**
+     * User repository
+     */
     private final UserRepository userRepository;
 
     /**
      * Injects dependencies
-     * @param songRepository Song Repository needed
+     *
+     * @param songRepository     Song Repository needed
      * @param playlistRepository Playlist Repository needed
-     * @param userRepository User Repository needed
+     * @param userRepository     User Repository needed
      */
     public PlaylistServiceImpl(final SongRepository songRepository, final PlaylistRepository playlistRepository, final UserRepository userRepository) {
         this.songRepository = songRepository;
@@ -57,13 +64,14 @@ public class PlaylistServiceImpl implements PlaylistService{
      * Creates a new playlist for the given user with the given username. Returns true if the playlist
      * was created. It will false if the given user doesn't exist, the user already has a playlist
      * with the given name, or if the given name isn't valid (Is blank).
+     *
      * @param name Name of new playlist
      * @param user User who created playlist
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public MethodOutcome createPlaylist(String name, User user){
+    public MethodOutcome createPlaylist(String name, User user) {
         //If user doesn't exist
-        if(!userRepository.existsById(user.getuserID())){
+        if (!userRepository.existsById(user.getuserID())) {
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} doesn't exist", user.getuserID());
             return MethodOutcome.USER_NOT_FOUND;
         }
@@ -73,7 +81,7 @@ public class PlaylistServiceImpl implements PlaylistService{
         }
 
         //If string is empty or blank
-        if(name.isBlank()){
+        if (name.isBlank()) {
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} tried to make a playlist with a blank String", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
@@ -85,7 +93,7 @@ public class PlaylistServiceImpl implements PlaylistService{
             return MethodOutcome.PLAYLIST_NAME_EXISTS;
         }
 
-        final Playlist newPlaylist = new Playlist(user,name);
+        final Playlist newPlaylist = new Playlist(user, name);
         playlistRepository.save(newPlaylist);
         user.addPlaylist(newPlaylist);
 
@@ -96,37 +104,38 @@ public class PlaylistServiceImpl implements PlaylistService{
 
     /**
      * This function handles renaming a playlist
-     * @param newName New name of playlist
+     *
+     * @param newName    New name of playlist
      * @param playlistID ID of playlist to rename
-     * @param user User who created playlist
+     * @param user       User who created playlist
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public MethodOutcome renamePlaylist(String newName, Long playlistID, User user){
-        if(user.getPlaylist(newName) != null){
+    public MethodOutcome renamePlaylist(String newName, Long playlistID, User user) {
+        if (user.getPlaylist(newName) != null) {
             log.warn("renamePlaylist: Attempted to rename playlist, but a Playlist with name '{}' already exists for user id#{}", newName, user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_EXISTS;
         }
 
         //If user doesn't exist
-        if(!userRepository.existsById(user.getuserID())){
+        if (!userRepository.existsById(user.getuserID())) {
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} doesn't exist", user.getuserID());
             return MethodOutcome.USER_NOT_FOUND;
         }
 
-        if(newName == null) {
+        if (newName == null) {
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist null", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         //If string is empty or blank
-        if(newName.isBlank()){
+        if (newName.isBlank()) {
             log.warn("renamePlaylist: Attempted to rename playlist, but User id#{} tried to rename playlist with a blank String", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         //Look through each playlist, faster to do in-memory then pull playlist from repository
-        for(Playlist playlist : user.getPlaylists()){
-            if(Objects.equals(playlist.getPlaylistID(), playlistID)){
+        for (Playlist playlist : user.getPlaylists()) {
+            if (Objects.equals(playlist.getPlaylistID(), playlistID)) {
                 playlist.setPlaylistName(newName);
                 playlistRepository.save(playlist);
                 log.info("renamePlaylist: Playlist with id '{}' renamed to '{}'", playlistID, newName);
@@ -139,20 +148,21 @@ public class PlaylistServiceImpl implements PlaylistService{
 
     /**
      * This function handles deleting a song from a playlist.
+     *
      * @param playlistName Name of playlist to delete
-     * @param playlistID ID of playlist to delete
-     * @param user User who created playlist
+     * @param playlistID   ID of playlist to delete
+     * @param user         User who created playlist
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public MethodOutcome deletePlaylist(String playlistName, Long playlistID, User user){
+    public MethodOutcome deletePlaylist(String playlistName, Long playlistID, User user) {
         //If user doesn't exist
-        if(!userRepository.existsById(user.getuserID())){
+        if (!userRepository.existsById(user.getuserID())) {
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't exist", user.getuserID());
             return MethodOutcome.USER_NOT_FOUND;
         }
 
         //If playlist isn't found for given user.
-        if(user.getPlaylist(playlistName) == null){
+        if (user.getPlaylist(playlistName) == null) {
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
             return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
@@ -168,13 +178,14 @@ public class PlaylistServiceImpl implements PlaylistService{
 
     /**
      * Gets the playlist object with the given id
+     *
      * @param playlistID ID to search by
      * @return The playlist object found, if any
      */
-    public Playlist getPlaylist(Long playlistID){
+    public Playlist getPlaylist(Long playlistID) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
-        if(playlistsFound.size() != 1){
+        if (playlistsFound.size() != 1) {
             return null;
         }
 
@@ -183,16 +194,17 @@ public class PlaylistServiceImpl implements PlaylistService{
 
     /**
      * Removes a song from a playlist based off their respective ID's
+     *
      * @param playlistID ID of playlist
-     * @param songID ID of song
+     * @param songID     ID of song
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
-    public MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID){
+    public MethodOutcome removeSongFromPlaylist(Long playlistID, Long songID) {
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         //If there was 0 or more than 1 playlist found
-        if(playlistsFound.size() != 1){
-            log.warn("removeSongFromPlaylist: Playlist id#{} not found",playlistID);
+        if (playlistsFound.size() != 1) {
+            log.warn("removeSongFromPlaylist: Playlist id#{} not found", playlistID);
             return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
         final Playlist playlist = playlistsFound.getFirst();
@@ -200,8 +212,8 @@ public class PlaylistServiceImpl implements PlaylistService{
         final boolean songRemoved = playlist.removeSong(songID);
 
         //If song wasn't removed
-        if(!songRemoved){
-            log.warn("removeSongFromPlaylist: Error when removing song id#{} from playlist id#{} using removeSong(songID)",songID,playlistID);
+        if (!songRemoved) {
+            log.warn("removeSongFromPlaylist: Error when removing song id#{} from playlist id#{} using removeSong(songID)", songID, playlistID);
             return MethodOutcome.SONG_NOT_IN_PLAYLIST;
         }
 
@@ -218,13 +230,13 @@ public class PlaylistServiceImpl implements PlaylistService{
      * a playlist object that has already been created.
      *
      * @param playlist playlist to add song to
-     * @param song       Song to add to playlist
+     * @param song     Song to add to playlist
      * @return MethodOutcome, the outcome of the method
      */
     public MethodOutcome addSongToPlaylist(Playlist playlist, Song song) {
         //Check if the song is already in the playlist
         if (playlist.containsSong(song)) {
-            log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}",playlist.getPlaylistID(),playlist.getAuthor().getuserID(),song.getDeezerID());
+            log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}", playlist.getPlaylistID(), playlist.getAuthor().getuserID(), song.getDeezerID());
             return MethodOutcome.PLAYLIST_ALREADY_CONTAINS_SONG; //Song is already in the playlist
         }
 
@@ -244,7 +256,7 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
 
-        log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getDeezerID(), playlist.getPlaylistID(),playlist.getAuthor().getuserID());
+        log.info("addSongToPlaylist: Song id#{} added to playlist id#{} by user id#{}", song.getDeezerID(), playlist.getPlaylistID(), playlist.getAuthor().getuserID());
         return MethodOutcome.SUCCESS;
     }
 }

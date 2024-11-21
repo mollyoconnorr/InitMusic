@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  * validating user credentials, and redirecting to success or failure pages.
  *
  * @author Molly O'Connor
- *
  * @since September 8, 2024
  */
 @Controller
 @EnableWebSecurity
 public class LoginController {
-    /** Logger object used for logging actions within this controller. */
+    /**
+     * Logger object used for logging actions within this controller.
+     */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     /**

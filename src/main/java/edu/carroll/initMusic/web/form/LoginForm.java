@@ -9,14 +9,17 @@ package edu.carroll.initMusic.web.form;
  * </p>
  *
  * @author Molly O'Connor
- *
  * @since September 9, 2024
  */
 public class LoginForm {
-    /** Username */
+    /**
+     * Username
+     */
     private String username;
 
-    /** Password */
+    /**
+     * Password
+     */
     private String password;
 
     /**

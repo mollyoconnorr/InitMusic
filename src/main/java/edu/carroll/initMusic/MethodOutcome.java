@@ -8,7 +8,6 @@ package edu.carroll.initMusic;
  * </p>
  *
  * @author Nick Clouse
- *
  * @since October 2, 2024
  */
 public enum MethodOutcome {
@@ -31,7 +30,8 @@ public enum MethodOutcome {
     PLAYLIST_NAME_INVALID("Playlist name is invalid!"),
     PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),
     SONG_NOT_IN_PLAYLIST("Song not found in playlist!"),
-    QUERY_EMPTY("Query is empty!"),;
+    QUERY_EMPTY("Query is empty!"),
+    ;
 
     /**
      * Message of the constant, part of what is displayed to the user
@@ -40,6 +40,7 @@ public enum MethodOutcome {
 
     /**
      * Constructs a new constant
+     *
      * @param message Message of constant
      */
     MethodOutcome(String message) {
@@ -49,14 +50,16 @@ public enum MethodOutcome {
     /**
      * Checks if the response is anything but the success constant. Used when
      * checking if a operation succeeded or failed.
+     *
      * @return If the response is not the success message.
      */
-    public boolean failed(){
+    public boolean failed() {
         return !SUCCESS.getMessage().equals(this.message);
     }
 
     /**
      * Gets the message of the constant
+     *
      * @return The message
      */
     public String getMessage() {

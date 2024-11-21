@@ -20,26 +20,30 @@ import org.springframework.web.bind.annotation.PostMapping;
  * This controller manages the flow for users to change their passwords securely.
  * It checks the old password, validates the new password, and updates the user's password if valid.
  * </p>
- * @author Molly O'Connor
  *
+ * @author Molly O'Connor
  * @since October 20, 2024
  */
 @Controller
 public class ChangePasswordAlreadyLoggedInController {
 
-    /** BCrypt password encoder used for hashing passwords. */
-    private final BCryptPasswordEncoder passwordEncoder;
-
-    /** Logger object used for logging actions within this controller. */
+    /**
+     * Logger object used for logging actions within this controller.
+     */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordAlreadyLoggedInController.class);
-
-    /** Service for user-related operations such as updating passwords. */
+    /**
+     * BCrypt password encoder used for hashing passwords.
+     */
+    private final BCryptPasswordEncoder passwordEncoder;
+    /**
+     * Service for user-related operations such as updating passwords.
+     */
     private final UserService userService;
 
     /**
      * Constructs a new ChangePasswordAlreadyLoggedInController.
      *
-     * @param userService the service that handles user operations
+     * @param userService     the service that handles user operations
      * @param passwordEncoder the password encoder for hashing passwords
      */
     public ChangePasswordAlreadyLoggedInController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
@@ -64,9 +68,10 @@ public class ChangePasswordAlreadyLoggedInController {
      * If the old password is correct, it updates the password to the new one. If not,
      * it displays an error message.
      * </p>
-     * @param passwordForm the form containing the old and new passwords
+     *
+     * @param passwordForm   the form containing the old and new passwords
      * @param authentication the current authentication token, used to retrieve the logged-in user
-     * @param model the model used to pass data back to the view
+     * @param model          the model used to pass data back to the view
      * @return the view to display next, either a success page or the form with an error
      */
     @PostMapping("/changePasswordLoggedIn")
@@ -81,14 +86,14 @@ public class ChangePasswordAlreadyLoggedInController {
             // Check if the old password matches the stored hashed password
             if (passwordEncoder.matches(passwordForm.getOldPassword(), storedHashedPassword)) {
                 final boolean passwordUpdated = userService.updatePassword(currentUser, passwordForm.getNewPassword());
-                if(!passwordUpdated) {
-                    log.warn("handleSecuritySubmission: Password update failed for User id#{}",currentUser.getuserID());
+                if (!passwordUpdated) {
+                    log.warn("handleSecuritySubmission: Password update failed for User id#{}", currentUser.getuserID());
                     model.addAttribute("errorMessage", "Password update failed");
                 }
                 return "passwordChangedLoggedIn"; // Redirect to the password changed confirmation page
             } else {
                 // Password mismatch, show error
-                log.warn("handleSecuritySubmission: Old password is incorrect for User id#{}",currentUser.getuserID());
+                log.warn("handleSecuritySubmission: Old password is incorrect for User id#{}", currentUser.getuserID());
                 model.addAttribute("error", "Old password is incorrect.");
                 return "changePasswordLoggedIn"; // Reload the form with an error message
             }
