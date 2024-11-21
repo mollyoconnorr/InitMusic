@@ -12,6 +12,7 @@ By '**Init to Win it**' - Molly O'Connor and Nick Clouse
       <ul>
         <li><a href="#main-features">Main Features</a></li>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#documentation">Documentation</a></li>
       </ul>
     </li>
     <li>
@@ -80,7 +81,7 @@ their favorite tracks, making it easy to enjoy their music collection at any tim
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Documentation
+### Documentation
 To see our documentation, go to the [**Documentation**](Documentation) folder in the main directory.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
