@@ -83,7 +83,7 @@ Our database is called `initMusic` and is on **Port 3306**. You can access it by
 Run the commands below to set up your MySql user **(Make sure MySql is started first)**:
 ```mysql
 $ mysql -u root -p
-mysql> CREATE DATABASE database;
+mysql> CREATE DATABASE initMusic;
 mysql> CREATE USER 'initDev'@'localhost' IDENTIFIED BY 'password';
 mysql> CREATE USER 'initDev'@'%' IDENTIFIED BY 'password';
 mysql> GRANT ALL PRIVILEGES ON initMusic.* TO 'initDev'@'localhost' WITH GRANT OPTION;
