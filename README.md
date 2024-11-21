@@ -80,7 +80,10 @@ their favorite tracks, making it easy to enjoy their music collection at any tim
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Documentation
+To see our documentation, go to the [**Documentation**](Documentation) folder in the main directory.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -97,7 +100,6 @@ To get a local copy up and running follow these steps.
 #### Other technologies used:
 * **Gradle**: 8.10
 * **Spring Boot**: 3.3.3
-* **SLF4J**: Logging throughout our code
 * Navigate to our [**build.gradle**](build.gradle) file to see the other dependencies we used
 
 ### Installation
