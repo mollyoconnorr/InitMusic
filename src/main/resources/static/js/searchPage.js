@@ -53,12 +53,12 @@ function popModalWithButtonData() {
 }
 
 //When createPlaylistForm is submitted, and set showModal to true in sessionStorage so modal will show back up
-document.getElementById('createPlaylistForm').addEventListener('submit', function(event) {
+document.getElementById('createPlaylistForm').addEventListener('submit', function (event) {
     sessionStorage.setItem('showModal', 'true');
 });
 
 //Check if the flag is set in sessionStorage on page load, if so, load and populate modal
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     if (sessionStorage.getItem('showModal') === 'true') {
         const myModal = new bootstrap.Modal(document.getElementById('addToPlaylistModal')); // Initialize modal
         popModalWithButtonData();

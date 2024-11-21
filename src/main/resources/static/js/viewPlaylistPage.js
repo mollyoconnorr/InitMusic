@@ -1,8 +1,8 @@
 //Populates the deleteSongModal (But could do any modal) with given data
-function populateDeleteSongModal(modal, songID, songName, playlistID, playlistName){
+function populateDeleteSongModal(modal, songID, songName, playlistID, playlistName) {
     const modalBody = modal.querySelector('.modal-body');
     modalBody.textContent = 'Are you sure you want to delete ' + songName + ' from ' +
-    playlistName + '?';
+        playlistName + '?';
 
     document.getElementById('playlistID').value = playlistID;
     document.getElementById('songID').value = songID;
