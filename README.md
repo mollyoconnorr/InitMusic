@@ -175,20 +175,20 @@ While running, log messages will be shown in the console throughout usage of the
 
 ## Testing
 
-We tested our app using JUnit [(User Guide to JUnit)](https://junit.org/junit5/docs/current/user-guide/). To run our tests, you can run the command below:  
+We tested our app using JUnit [(User Guide to JUnit)](https://junit.org/junit5/docs/current/user-guide/). To run our tests, you can run the commands below in the console:  
 ```bash
 $ ./gradlew test #MacOS and Linux
 $ gradlew test #Windows
 ```
 **Only run tests for a specific package**
 ```bash
-./gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #MacOS and Linux
-gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #Windows
+$ ./gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #MacOS and Linux
+$ gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #Windows
 ```
 **Only run tests for a specific class**
 ```bash
-./gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #MacOS and Linux
-gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #Windows
+$ ./gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #MacOS and Linux
+$ gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #Windows
 ```
 
 <!-- Future Opportunities -->
