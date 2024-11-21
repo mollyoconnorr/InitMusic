@@ -52,16 +52,49 @@ their favorite tracks, making it easy to enjoy their music collection at any tim
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
 * **IDE**: Any IDE of your choosing, although we recommend IntelliJ for optimal compatibility.
-* **Java**: Ensure Java is installed on your device. The project is compatible with Java version 17 or higher (Not tested with older versions).
+* **Java**: Java 21.0.4 JDK or higher.
+* **MySql**: MySql 9.0.1 or higher. We used `Ver 9.0.1 for macos14 on x86_64 (MySQL Community Server - GPL)`  
+**NOTE: Not tested with older versions of dependencies.**
+
+#### Other technologies used:
+* **Gradle**: 8.10
+* **Spring Boot**: 3.3.3
+* **SLF4J**: Logging throughout our code
+* Navigate to our [**build.gradle**](build.gradle) file to see the other dependencies we used
 
 ### Installation
-TBD
+1. Clone the git repository:
+     `git clone https://github.com/mollyoconnorr/InitMusic`
+2. If you don't have Java 21.0.4 installed:  
+     * [Oracle Download Guide](https://docs.oracle.com/en/java/javase/23/install/overview-jdk-installation.html)  
+     * [Oracle Download Java](https://www.oracle.com/java/technologies/downloads/)
+3. If you don't have MySql 9.0.1 installed:  
+     * [Download Guide](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/)  
+     * [Download MySql](https://dev.mysql.com/downloads/installer/)
+
+#### Setting up MySql
+Our database is called `initMusic` and is on **Port 3306**. You can access it by setting up a user with username `initDev` and password `password`. To change any of these fields, you can do so in our [application.properties](src/main/resources/application.properties) file.
+
+Run the commands below to set up your MySql user **(Make sure MySql is started first)**:
+```mysql
+$ mysql -u root -p
+mysql> CREATE DATABASE initMusic;
+mysql> CREATE USER 'initDev'@'localhost' IDENTIFIED BY 'password';
+mysql> CREATE USER 'initDev'@'%' IDENTIFIED BY 'password';
+mysql> GRANT ALL PRIVILEGES ON initMusic.* TO 'initDev'@'localhost' WITH GRANT OPTION;
+mysql> GRANT ALL PRIVILEGES ON initMusic.* TO 'initDev'@'%' WITH GRANT OPTION;
+mysql> exit
+```
+Connecting to DB after creation:
+```mysql
+$ mysql -u initDev -p database
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- Using our website -->
