@@ -30,7 +30,8 @@ public enum MethodOutcome {
     PLAYLIST_NAME_EXISTS("Playlist with given name already exists!"),
     PLAYLIST_NAME_INVALID("Playlist name is invalid!"),
     PLAYLIST_RENAME_ERROR("Playlist could not be renamed."),
-    SONG_NOT_IN_PLAYLIST("Song not found in playlist!");
+    SONG_NOT_IN_PLAYLIST("Song not found in playlist!"),
+    INVALID_SONG("Song name invalid!");
 
     /**
      * Message of the constant, part of what is displayed to the user
