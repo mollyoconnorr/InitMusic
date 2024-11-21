@@ -14,40 +14,47 @@ import java.util.Set;
  * A playlist is a collection of songs created by a user.
  *
  * @author Nick Clouse
- *
  * @since September 11, 2024
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "playlist")
 public class Playlist {
-    /** Serial version ID */
+    /**
+     * Serial version ID
+     */
     private static final long serialVersionID = 2L;
-
-    /** Playlist's id number, used as primary key */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long playlistID;
-
-    /** ID of author who made playlist. A Many-to-one relationship. */
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User author;
-
-    /** Set of songs each playlist contains, many-to-many relationship */
+    /**
+     * Set of songs each playlist contains, many-to-many relationship
+     */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "playlist_song",
-            joinColumns = { @JoinColumn(name = "playlistID") },
-            inverseJoinColumns = { @JoinColumn(name = "songID")}
+            joinColumns = {@JoinColumn(name = "playlistID")},
+            inverseJoinColumns = {@JoinColumn(name = "songID")}
     )
     private final Set<Song> songs = new HashSet<>();
-
-    /** Name of playlist */
-    @Column(name= "playlist_name",nullable = false)
+    /**
+     * Playlist's id number, used as primary key
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long playlistID;
+    /**
+     * ID of author who made playlist. A Many-to-one relationship.
+     */
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User author;
+    /**
+     * Name of playlist
+     */
+    @Column(name = "playlist_name", nullable = false)
     private String playlistName;
 
-    /** Date playlist was created */
+    /**
+     * Date playlist was created
+     */
     @CreatedDate
     @Column(name = "date_playlist_created", nullable = false)
     private LocalDateTime dateCreated;
@@ -67,16 +74,17 @@ public class Playlist {
     private int totalSongLength;
 
     /**
-    * JPA needs this constructor to instantiate entities when retrieving data from the database.
-    * Its protected so it can't be used to create new Album objects by other classes.
-    */
+     * JPA needs this constructor to instantiate entities when retrieving data from the database.
+     * Its protected so it can't be used to create new Album objects by other classes.
+     */
     public Playlist() {
         //Default Constructor
     }
 
     /**
      * Creates new playlist instance
-     * @param author Author of playlist
+     *
+     * @param author       Author of playlist
      * @param playlistName Name of playlist
      */
     public Playlist(User author, String playlistName) {
@@ -97,6 +105,7 @@ public class Playlist {
 
     /**
      * Gets all songs in playlist
+     *
      * @return Set of songs
      */
     public Set<Song> getSongs() {
@@ -105,6 +114,7 @@ public class Playlist {
 
     /**
      * Add song to playlist
+     *
      * @param song Song to add
      */
     public void addSong(Song song) {
@@ -115,6 +125,7 @@ public class Playlist {
 
     /**
      * Remove a song from playlist using a song object
+     *
      * @param song Song to remove
      * @return If song was removed or not
      */
@@ -130,10 +141,11 @@ public class Playlist {
 
     /**
      * Remove a song from playlist using a song object using the songs id
+     *
      * @param songID ID of song to remove
      * @return If song was removed or not
      */
-    public boolean removeSong(Long songID){
+    public boolean removeSong(Long songID) {
         for (Song song : this.songs) {
             if (song.getDeezerID().equals(songID)) {
                 this.numberOfSongs--;
@@ -148,12 +160,13 @@ public class Playlist {
 
     /**
      * Checks if song is in playlist
+     *
      * @param song Song to check for
      * @return If song is in playlist, false otherwise
      */
     public boolean containsSong(Song song) {
-        for(Song s: this.songs){
-            if(s.getDeezerID().equals(song.getDeezerID())){
+        for (Song s : this.songs) {
+            if (s.getDeezerID().equals(song.getDeezerID())) {
                 return true;
             }
         }
@@ -171,6 +184,7 @@ public class Playlist {
 
     /**
      * Sets the ID of the playlist
+     *
      * @param playlistID The id to set
      */
     public void setPlaylistID(Long playlistID) {
@@ -179,6 +193,7 @@ public class Playlist {
 
     /**
      * Gets the author who owns the playlist
+     *
      * @return The author object
      */
     public User getAuthor() {
@@ -187,6 +202,7 @@ public class Playlist {
 
     /**
      * Sets the author of the playlist to parameter passed.
+     *
      * @param author Author to set
      */
     public void setAuthor(User author) {
@@ -195,6 +211,7 @@ public class Playlist {
 
     /**
      * Gets the playlist's name
+     *
      * @return The playlist's name
      */
     public String getPlaylistName() {
@@ -203,6 +220,7 @@ public class Playlist {
 
     /**
      * Sets playlist name
+     *
      * @param playlistName Name to set
      */
     public void setPlaylistName(String playlistName) {
@@ -211,6 +229,7 @@ public class Playlist {
 
     /**
      * Gets the date the playlist was created
+     *
      * @return The creation Date
      */
     public LocalDateTime getDateCreated() {
@@ -219,6 +238,7 @@ public class Playlist {
 
     /**
      * Sets the playlist's creation date
+     *
      * @param dateCreated Date to set
      */
     public void setDateCreated(LocalDateTime dateCreated) {
@@ -227,6 +247,7 @@ public class Playlist {
 
     /**
      * Gets the number of songs in the playlist
+     *
      * @return The number of songs in the playlist
      */
     public int getNumberOfSongs() {
@@ -235,6 +256,7 @@ public class Playlist {
 
     /**
      * Sets the number of songs in playlist
+     *
      * @param numberOfSongs Number of songs to set
      */
     public void setNumberOfSongs(int numberOfSongs) {
@@ -244,6 +266,7 @@ public class Playlist {
     /**
      * Gets the total length of the playlist, which is the combined length
      * of all songs in the playlist in minutes
+     *
      * @return The total length of the playlist
      */
     public int getTotalSongLength() {
@@ -252,6 +275,7 @@ public class Playlist {
 
     /**
      * Sets the total length of the playlist
+     *
      * @param totalSongLength Length to set
      */
     public void setTotalSongLength(int totalSongLength) {
@@ -260,6 +284,7 @@ public class Playlist {
 
     /**
      * Compares Playlist object with another
+     *
      * @param o Object to compare
      * @return If playlists are equal or not
      */
@@ -276,6 +301,7 @@ public class Playlist {
 
     /**
      * Converts object to hash code
+     *
      * @return Hash code of object
      */
     @Override
@@ -285,18 +311,18 @@ public class Playlist {
 
     /**
      * Converts playlist to string
+     *
      * @return String version of playlist
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Playlist{");
-        sb.append("playlistID=").append(playlistID);
-        sb.append(", author=").append(author);
-        sb.append(", playlistName='").append(playlistName).append('\'');
-        sb.append(", dateCreated='").append(dateCreated).append('\'');
-        sb.append(", numberOfSongs=").append(numberOfSongs);
-        sb.append(", totalSongLength=").append(totalSongLength);
-        sb.append('}');
-        return sb.toString();
+        String sb = "Playlist{" + "playlistID=" + playlistID +
+                ", author=" + author +
+                ", playlistName='" + playlistName + '\'' +
+                ", dateCreated='" + dateCreated + '\'' +
+                ", numberOfSongs=" + numberOfSongs +
+                ", totalSongLength=" + totalSongLength +
+                '}';
+        return sb;
     }
 }

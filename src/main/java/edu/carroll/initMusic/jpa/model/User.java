@@ -20,45 +20,55 @@ import java.util.Set;
  * </p>
  *
  * @author Nick Clouse
- *
  * @since September 11, 2024
  */
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-    /** Serial version ID */
+    /**
+     * Serial version ID
+     */
     private static final long serialVersionID = 3L;
-
-    /** User's id number, used as primary key */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
-
     /**
      * User's playlists, has a one-to-many relationship
      * with the playlist class.
      */
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final Set<Playlist> playlists = new HashSet<>();
-
-    /** User's username */
+    /**
+     * User's id number, used as primary key
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userID;
+    /**
+     * User's username
+     */
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    /** User's password */
+    /**
+     * User's password
+     */
     @Column(name = "password", nullable = false)
     private String hashedPassword;
 
-    /** User's first name */
+    /**
+     * User's first name
+     */
     @Column(name = "user_first_name", nullable = false)
     private String firstName;
 
-    /** User's last name */
+    /**
+     * User's last name
+     */
     @Column(name = "user_last_name", nullable = false)
     private String lastName;
 
-    /** User's email */
+    /**
+     * User's email
+     */
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -66,19 +76,27 @@ public class User {
     @Column(name = "question1")
     private String question1;
 
-    /** User's Security Question2 */
+    /**
+     * User's Security Question2
+     */
     @Column(name = "question2")
     private String question2;
 
-    /** User's Security Answer1 */
+    /**
+     * User's Security Answer1
+     */
     @Column(name = "answer1")
     private String answer1;
 
-    /** User's Security Answer2 */
+    /**
+     * User's Security Answer2
+     */
     @Column(name = "answer2")
     private String answer2;
 
-    /** Date user account was created */
+    /**
+     * Date user account was created
+     */
     @CreatedDate
     @Column(name = "account_creation_date", nullable = false)
     private LocalDateTime accountCreationDate;
@@ -86,24 +104,25 @@ public class User {
     /**
      * JPA needs this default constructor to instantiate entities when retrieving data from the database.
      */
-    public User(){
+    public User() {
         //Default Constructor
     }
 
     /**
      * Creates a user instance
-     * @param username User's username
+     *
+     * @param username       User's username
      * @param hashedPassword User's password, hashed
-     * @param firstName User's first name
-     * @param lastName User's last name
-     * @param email User's email
-     * @param question1 User's first security question
-     * @param question2 User's second security question
-     * @param answer1 User's answer to first security question
-     * @param answer2 User's answer second security question
+     * @param firstName      User's first name
+     * @param lastName       User's last name
+     * @param email          User's email
+     * @param question1      User's first security question
+     * @param question2      User's second security question
+     * @param answer1        User's answer to first security question
+     * @param answer2        User's answer second security question
      */
     public User(String username, String hashedPassword, String firstName, String lastName, String email,
-    String question1, String question2, String answer1, String answer2) {
+                String question1, String question2, String answer1, String answer2) {
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.firstName = firstName;
@@ -117,6 +136,7 @@ public class User {
 
     /**
      * Gets all playlists the user has
+     *
      * @return Set of user's playlists
      */
     public Set<Playlist> getPlaylists() {
@@ -125,12 +145,13 @@ public class User {
 
     /**
      * Get a playlist based off of its name
+     *
      * @param playlistName Name of playlist to search for
      * @return Playlist if found, null if not.
      */
     public Playlist getPlaylist(String playlistName) {
-        for(Playlist playlist : playlists) {
-            if(playlist.getPlaylistName().equalsIgnoreCase(playlistName)){
+        for (Playlist playlist : playlists) {
+            if (playlist.getPlaylistName().equalsIgnoreCase(playlistName)) {
                 return playlist;
             }
         }
@@ -139,6 +160,7 @@ public class User {
 
     /**
      * Adds a playlist to user's list of playlist
+     *
      * @param playlist Playlist to add
      */
     public void addPlaylist(final Playlist playlist) {
@@ -147,6 +169,7 @@ public class User {
 
     /**
      * Removes a playlist from User's playlists
+     *
      * @param playlist Playlist to remove
      */
     public void removePlaylist(final Playlist playlist) {
@@ -164,6 +187,7 @@ public class User {
 
     /**
      * Sets the users id
+     *
      * @param userID ID to set
      */
     public void setuserID(Long userID) {
@@ -172,6 +196,7 @@ public class User {
 
     /**
      * Gets user's username
+     *
      * @return username User's username
      */
     public String getUsername() {
@@ -180,6 +205,7 @@ public class User {
 
     /**
      * Sets the user's username
+     *
      * @param username Username to set
      */
     public void setUsername(String username) {
@@ -188,6 +214,7 @@ public class User {
 
     /**
      * Returns user's hashed password
+     *
      * @return The hashed password
      */
     public String getHashedPassword() {
@@ -196,6 +223,7 @@ public class User {
 
     /**
      * Sets the user's password to hashed version
+     *
      * @param hashedPassword Password to set
      */
     public void setHashedPassword(String hashedPassword) {
@@ -204,6 +232,7 @@ public class User {
 
     /**
      * Gets user's first name
+     *
      * @return User's first name
      */
     public String getFirstName() {
@@ -212,6 +241,7 @@ public class User {
 
     /**
      * Sets user's first name
+     *
      * @param firstName First name to set
      */
     public void setFirstName(String firstName) {
@@ -220,6 +250,7 @@ public class User {
 
     /**
      * Gets user's last name
+     *
      * @return User's last name
      */
     public String getLastName() {
@@ -228,6 +259,7 @@ public class User {
 
     /**
      * Sets user's last name
+     *
      * @param lastName Last name to set
      */
     public void setLastName(String lastName) {
@@ -236,6 +268,7 @@ public class User {
 
     /**
      * Gets user's email
+     *
      * @return User's email
      */
     public String getEmail() {
@@ -244,6 +277,7 @@ public class User {
 
     /**
      * Sets user's email
+     *
      * @param email Email to set
      */
     public void setEmail(String email) {
@@ -252,6 +286,7 @@ public class User {
 
     /**
      * Gets user's first security question
+     *
      * @return User's first security question
      */
     public String getQuestion1() {
@@ -260,6 +295,7 @@ public class User {
 
     /**
      * Sets user's first security question
+     *
      * @param question1 question to set
      */
     public void setQuestion1(String question1) {
@@ -268,6 +304,7 @@ public class User {
 
     /**
      * Gets user's second security question
+     *
      * @return User's second security question
      */
     public String getQuestion2() {
@@ -276,6 +313,7 @@ public class User {
 
     /**
      * Sets user's second security question
+     *
      * @param question2 question to set
      */
     public void setQuestion2(String question2) {
@@ -284,13 +322,16 @@ public class User {
 
     /**
      * Gets user's first security question answer
+     *
      * @return User's first security question answer
      */
-    public String getAnswer1() { return answer1;
+    public String getAnswer1() {
+        return answer1;
     }
 
     /**
      * Sets user's answer to first security question
+     *
      * @param answer1 answer to question1
      */
     public void setAnswer1(String answer1) {
@@ -299,13 +340,16 @@ public class User {
 
     /**
      * Gets user's second security question answer
+     *
      * @return User's scond security question answer
      */
-    public String getAnswer2() { return answer2;
+    public String getAnswer2() {
+        return answer2;
     }
 
     /**
      * Sets user's answer to second security question
+     *
      * @param answer2 answer to question1
      */
     public void setAnswer2(String answer2) {
@@ -314,6 +358,7 @@ public class User {
 
     /**
      * Gets the date the account was created
+     *
      * @return The date the user's account was created
      */
     public LocalDateTime getAccountCreationDate() {
@@ -322,6 +367,7 @@ public class User {
 
     /**
      * Sets the user's account creation date
+     *
      * @param accountCreationDate Date to set
      */
     public void setAccountCreationDate(LocalDateTime accountCreationDate) {
@@ -330,6 +376,7 @@ public class User {
 
     /**
      * Compares user object with another user object
+     *
      * @param o object to compare with
      * @return boolean - If objects are equal
      */
@@ -351,6 +398,7 @@ public class User {
 
     /**
      * Converts object to hash code
+     *
      * @return Object as hash code
      */
     @Override
@@ -360,18 +408,18 @@ public class User {
 
     /**
      * Converts object to a string
+     *
      * @return String version of the object
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Login @ User{");
-        sb.append("id=").append(userID);
-        sb.append(", username='").append(username).append('\'');
-        sb.append(", hashedPassword='").append("*****").append('\'');
-        sb.append(", firstName='").append(firstName).append('\'');
-        sb.append(", lastName='").append(lastName).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append('}');
-        return sb.toString();
+        String sb = "Login @ User{" + "id=" + userID +
+                ", username='" + username + '\'' +
+                ", hashedPassword='" + "*****" + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+        return sb;
     }
 }

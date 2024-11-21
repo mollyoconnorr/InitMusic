@@ -19,20 +19,23 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * This class configures the security settings for the web application, including
  * authentication and authorization rules.
  * </p>
+ *
  * @author Nick Clouse
  * @author Molly O'Connor
- *
  * @since September 11, 2024
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /** UserDetailsService to use */
+    /**
+     * UserDetailsService to use
+     */
     private final CustomUserDetailsService userDetailsService;
 
     /**
      * Injects dependencies
+     *
      * @param userDetailsService UserDetailsService to inject
      */
     public SecurityConfig(final CustomUserDetailsService userDetailsService) {
@@ -78,7 +81,7 @@ public class SecurityConfig {
         http.formLogin(formLogin ->
                 formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/playlists",true)
+                        .defaultSuccessUrl("/playlists", true)
                         .failureUrl("/login?error")
                         .permitAll()
         );
@@ -96,10 +99,10 @@ public class SecurityConfig {
 
     /**
      * Configures a AuthenticationManager with our own userDetailsService and password encoder
+     *
      * @param http HttpSecurity object to get AuthenticationManagerBuilder class from
      * @return New AuthenticationManager object with our custom compnonents
      * @throws Exception Any Exception that might occur
-     *
      * @see AuthenticationManager
      * @see HttpSecurity
      * @see CustomUserDetailsService
