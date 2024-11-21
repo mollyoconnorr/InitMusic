@@ -10,18 +10,34 @@ By '**Init to Win it**' - Molly O'Connor and Nick Clouse
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+        <li><a href="#main-features">Main Features</a></li>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#documentation">Documentation</a></li>
       </ul>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#prerequisites">Prerequisites</a>
+          <ul>
+            <li><a href="#other-technologies-used">Other Technologies Used</a></li>
+          </ul>
+        </li>
+        <li><a href="#installation">Installation</a>
+          <ul>
+            <li><a href="#setting-up-mysql">Setting up MySql</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li>
-      <a href="#Using-our-website">Using our website</a>
+      <a href="#running-our-application">Running our application</a>
+    </li>
+    <li>
+      <a href="using-our-application">Using our application</a>
+    </li>
+    <li>
+      <a href="#testing">Testing</a>
     </li>
     <li><a href="#future-opportunities">Future Opportunities</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -37,17 +53,38 @@ powered by the Deezer API. With an intuitive, simple interface, users can easily
 wide variety of genres and artists. The platform allows users to create personalized playlists where they can save 
 their favorite tracks, making it easy to enjoy their music collection at any time.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### Main features
+* Persisted data, included user information, and created playlists
+* Ability to search for thousands of songs using the [Deezer API](https://developers.deezer.com/api)
+* Create,Rename,Remove playlists with all your favorite songs
+* Security Questions for changing/resetting user data
+* Song Queries cached for faster lookups in the future, updated frequently
+    * If a query is searched and it's been more than 7 days since it was last retrieved from Deezer, it will be retrieved again to check for any updated/new songs
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ### Built With
 
 [![Java][java-img]][java-url]
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)  
+
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
+![JUnit](https://img.shields.io/badge/JUnit-25A162?style=for-the-badge&logo=junit5&logoColor=white)
+![SLF4J](https://img.shields.io/badge/SLF4J-008080?style=for-the-badge&logo=java&logoColor=white)
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Documentation
+To see our documentation, go to the [**Documentation**](Documentation) folder in the main directory.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -64,7 +101,6 @@ To get a local copy up and running follow these steps.
 #### Other technologies used:
 * **Gradle**: 8.10
 * **Spring Boot**: 3.3.3
-* **SLF4J**: Logging throughout our code
 * Navigate to our [**build.gradle**](build.gradle) file to see the other dependencies we used
 
 ### Installation
@@ -93,20 +129,79 @@ mysql> exit
 Connecting to DB after creation:
 ```mysql
 $ mysql -u initDev -p database
+mysql> USE initMusic;
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- Using our website -->
-## Using our website
+<!-- Running our application -->
+## Running our application
+0. Navigate to the command line
+1. Make sure mysql is running:  
+  * Starting will depend on how you installed MySql.
+2. Navigate to the initMusic directory. Example:
+```bash
+$ cd initMusic
+```
+3. Start Gradle by running:
+```bash
+$ ./gradlew bootRun #MacOS and Linux
+$ gradlew bootRun #Windows
+```
+The first time you run this command, it might show a lot of messages and take a while to start. If it ends in something like:  
+```bash
+YYYY-MM-DD HH:MM:SS - [INFO] - from edu.carroll.initMusic.InitMusicApplication in restartedMain 
+Started InitMusicApplication in 7.696 seconds (process running for 8.301)
+
+<==========---> 80% EXECUTING [10s]
+```
+The application is now running! It will run until you stop it.  
+Stop it by pushing `control + c`  
+
+If the application fails to run and gives something like 
+```bash
+BUILD SUCCESSFUL in 10s 2 actionable tasks: 2 executed, 2 up-to-date
+```
+Make sure MySql is started. 
+If the application fails to run and gives something like
+```bash
+BUILD FAILED in 10s
+```
+This usually means something went wrong internally. Check if any error messages are shown in the console. 
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Using our Application
+Once running, our app runs on **Port 8080**, and you can go to `http://localhost:8080/` in a browser of your choice to use it.  
 
+While running, log messages will be shown in the console throughout usage of the app, and can help with debugging if needed. A `logs' folder should be created in your directory, and you can see all archived logs by looking in that folder.
+
+## Testing
+
+We tested our app using JUnit [(User Guide to JUnit)](https://junit.org/junit5/docs/current/user-guide/). To run our tests, you can run the commands below in the console:  
+```bash
+$ ./gradlew test #MacOS and Linux
+$ gradlew test #Windows
+```
+**Only run tests for a specific package**
+```bash
+$ ./gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #MacOS and Linux
+$ gradlew test --tests "edu.carroll.initMusic.YourPackage.*" #Windows
+```
+**Only run tests for a specific class**
+```bash
+$ ./gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #MacOS and Linux
+$ gradlew test --tests "edu.carroll.initMusic.YourPackage.YourClass" #Windows
+```
 
 <!-- Future Opportunities -->
 ## Future Opportunities
 
-- [ ] TBD
+- [ ] Improve search functionality, find a better API to use
+- [ ] Add more features, like saving artist or albums to your profile
+- [ ] Ability to see other users' playlists
+- [ ] Explore page
+- [ ] **Got an idea? Learn how to contribute below!**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -138,3 +233,4 @@ Project Link: [https://github.com/mollyoconnorr/InitMusic](https://github.com/mo
 <!-- MARKDOWN LINKS & IMAGES -->
 [java-url]:https://www.java.com/en/
 [java-img]:https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white
+<!-- ![initMusic](https://img.shields.io/badge/initMusic-purple?style=for-the-badge&logoSize=auto) -->
