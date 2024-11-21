@@ -82,8 +82,9 @@
                 th:text="${(song.getLength() / 60) + ':' + (song.getLength() % 60 < 10 ? '0' + (song.getLength() % 60) : song.getLength() % 60)}"></span>
 
           <!-- Song preview as a link -->
-          <a class="preview-link" th:data-url="${song.getSongPreview()}"
-             th:href="${song.getSongPreview()}" title="Preview">
+          <a class="preview-link" href="#" th:data-url="${song.getDeezerID()}"
+             th:onclick="'window.open( \'/preview/' + ${song.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
+             title="Preview">
             Preview
           </a>
         </div>

@@ -99,8 +99,9 @@
 
 
             <!-- Song preview as a link -->
-            <a class="preview-link" th:data-url="${item.getSongPreview()}"
-               th:href="${item.getSongPreview()}" title="Preview">
+            <a class="preview-link" href="#" th:data-url="${item.getDeezerID()}"
+               th:onclick="'window.open( \'/preview/' + ${item.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
+               title="Preview">
               Preview
             </a>
           </div>

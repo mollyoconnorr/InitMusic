@@ -19,10 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -260,6 +257,35 @@ public class SearchController {
         song.setSongImg(songImg);
         song.setSongPreview(songPreview);
         return song;
+    }
+
+    /**
+     * Handles the mapping for opening a popup window with the preview for a song
+     * @param deezerId ID of song to preview
+     * @param model Model to add preview url to
+     * @return popupRedirect page
+     */
+    @GetMapping("/preview/{deezerId}")
+    public String previewSong(@PathVariable String deezerId, Model model) {
+        //Get the deezer preview url
+        String previewURL = "";
+        try{
+            previewURL = songService.getSongPreview(Long.parseLong(deezerId));
+        } catch (NumberFormatException e) {
+            log.error("Non-long value passed to previewSong");
+        }
+
+        if (previewURL == null || previewURL.isEmpty()) {
+            log.error("previewSong: Invalid Deezer id#{}, Showing error page",deezerId);
+            model.addAttribute("status", "999");
+            return "redirect:/error"; // Redirect to an internal error page
+        }
+
+
+        log.info("previewSong: Creating popup window for link {}", previewURL);
+
+        model.addAttribute("deezerUrl", previewURL);  // Add URL to the model
+        return "popupRedirect";  // View that opens the URL in a popup window
     }
 }
 

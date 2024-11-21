@@ -218,6 +218,47 @@ public class SongSearchDeezerImpl implements SongSearchService{
     }
 
     /**
+     * Gets the link to the preview of the song with the given id. Deezer makes some links secure, and makes
+     * them expire after a day, so we always have to reload the link to preview the song. We couldn't done a better implementation
+     * with more time, but this was a last minute fix.
+     * @param deezerID ID to get link for
+     * @return String of url
+     */
+    public String getSongPreview(Long deezerID){
+        final String url = "https://api.deezer.com/track/" + deezerID;
+        URLEncoder.encode(url, StandardCharsets.UTF_8);
+
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .build();
+        final HttpResponse<String> response;
+
+        try {
+            // Send the HTTP request and get the response
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check if the response status code is 200 (OK)
+            if (response.statusCode() == 200) {
+                final JSONObject track = new JSONObject(response.body());
+
+                //Get the preview link
+                final String preview = track.getString("preview");
+                log.info("getSongPreview: Got link for song with id#{}",deezerID);
+                return preview;
+            } else {
+                log.error("getSongPreview: Error response from Deezer API: Status Code {}", response.statusCode());
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("getSongPreview: Network error occurred during search with id# {}", deezerID, e);
+        } catch (JSONException e) {
+            log.error("getSongPreview: JSON parsing error occurred with id# {}", deezerID, e);
+        }
+
+        return "";
+    }
+
+    /**
      * Checks if the given query is valid.
      * <p>
      *     A query is valid if:

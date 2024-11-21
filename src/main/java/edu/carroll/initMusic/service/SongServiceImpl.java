@@ -35,12 +35,14 @@ public class SongServiceImpl implements SongService{
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
 
     /**
-     * Formats the given song name and artist name into a format like 'Song:{songName}+Artist:{artistName}'
+     * Formats the given song name and artist name into a format like {@code Song:{songName}+Artist:{artistName}}.
+     * If there is only a songName, it will look like {@code Song:{SongName}}. If there is only a artistName, it will
+     * look like {@code Artist:{artistName}}
      * @param songName Song name
      * @param artistName Artist name
      * @return Formatted String
      */
-    private static String getString(String songName, String artistName) {
+    public static String getQueryString(String songName, String artistName) {
         String query = "";
         songName = songName.trim();
         artistName = artistName.trim();
@@ -104,8 +106,8 @@ public class SongServiceImpl implements SongService{
         }
 
         //Create query string, used for logging and caching queries
-        final String query = getString(songName, artistName);
-        log.info("searchForSongs: Used searched for query: {}",query);
+        final String query = getQueryString(songName, artistName);
+        log.info("searchForSongs: User searched for query: {}",query);
 
         //Check for local cache
         Set<Song> songsFound = getLocalCache(query);
@@ -161,6 +163,11 @@ public class SongServiceImpl implements SongService{
 
     /**
      * Gets the local cache with the given query, if there is one
+     *
+     * <p>
+     *     For this to return the correct cache, the passed query needs to be in the same format the
+     *     {@link #getQueryString(String, String)} would put it in.
+     * </p>
      * @param query Query to search for
      * @return Set of songs related to given query, null if cache wasn't found
      *
@@ -281,5 +288,16 @@ public class SongServiceImpl implements SongService{
      */
     public boolean isValidQuery(String query) {
         return query != null && !query.trim().isEmpty() && !(query.length() < MIN_QUERY_LENGTH || query.length() > MAX_QUERY_LENGTH);
+    }
+
+    /**
+     * Gets the preview link for the given id using songSearchService, since we have to get it externally
+     * and reload it each time because some links expire after a day.
+     * @param id id to get preview for
+     * @return String of URL
+     */
+    @Override
+    public String getSongPreview(Long id) {
+        return songSearchService.getSongPreview(id);
     }
 }

@@ -24,4 +24,13 @@ public interface SongSearchService {
      * @return Set of songs related to query
      */
     Set<Song> externalSearchForSongs(String songName, String artistName);
+
+    /**
+     * Gets the link to the preview of the song with the given id. Deezer makes some links secure, and makes
+     * them expire after a day, so we always have to reload the link to preview the song. We couldn't done a better implementation
+     * with more time, but this was a last minute fix.
+     * @param deezerID ID to get link for
+     * @return String of url
+     */
+    String getSongPreview(Long deezerID);
 }

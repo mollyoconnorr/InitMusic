@@ -18,7 +18,7 @@ public interface SongService {
      * Searches for songs related to the given query
      * @param songName Name of song to look for
      * @param artistName Name of artist to look for
-     * @return Set of songs related to the query
+     * @return Set of songs related to the query, empty set if no songs found
      */
     Set<Song> searchForSongs(String songName,String artistName);
 
@@ -45,4 +45,11 @@ public interface SongService {
      * @return  {@code true} if query is valid, {@code false} otherwise.
      */
     boolean isValidQuery(String query);
+
+    /**
+     * Gets the preview link for the given id
+     * @param id id to get preview for
+     * @return String of URL
+     */
+    String getSongPreview(Long id);
 }
