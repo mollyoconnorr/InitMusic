@@ -1,0 +1,7 @@
+edu.carroll.initMusic
+edu.carroll.initMusic.config
+edu.carroll.initMusic.jpa.model
+edu.carroll.initMusic.jpa.repo
+edu.carroll.initMusic.service
+edu.carroll.initMusic.web.controller
+edu.carroll.initMusic.web.form
