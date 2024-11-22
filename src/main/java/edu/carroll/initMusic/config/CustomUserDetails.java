@@ -11,10 +11,6 @@ import java.util.List;
  * Defines our custom user details object, used to store information for a user,
  * such as their username, hashed password, user object, and keeps track of if the account
  * is not expired, locked, has valid credentials, and is enabled.
- *
- * @author Nick Clouse
- *
- * @since October 30, 2024
  */
 public record CustomUserDetails(User user) implements UserDetails {
     /**

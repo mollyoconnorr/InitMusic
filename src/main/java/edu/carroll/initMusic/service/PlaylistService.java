@@ -7,10 +7,6 @@ import edu.carroll.initMusic.jpa.model.User;
 
 /**
  * Interface for PlaylistService, defines methods related to interacting with playlists.
- *
- * @author Nick Clouse
- *
- * @since October 23, 2024
  */
 public interface PlaylistService{
     /**

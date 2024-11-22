@@ -19,15 +19,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class PlaylistServiceTests {
 
+    /** Service class for managing playlist-related operations */
     @Autowired
     private PlaylistService playlistService;
 
+    /** Service class for managing user-related operations */
     @Autowired
     private UserService userService;
 
+    /** Service class for handling song-related operations */
     @Autowired
     private SongService songService;
 
+    /** Test user object to be used in testing scenarios */
     User testUser;
 
     /**

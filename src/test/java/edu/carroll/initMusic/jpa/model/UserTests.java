@@ -9,13 +9,7 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * <p>
  * This class is used to test the User class
- * </p>
- *
- * @author Nick Clouse
- *
- * @since September 19, 2024
  */
 @SpringBootTest
 public class UserTests {

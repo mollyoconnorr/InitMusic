@@ -16,10 +16,6 @@ import java.util.List;
  * Creates our own implementation of UserDetailsService, so spring security knows
  * how to get/load a user's information.
  *
- * @author Nick Clouse
- *
- * @since October 30, 2024
- *
  * @see UserDetailsService
  */
 @Service
@@ -52,7 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         username = username.strip();
         final List<User> user = userRepository.findByUsernameIgnoreCase(username);
         if(user.size() != 1) {
-            log.info("loadUserByUsername: username={} not found", username);
+            log.warn("loadUserByUsername: username={} not found", username);
             throw new UsernameNotFoundException("User not found");
         }
         return new CustomUserDetails(user.getFirst());

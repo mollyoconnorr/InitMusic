@@ -14,10 +14,6 @@ import java.util.*;
 
 /**
  * This services handles Searching for songs using the deezer api.
- *
- * @author Nick Clouse
- *
- * @since September 30, 2024
  */
 @Service
 public class SongServiceImpl implements SongService{
@@ -257,7 +253,6 @@ public class SongServiceImpl implements SongService{
 
     /**
      * Checks if the given query is valid.
-     * <p>
      *     A query is valid if:
      *     <ul>
      *         <li>It's not null</li>
@@ -265,7 +260,6 @@ public class SongServiceImpl implements SongService{
      *         <li>It's length is greater than MIN_QUERY_LENGTH</li>
      *         <li>It's length is less than MAX_QUERY_LENGTH</li>
      *     </ul>
-     * </p>
      * Same method as in {@link SongSearchDeezerImpl}, didn't really feel the need to make something separate
      * to reduce duplicate code since it's just used in two services.
      * @param query Query to check if valid

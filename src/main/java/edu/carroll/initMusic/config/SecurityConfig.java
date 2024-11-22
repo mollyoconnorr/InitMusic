@@ -15,14 +15,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Security configuration for the application.
- * <p>
  * This class configures the security settings for the web application, including
  * authentication and authorization rules.
- * </p>
- * @author Nick Clouse
- * @author Molly O'Connor
- *
- * @since September 11, 2024
  */
 @Configuration
 @EnableWebSecurity

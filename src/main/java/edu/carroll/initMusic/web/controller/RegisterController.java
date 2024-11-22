@@ -17,10 +17,6 @@ import jakarta.servlet.http.HttpSession;
  * Controller for handling user registration.
  * This class manages the registration process, including displaying the
  * registration form and processing the submitted registration details.
- *
- * @author Molly O'Connor
- *
- * @since October 8, 2024
  */
 @Controller
 public class RegisterController {
@@ -54,12 +50,10 @@ public class RegisterController {
 
     /**
      * Processes the registration form submission.
-     * <p>
      * This method checks if the submitted username and email are unique. If not, it
      * either redirects to an error page or shows an error message on the registration form.
      * If both username and email are unique, the user is saved, and their details are stored
      * in the session.
-     * </p>
      *
      * @param registrationForm the registration form submitted by the user.
      * @param model            the model to be used in the view.
@@ -77,19 +71,20 @@ public class RegisterController {
 
         // Check if the email already exists
         if (emailUnique.equals(MethodOutcome.EMAIL_ALREADY_EXISTS)) {
+            log.warn("registerUser: Email already exists {}", email);
             // Redirect to a new page for users with existing emails
             return "emailTaken"; // Redirect to email taken page
         }
         //UniqueEmail failed for some other reason
         if(emailUnique.failed()){
-            log.info("registerUser: Error checking for unique email {}, {}", email,emailUnique.getMessage());
+            log.warn("registerUser: Error checking for unique email {}, {}", email,emailUnique.getMessage());
             model.addAttribute("errorMessage", emailUnique.getMessage());
             model.addAttribute("registrationForm", new RegistrationForm());
             return "register";
         }
         // Check if the username is already taken
         if (usernameUnique.failed()) {
-            log.info("registerUser: Error checking for unique username {}, {}", username,usernameUnique.getMessage());
+            log.warn("registerUser: Error checking for unique username {}, {}", username,usernameUnique.getMessage());
             // Set an error message
             if(usernameUnique.equals(MethodOutcome.USER_ALREADY_EXISTS)){
                 model.addAttribute("errorMessage", "Username is taken. Please try a new one.");

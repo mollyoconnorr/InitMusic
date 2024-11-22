@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootTest
 class InitMusicApplicationTests {
-
 	@Test
 	void contextLoads() {
 	}
-
 }

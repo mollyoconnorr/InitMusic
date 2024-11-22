@@ -27,10 +27,6 @@ import java.net.URISyntaxException;
 /**
  * This controller handles the playlist page, which is where users can do things like
  * look at their playlists and add/remove playlists.
- *
- * @author Nick Clouse
- *
- * @since October 2, 2024
  */
 @Controller
 public class PlaylistController {

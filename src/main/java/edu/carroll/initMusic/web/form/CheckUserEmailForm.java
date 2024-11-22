@@ -2,10 +2,6 @@ package edu.carroll.initMusic.web.form;
 
 /**
  * This form is used to help handle checking for a valid email
- *
- * @author Molly O'Connor
- *
- * @since September 26, 2024
  */
 public class CheckUserEmailForm {
     /** User's email */

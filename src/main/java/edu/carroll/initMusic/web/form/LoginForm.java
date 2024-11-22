@@ -2,15 +2,9 @@ package edu.carroll.initMusic.web.form;
 
 /**
  * A form object for handling user login data.
- * <p>
  * This class encapsulates the user's login information, including
  * the username and password, providing getter and setter methods
  * for accessing and modifying these fields.
- * </p>
- *
- * @author Molly O'Connor
- *
- * @since September 9, 2024
  */
 public class LoginForm {
     /** Username */

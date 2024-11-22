@@ -9,10 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 /**
  * Repository used for managing and retrieving the User Entity
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 public interface UserRepository extends JpaRepository<User, Long> {
     /**
@@ -39,7 +35,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.playlists WHERE u.userID = :id")
     User findByIdWithPlaylists(@Param("id") Long id);
 
+    /**
+     * Deletes a user based on their email address.
+     *
+     * @param email The email address of the user to delete.
+     */
     void deleteByEmail(String email);
 
+    /**
+     * Deletes all users from the database.
+     */
     void deleteAll();
 }

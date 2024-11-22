@@ -16,16 +16,11 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * Controller for handling the submission and display of security questions.
  * This controller manages the process where users set up their security questions
- * during registration, or answer them as part of their account security process.
- * It interacts with the {@link UserService} to handle user-related operations.
- *
+ * during registration, or answer them as part of their account security process.*
  * Features include:
  * - Displaying the security questions form during registration or login.
  * - Handling form submissions for setting or answering security questions.
  * - Validating user input and updating the database with security questions and answers.
- *
- * @author Molly O'Connor
- * @since October 8, 2024
  */
 @Controller
 public class SecurityQuestionsController {
@@ -57,7 +52,7 @@ public class SecurityQuestionsController {
     public String showSecurityQuestionsForm(Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         if (referer == null || !referer.endsWith("/register")) {
-            log.info("User didn't come from the register page, not allowed to access security questions");
+            log.warn("User didn't come from the register page, not allowed to access security questions");
             // Redirect to an error page or login page if the referer is invalid
             return "redirect:/login";
         }
@@ -107,7 +102,6 @@ public class SecurityQuestionsController {
             // Handle validation errors (e.g., blank fields)
             model.addAttribute("errorMessage", "One of the security question fields is blank.");
         }
-
         // Redirect to the confirmation page if the update was successful
         return "userRegistered";  // Thymeleaf template for confirmation page
     }

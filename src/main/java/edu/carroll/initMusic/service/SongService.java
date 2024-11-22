@@ -7,10 +7,6 @@ import java.util.Set;
 
 /**
  * Defines methods related to searching for songs
- *
- * @author Nick Clouse
- *
- * @since October 20, 2024
  */
 public interface SongService {
     /**
@@ -56,7 +52,4 @@ public interface SongService {
      * This is primarily useful for testing or resetting data.
      */
     void clearRepo();
-
-    Song findSong(Song song);
-
 }

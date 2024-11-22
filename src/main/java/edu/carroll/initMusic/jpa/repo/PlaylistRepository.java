@@ -7,10 +7,6 @@ import java.util.List;
 
 /**
  * Repository used for managing and retrieving the Playlist Entity
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     /**

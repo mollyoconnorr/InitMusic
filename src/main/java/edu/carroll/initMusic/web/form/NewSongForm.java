@@ -12,11 +12,7 @@ import java.util.List;
 /**
  * This form is used when a song is going to be added to a playlist.
  * We have to pass all the song attributes so we can make the song into
- * a object.
- *
- * @author Nick Clouse
- *
- * @since October 9, 2024
+ * an object.
  */
 public class NewSongForm {
     /**

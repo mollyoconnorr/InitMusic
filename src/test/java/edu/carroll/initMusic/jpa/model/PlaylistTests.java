@@ -11,13 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * <p>
  * This class is used to test the Playlist class
- * </p>
- *
- * @author Nick Clouse
- *
- * @since September 19, 2024
  */
 @SpringBootTest
 public class PlaylistTests {

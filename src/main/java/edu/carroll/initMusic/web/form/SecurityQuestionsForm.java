@@ -3,10 +3,6 @@ package edu.carroll.initMusic.web.form;
 
 /**
  * This form is used for setting user's security questions and their answers
- *
- * @author Molly O'Connor
- *
- * @since September 26, 2024
  */
 public class SecurityQuestionsForm {
     /** Security Question 1*/

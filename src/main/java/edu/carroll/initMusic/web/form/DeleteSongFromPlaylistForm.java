@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Positive;
 
 /**
  * This form is used to help handle deleting a playlist
- *
- * @author Nick Clouse
- *
- * @since October 17, 2024
  */
 public class DeleteSongFromPlaylistForm {
     /** ID of playlist */

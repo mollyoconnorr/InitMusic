@@ -17,10 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * Controller for handling password change requests for users who have successfully
  * passed security checks and are changing their password.
- *
- * @author Molly O'Connor
- *
- * @since October 8, 2024
  */
 @Controller
 public class ChangePasswordController {
@@ -42,10 +38,8 @@ public class ChangePasswordController {
 
     /**
      * Displays the password change form page.
-     * <p>
      * This method is invoked when a user requests to change their password.
      * It serves the page containing the form where users can input their new password.
-     * </p>
      *
      * @param request the HTTP request object to retrieve the referer header.
      * @return the name of the Thymeleaf template for the password change page.
@@ -62,11 +56,9 @@ public class ChangePasswordController {
 
     /**
      * Processes the password change form submission.
-     * <p>
      * This method handles the POST request when a user submits their new password.
      * It checks if a user is stored in the session, and if so, updates their password.
      * If no user is found, it redirects the user to the login page.
-     * </p>
      *
      * @param passwordForm the form containing the user's new password.
      * @param session the HTTP session object that holds the current user's session data.

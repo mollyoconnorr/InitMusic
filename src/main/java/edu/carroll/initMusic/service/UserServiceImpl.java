@@ -13,10 +13,8 @@ import java.util.regex.Pattern;
 
 /**
  * Service class for handling user-related operations.
- * <p>
  * This class provides methods for saving user information, checking unique usernames/emails,
  * updating security questions, and managing passwords.
- * </p>
  */
 @Service
 public class UserServiceImpl implements UserService {

@@ -19,11 +19,6 @@ import java.util.Optional;
  * Service class which interacts with playlists. Handles functions like
  * creating, renaming, and deleting playlists, and adding/removing songs from them.
  *
- * @author Nick Clouse
- * @author Molly O'Connor
- *
- * @since October 23, 2024
- *
  * @see PlaylistService
  */
 @Service
@@ -71,21 +66,22 @@ public class PlaylistServiceImpl implements PlaylistService{
             return MethodOutcome.USER_NOT_FOUND;
         }
 
+        name = name.strip();
+
         if (name == null || name.trim().isEmpty()) {
+            log.warn("createPlaylist: Attempted to create a new playlist, but playlist name is null or empty.", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
 
         if (name.length() > MAX_NAME_LENGTH) {
+            log.warn("createPlaylist: Attempted to create a new playlist, but playlist name is to long.", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID; // Add a descriptive error if needed
         }
 
-        //If string is empty or blank
         if(name.isBlank()){
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} tried to make a playlist with a blank String", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
-
-        name = name.strip();
 
         if (user.getPlaylist(name) != null) {
             log.warn("createPlaylist: Attempted to create a duplicate playlist name '{}' for User id#{}", name, user.getuserID());
@@ -150,7 +146,6 @@ public class PlaylistServiceImpl implements PlaylistService{
                 return MethodOutcome.SUCCESS;
             }
         }
-
         return MethodOutcome.PLAYLIST_RENAME_ERROR;
     }
 
@@ -177,13 +172,10 @@ public class PlaylistServiceImpl implements PlaylistService{
             log.warn("deletePlaylist: Attempted to delete playlist, but User id#{} doesn't have a playlist with name '{}', id#{}", user.getuserID(), playlistName, playlistID);
             return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
-
         playlistRepository.delete(user.getPlaylist(playlistName));
         user.removePlaylist(user.getPlaylist(playlistName));
         log.info("deletePlaylist: Playlist '{}' deleted for user id#{}", playlistName, user.getuserID());
-
         userRepository.save(user);
-
         return MethodOutcome.SUCCESS;
     }
 
@@ -196,9 +188,10 @@ public class PlaylistServiceImpl implements PlaylistService{
         final List<Playlist> playlistsFound = playlistRepository.findByPlaylistIDEquals(playlistID);
 
         if(playlistsFound.size() != 1){
+            log.warn("getPlaylist: Attempted to get playlist, but playlist wasn't found.");
             return null;
         }
-
+        log.info("getPlaylist: Retrieved playlist {}", playlistsFound.getFirst());
         return playlistsFound.getFirst();
     }
 
@@ -255,12 +248,13 @@ public class PlaylistServiceImpl implements PlaylistService{
      */
     public MethodOutcome addSongToPlaylist(Playlist playlist, Song song) {
         if (song == null) {
+            log.warn("addSongToPlaylist: Song was null.");
             return MethodOutcome.INVALID_SONG;
         }
         if (playlist == null) {
+            log.warn("addSongToPlaylist: Playlist was null.");
             return MethodOutcome.PLAYLIST_NOT_FOUND;
         }
-        log.info("Song info: {}", song.getDeezerID());
 
         if (playlistRepository.findByPlaylistIDEquals(playlist.getPlaylistID()).isEmpty()) {
             log.warn("addSongToPlaylist: Playlist id#{} does not exist", playlist.getPlaylistID());
@@ -276,20 +270,16 @@ public class PlaylistServiceImpl implements PlaylistService{
         //Attempt to find the song in the repository
         final Optional<Song> songFound = songRepository.findById(song.getDeezerID());
         if (songFound.isPresent()) {
-            log.info("Song was already found");
-            //Add the managed song to the playlist
+            log.warn("addSongToPlaylist: Playlist id#{} by user id#{} already contains song#{}", playlist.getPlaylistID(), playlist.getAuthor().getuserID(), song.getDeezerID());            //Add the managed song to the playlist
             playlist.addSong(songFound.get());
             songFound.get().addPlaylist(playlist);
         } else {
-            log.info("Before save: Song repository size is {}", songRepository.findAll().size());
+            log.info("addSongToPlaylist: Saving new song#{} to the database and adding it to playlist id#{}", song.getDeezerID(), playlist.getPlaylistID());
             //If the song does not exist, save it
             songRepository.save(song);
-            log.info("After save: Song repository size is {}", songRepository.findAll().size());
-
             playlist.addSong(song);
             song.addPlaylist(playlist);
         }
-
         //Save only the playlist, which will cascade the updates
         playlistRepository.save(playlist);
         return MethodOutcome.SUCCESS;

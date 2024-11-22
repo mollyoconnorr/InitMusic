@@ -14,23 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling user security questions validation.
- * <p>
  * This class manages the process of verifying the user's answers to
  * pre-set security questions and redirecting to the password change page upon success.
- * </p>
- *
- * <p>
  * This controller ensures that only users who correctly answer their security questions
  * can proceed to change their password.
- * </p>
- *
- * <p>
  * Handles both displaying the security questions page and processing
  * the user's answers.
- * </p>
- *
- * @author Molly O'Connor
- * @since October 8, 2024
  */
 @Controller
 public class PassSecurityController {
@@ -40,11 +29,9 @@ public class PassSecurityController {
 
     /**
      * Displays the security questions page.
-     * <p>
      * This method serves the page where users can answer their security questions
      * to verify their identity. It checks the referrer to ensure that users arrive
      * at this page through the intended flow.
-     * </p>
      *
      * @param request the HTTP servlet request, used to obtain the referrer header.
      * @return the name of the Thymeleaf template for the security questions page,
@@ -62,13 +49,11 @@ public class PassSecurityController {
 
     /**
      * Processes the security question form submission.
-     * <p>
      * This method handles the POST request when a user submits their answers to the
      * security questions. It checks if the answers match the stored answers for the user.
      * If the answers are correct, the user is redirected to the password change page.
      * Otherwise, an error message is displayed, and the user remains on the security
      * questions page.
-     * </p>
      *
      * @param passSecurityForm the form containing the user's answers to the security questions.
      * @param model            the model to store attributes for the view.
@@ -88,7 +73,7 @@ public class PassSecurityController {
                 return "changePassword";  // Redirect to the change password page
             } else {
                 // Provide feedback to the user
-                log.info("handleSecuritySubmission: User answered Security Questions Wrong");
+                log.warn("handleSecuritySubmission: User answered Security Questions Wrong");
                 model.addAttribute("question1", currentUser.getQuestion1());  // Assuming you have this method
                 model.addAttribute("question2", currentUser.getQuestion2());
                 model.addAttribute("errorMessage", "Incorrect answers. Please try again.");

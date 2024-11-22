@@ -5,10 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * This form is used for renaming a playlist.
- *
- * @author Nick Clouse
- *
- * @since October 13, 2024
  */
 public class RenamePlaylistForm {
     /** New name for playlist */

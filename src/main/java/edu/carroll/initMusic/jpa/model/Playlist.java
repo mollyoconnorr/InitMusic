@@ -12,10 +12,6 @@ import java.util.Set;
 /**
  * This class is used to represent Playlist objects, and maps to our database table.
  * A playlist is a collection of songs created by a user.
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)

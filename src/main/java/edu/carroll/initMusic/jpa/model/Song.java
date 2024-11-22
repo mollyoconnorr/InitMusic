@@ -9,10 +9,6 @@ import java.util.Set;
 /**
  * This class is used to represent songs, and
  * stores several attributes about each song.
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 @Entity
 @Table(name = "song")

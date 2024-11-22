@@ -11,17 +11,9 @@ import java.util.Set;
 
 
 /**
- * <p>
  * This class is used to represent User objects, and maps to our database table.
- * </p>
- * <p>
  * The table is called users, instead of user, because 'user' is a reserved word in h2, and we could not use
  * a in memory database to test our program without changing the name.
- * </p>
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 @Entity
 @Table(name = "users")

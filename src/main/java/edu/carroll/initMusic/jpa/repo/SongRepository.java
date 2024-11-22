@@ -7,10 +7,6 @@ import java.util.List;
 
 /**
  * Repository used for retrieving Song Entities
- *
- * @author Nick Clouse
- *
- * @since September 11, 2024
  */
 public interface SongRepository extends JpaRepository<Song, Long> {
     /**

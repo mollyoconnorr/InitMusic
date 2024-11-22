@@ -6,13 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * <p>
  * This class is used to test the Song class
- * </p>
- *
- * @author Nick Clouse
- *
- * @since September 19, 2024
  */
 @SpringBootTest
 public class SongTests {

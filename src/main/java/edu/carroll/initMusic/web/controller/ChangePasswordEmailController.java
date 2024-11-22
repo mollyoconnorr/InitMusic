@@ -16,18 +16,18 @@ import jakarta.servlet.http.HttpSession;
  * Controller for handling password changes via email verification.
  * This controller manages the flow where users can input their email to change their password.
  * If the email is valid, it redirects to the security question validation page.
- *
- * @author Molly O'Connor
- *
- * @since October 8, 2024
  */
 @Controller
 public class ChangePasswordEmailController {
 
-    /** Logger object used for logging actions within this controller. */
+    /**
+     * Logger object used for logging actions within this controller.
+     */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
 
-    /** Service for user-related operations such as finding users by email. */
+    /**
+     * Service for user-related operations such as finding users by email.
+     */
     private final UserService userService;
 
     /**
@@ -41,28 +41,23 @@ public class ChangePasswordEmailController {
 
     /**
      * Displays the email input form for changing the password.
-     * <p>
      * This method is invoked when the user requests the password reset page.
-     * </p>
      *
      * @return the name of the Thymeleaf template for the email input page.
      */
     @GetMapping("/changePasswordEmail")
     public String showChangePasswordEmailPage() {
-        log.info("Request mapping for /changePasswordEmail GET method is called.");
         return "changePasswordEmail";  // Thymeleaf template for the email input page
     }
 
     /**
      * Handles the email form submission for password change.
-     * <p>
      * This method checks if the email exists in the system. If the email is valid,
      * it redirects the user to the security questions page. Otherwise, it shows an error.
-     * </p>
      *
      * @param emailForm the form containing the email to check.
-     * @param model the model used to pass data back to the view.
-     * @param session the HTTP session used to store the current user data.
+     * @param model     the model used to pass data back to the view.
+     * @param session   the HTTP session used to store the current user data.
      * @return the view to display next, either the security questions page or the email input page with an error.
      */
     @PostMapping("/changePasswordEmail")
@@ -75,6 +70,7 @@ public class ChangePasswordEmailController {
                     currentUser.getQuestion1() == null || currentUser.getQuestion1().isEmpty() ||
                     currentUser.getQuestion2() == null || currentUser.getQuestion2().isEmpty()) {
                 // Display error if no security questions are set
+                log.warn("handleEmailSubmission: User {} doesn't have any security questions available", emailForm.getEmail());
                 model.addAttribute("errorMessage", "When you created your account you never created security questions so you are unable to change your password. Please make a new account or email us (moconnor@carroll.edu, nclouse@carroll.edu) to reset your password.");
                 return "changePasswordEmail"; // Reload the form with an error message
             } else {
@@ -82,11 +78,12 @@ public class ChangePasswordEmailController {
                 model.addAttribute("question1", currentUser.getQuestion1());
                 model.addAttribute("question2", currentUser.getQuestion2());
                 session.setAttribute("currentUser", currentUser);
+                log.info("handleEmailSubmission: User {} has security questions available", emailForm.getEmail());
                 return "passSecurity";  // Redirect to the security question validation page
             }
         } else {
             // Log the situation and show an error message if the email isn't found
-            log.info("handleEmailSubmission: No user found with email: {}", emailForm.getEmail());
+            log.warn("handleEmailSubmission: No user found with email: {}", emailForm.getEmail());
             model.addAttribute("errorMessage", "That email doesn't exist in our system. Please try again, or register a new account!");
             return "changePasswordEmail";  // Reload the form with an error message
         }

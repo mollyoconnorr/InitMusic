@@ -7,10 +7,6 @@ import java.util.List;
 
 /**
  * Repository used for retrieving QueryCache Entities
- *
- * @author Nick Clouse
- *
- * @since November 7, 2024
  */
 public interface QueryCacheRepository extends JpaRepository<QueryCache, Long> {
     /**

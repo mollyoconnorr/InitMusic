@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Controller for handling login-related requests.
  * This class manages the login process, including displaying the login form,
  * validating user credentials, and redirecting to success or failure pages.
- *
- * @author Molly O'Connor
- *
- * @since September 8, 2024
  */
 @Controller
 @EnableWebSecurity
@@ -27,10 +23,8 @@ public class LoginController {
 
     /**
      * Displays the login page.
-     * <p>
      * This method is invoked when a user requests the login page. It initializes
      * the login form and adds it to the model.
-     * </p>
      *
      * @param error Any errors that have occurred
      * @param model the model to be used in the view.
@@ -38,7 +32,6 @@ public class LoginController {
      */
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error, Model model) {
-        log.info("loginGet: Get login page");
         if (error != null) {
             log.warn("loginGet: Error while logging in, Invalid username or password.");
             model.addAttribute("errorMsg", "Invalid username or password. Please try again.");

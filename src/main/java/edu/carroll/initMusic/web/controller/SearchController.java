@@ -33,10 +33,6 @@ import java.util.Set;
 /**
  * This Controller handles the search page, which is where users can
  * search for songs and add them to playlists
- *
- * @author Nick Clouse
- *
- * @since October 2, 2024
  */
 @Controller
 public class SearchController {
@@ -253,7 +249,6 @@ public class SearchController {
         final Long albumID = addSongForm.getAlbumID();
         final String songImg = addSongForm.getSongImg();
         final String songPreview = addSongForm.getSongPreview();
-
 
         // Create a new Song object
         final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);

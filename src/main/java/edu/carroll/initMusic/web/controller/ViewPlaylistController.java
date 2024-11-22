@@ -23,10 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * This Controller handles the view playlist page, which is where users can
  * view an individual playlist and edit its contents
- *
- * @author Nick Clouse
- *
- * @since October 17, 2024
  */
 @Controller
 public class ViewPlaylistController {
@@ -68,18 +64,15 @@ public class ViewPlaylistController {
 
         if(playlist == null) {
             model.addAttribute("error", "Playlist not found");
-            log.info("getViewPlaylistPage: Playlist not found when user id#{} tried to view playlist id#{}", user.getuserID(), playlistID);
+            log.warn("getViewPlaylistPage: Playlist not found when user id#{} tried to view playlist id#{}", user.getuserID(), playlistID);
             return "viewPlaylist";
         }
-
         model.addAttribute("playlist", playlist);
         model.addAttribute("playlistName", playlist.getPlaylistName());
         model.addAttribute("playlistSongs", playlist.getSongs());
         model.addAttribute("playlistAuthor", playlist.getAuthor().getUsername());
         model.addAttribute("playlistID",playlistID);
-
         model.addAttribute("deleteSongFromPlaylistForm", new DeleteSongFromPlaylistForm());
-
         return "viewPlaylist";
     }
 

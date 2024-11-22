@@ -54,8 +54,10 @@ public class UpdateSecurityQuestionsController {
             final boolean securityQuestionsUpdated = userService.updateUserSecurityQuestions
                     (currentUser, securityForm.getQuestion1(), securityForm.getAnswer1(), securityForm.getQuestion2(), securityForm.getAnswer2());
             if (!securityQuestionsUpdated) {
+                log.warn("processUpdateSecurityQuestionsForm: update failed for {}", currentUser.getUsername());
                 model.addAttribute("errorMessage", "Security Question Update failed");
             }
+            log.info("processUpdateSecurityQuestionsForm: Security Questions updated for {}", currentUser.getUsername());
             return "securityQuestionsUpdated"; // Redirect to the password changed confirmation page
         }
         model.addAttribute("errorMessage", "No user found in authentication principal");

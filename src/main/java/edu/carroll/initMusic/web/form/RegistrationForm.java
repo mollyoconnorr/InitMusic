@@ -2,15 +2,9 @@ package edu.carroll.initMusic.web.form;
 
 /**
  * A form object for handling user registration data.
- * <p>
  * This class encapsulates the user's registration information, including
  * the username, email, password, first name, and last name.
  * It provides getter and setter methods for accessing and modifying these fields.
- * </p>
- *
- * @author Molly O'Connor
- *
- * @since September 12, 2024
  */
 public class RegistrationForm {
     /** User's username */

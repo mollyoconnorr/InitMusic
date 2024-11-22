@@ -11,10 +11,6 @@ import java.util.Set;
 /**
  * QueryCache JPA model, used to store queries and their results. If a user searches for a query,
  * and it's in our database, it will be displayed much faster than using a API to search
- *
- * @author Nick Clouse
- *
- * @since November 7, 2024
  */
 @Entity
 @Table(name = "queryCache")

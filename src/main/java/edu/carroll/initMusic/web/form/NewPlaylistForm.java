@@ -5,10 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 /**
  * This form is used to make a new playlist. It only
  * has one attribute: The name of the new playlist.
- *
- * @author Nick Clouse
- *
- * @since October 9, 2024
  */
 public class NewPlaylistForm {
     /**
@@ -32,5 +28,4 @@ public class NewPlaylistForm {
     public void setPlaylistName(String playlistName) {
         this.playlistName = playlistName;
     }
-
 }

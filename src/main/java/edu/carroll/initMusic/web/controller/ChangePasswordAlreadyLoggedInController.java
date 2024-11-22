@@ -16,13 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * Controller for handling password changes for users who are already logged in.
- * <p>
  * This controller manages the flow for users to change their passwords securely.
  * It checks the old password, validates the new password, and updates the user's password if valid.
- * </p>
- * @author Molly O'Connor
- *
- * @since October 20, 2024
  */
 @Controller
 public class ChangePasswordAlreadyLoggedInController {
@@ -59,11 +54,10 @@ public class ChangePasswordAlreadyLoggedInController {
 
     /**
      * Handles the form submission for changing the password.
-     * <p>
      * This method verifies that the old password matches the user's current password.
      * If the old password is correct, it updates the password to the new one. If not,
      * it displays an error message.
-     * </p>
+     *
      * @param passwordForm the form containing the old and new passwords
      * @param authentication the current authentication token, used to retrieve the logged-in user
      * @param model the model used to pass data back to the view
@@ -85,6 +79,7 @@ public class ChangePasswordAlreadyLoggedInController {
                     log.warn("handleSecuritySubmission: Password update failed for User id#{}",currentUser.getuserID());
                     model.addAttribute("errorMessage", "Password update failed");
                 }
+                log.info("handleSecuritySubmission: Password updated User id#{}",currentUser.getuserID());
                 return "passwordChangedLoggedIn"; // Redirect to the password changed confirmation page
             } else {
                 // Password mismatch, show error

@@ -1,15 +1,9 @@
 package edu.carroll.initMusic;
 
 /**
- * <p>
  * This enum is used to assist with providing user feedback after operations are performed, like
  * adding, deleting, or creating playlists. Each constant has a corresponding message which tells
  * what the constant means.
- * </p>
- *
- * @author Nick Clouse
- *
- * @since October 2, 2024
  */
 public enum MethodOutcome {
     SUCCESS("Success"),
