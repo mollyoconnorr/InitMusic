@@ -2,6 +2,8 @@ package edu.carroll.initMusic.web.controller;
 
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.web.form.PassSQuestionsForm;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -9,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling user security questions validation.
@@ -35,7 +35,7 @@ public class PassSecurityController {
      *
      * @param request the HTTP servlet request, used to obtain the referrer header.
      * @return the name of the Thymeleaf template for the security questions page,
-     *         or a redirect to the login page if the referrer is invalid.
+     * or a redirect to the login page if the referrer is invalid.
      */
     @GetMapping("/passSecurity")
     public String showChangePasswordEmailPage(HttpServletRequest request) {

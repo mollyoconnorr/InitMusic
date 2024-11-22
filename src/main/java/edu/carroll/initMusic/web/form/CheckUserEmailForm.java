@@ -9,6 +9,7 @@ public class CheckUserEmailForm {
 
     /**
      * Gets user's email
+     *
      * @return User's email
      */
     public String getEmail() {
@@ -17,6 +18,7 @@ public class CheckUserEmailForm {
 
     /**
      * Sets user's email
+     *
      * @param email Email to set
      */
     public void setEmail(String email) {

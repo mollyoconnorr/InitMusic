@@ -3,15 +3,15 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.NewPasswordForm;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.servlet.http.HttpServletRequest;
 
 
 /**
@@ -61,8 +61,8 @@ public class ChangePasswordController {
      * If no user is found, it redirects the user to the login page.
      *
      * @param passwordForm the form containing the user's new password.
-     * @param session the HTTP session object that holds the current user's session data.
-     * @param model the model to store attributes for the view.
+     * @param session      the HTTP session object that holds the current user's session data.
+     * @param model        the model to store attributes for the view.
      * @return the name of the view to render (either the success page or a redirect).
      */
     @PostMapping("/changePassword")

@@ -12,6 +12,7 @@ public class PassSQuestionsForm {
 
     /**
      * Gets answer to first question
+     *
      * @return The answer to the first question
      */
     public String getAnswer1() {
@@ -20,6 +21,7 @@ public class PassSQuestionsForm {
 
     /**
      * Sets the answer to the first question
+     *
      * @param answer1 Answer to set
      */
     public void setAnswer1(String answer1) {
@@ -28,6 +30,7 @@ public class PassSQuestionsForm {
 
     /**
      * Gets answer to second question
+     *
      * @return The answer to the second question
      */
     public String getAnswer2() {
@@ -36,6 +39,7 @@ public class PassSQuestionsForm {
 
     /**
      * Sets the answer to the second question
+     *
      * @param answer2 Answer to set
      */
     public void setAnswer2(String answer2) {

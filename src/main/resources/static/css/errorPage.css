@@ -1,13 +1,13 @@
-h1{
+h1 {
     font-weight: bold;
     color: black;
 }
 
-p{
+p {
     font-weight: bold;
 }
 
-.errorContainer{
+.errorContainer {
     text-align: center;
     font-size: 1.5rem;
     color: black;

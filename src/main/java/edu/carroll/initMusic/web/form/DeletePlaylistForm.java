@@ -16,6 +16,7 @@ public class DeletePlaylistForm {
 
     /**
      * Gets the playlist id
+     *
      * @return The playlist id
      */
     public Long getPlaylistID() {
@@ -24,6 +25,7 @@ public class DeletePlaylistForm {
 
     /**
      * Sets the playlist id to given id
+     *
      * @param playlistID ID to set
      */
     public void setPlaylistID(Long playlistID) {
@@ -32,6 +34,7 @@ public class DeletePlaylistForm {
 
     /**
      * Gets the name of the playlist
+     *
      * @return The name of the playlist
      */
     public String getPlaylistName() {
@@ -40,6 +43,7 @@ public class DeletePlaylistForm {
 
     /**
      * Sets the playlist's name to given name
+     *
      * @param playlistName Name to set
      */
     public void setPlaylistName(String playlistName) {

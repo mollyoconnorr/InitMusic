@@ -16,6 +16,7 @@ public record CustomUserDetails(User user) implements UserDetails {
     /**
      * Gets the users authorities. We don't use roles in our application, so
      * it just returns a empty list.
+     *
      * @return Empty list, because we don't use roles
      */
     @Override
@@ -25,6 +26,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Gets the users hashed password
+     *
      * @return User's hashed password
      */
     @Override
@@ -34,6 +36,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Gets the users username
+     *
      * @return User's Username
      */
     @Override
@@ -43,6 +46,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Gets the user object
+     *
      * @return User object
      */
     public User getUser() {
@@ -51,6 +55,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Returns if account is not expired
+     *
      * @return true
      */
     @Override
@@ -60,6 +65,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Returns if account is not locked
+     *
      * @return true
      */
     @Override
@@ -69,6 +75,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Returns if credentials are not expired
+     *
      * @return true
      */
     @Override
@@ -78,6 +85,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Returns if user is enabled
+     *
      * @return true
      */
     @Override
@@ -87,6 +95,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     /**
      * Converts CustomUserDetails obj to string
+     *
      * @return String version of CustomUserDetails
      */
     @Override

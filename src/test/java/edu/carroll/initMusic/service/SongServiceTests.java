@@ -4,312 +4,232 @@ import edu.carroll.initMusic.jpa.model.Song;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
  * Tests methods in the SongServiceImpl class
  *
- * @author Nick Clouse
- *
- * @since October 4, 2024
+ * <p>
+ * {@link SongService#getSongPreview(Long)} is not tested because all it does is calls the
+ * {@link SongSearchService#getSongPreview(Long)} method, which uses an external api to get
+ * the song link and we can not control the output it gives us.
+ * </p>
  */
-@SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@Transactional
 class SongServiceTests {
-    /** Valid query string (More than 3 characters) */
-    private static final String VALID_QUERY = "Test Song";
-
-    /** invalid query string (Less than 3 characters) */
-    private static final String INVALID_QUERY = "AB"; // less than 3 characters
-
-    /** invalid query string (Empty String) */
-    private static final String EMPTY_QUERY = "";
-
-    /** Service we are testing */
-    @InjectMocks
-    private SongServiceImpl songService;
-
+    /**
+     * Set of songs to return when needed
+     */
+    private static final Set<Song> songs = new HashSet<>();
+    /**
+     * Service we are testing
+     */
     @Autowired
-    private SongServiceImpl songServiceDeezer;
-
-    /** Mock Http Client */
-    @Mock
-    private HttpClient mockHttpClient;
-
-    /** Mock Http Responses */
-    @Mock
-    private HttpResponse<String> mockResponse;
+    private SongService songService;
+    /**
+     * Mock the searchService since we can't control what it returns from the api
+     */
+    @MockBean
+    private SongSearchService searchService;
 
     @BeforeEach
     public void setUp() {
-        //Reset the mocks before each test
-        reset(mockHttpClient, mockResponse);
-        songService.setHttpClient(mockHttpClient);
+        final Random r = new Random();
+        songs.clear();
+        for (int i = 1; i <= 5; i++) {
+            final Song song = new Song();
+            song.setSongName("song".repeat(i));
+            song.setArtistName("artist".repeat(i));
+            song.setAlbumName("album".repeat(i));
+            song.setArtistDeezerID((long) i * i);
+            song.setAlbumDeezerID((long) i * i);
+            song.setDeezerID(r.nextLong(1, Long.MAX_VALUE));
+            song.setLength(0);
+            song.setSongPreview("");
+            song.setSongImg("");
+
+            songs.add(song);
+        }
+    }
+
+    // Testing searchForSongs first
+
+    @Test
+    public void testSearchForSongsEmptyQueries() {
+        final String songName = "";
+        final String artistName = "";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
+
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are empty!");
+
+        //SearchService should never get called, bc 2 empty strings will cause the searchForSongs method to return early
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsValidQuery() throws Exception {
-        final Song expectedSong = new Song(123456789L, "Sample Song Title", 300, "Sample Artist", 98765L, "Sample Album Title", 54321L);
-        expectedSong.setSongImg("https://api.deezer.com/album/54321/image");
-        expectedSong.setSongPreview("https://cdn-preview-5.dzcdn.net/stream/c-samplepreview.mp3");
+    public void testSearchForSongsNullQueries() {
+        final String songName = null;
+        final String artistName = null;
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        //Prepare the mocked response with the JSON
-        when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        when(mockResponse.statusCode()).thenReturn(200);
-        when(mockResponse.body()).thenReturn("{\"data\":[{\"id\":123456789,\"readable\":true,\"title\":\"Sample Song Title\"," +
-                "\"title_short\":\"Sample Song\",\"title_version\":\"(Demo Version)\",\"link\":\"https://www.deezer.com/track/123456789\"," +
-                "\"duration\":300,\"rank\":100000,\"explicit_lyrics\":false,\"explicit_content_lyrics\":0,\"explicit_content_cover\":0," +
-                "\"preview\":\"https://cdn-preview-5.dzcdn.net/stream/c-samplepreview.mp3\",\"md5_image\":\"sampleimagehash123456\"," +
-                "\"artist\":{\"id\":98765,\"name\":\"Sample Artist\",\"link\":\"https://www.deezer.com/artist/98765\"," +
-                "\"picture\":\"https://api.deezer.com/artist/98765/image\",\"picture_small\":\"https://e-cdns-images.dzcdn.net/images/artist/sampleartist_small.jpg\"," +
-                "\"picture_medium\":\"https://e-cdns-images.dzcdn.net/images/artist/sampleartist_medium.jpg\"," +
-                "\"picture_big\":\"https://e-cdns-images.dzcdn.net/images/artist/sampleartist_big.jpg\"," +
-                "\"picture_xl\":\"https://e-cdns-images.dzcdn.net/images/artist/sampleartist_xl.jpg\",\"tracklist\":\"https://api.deezer.com/artist/98765/top?limit=50\"," +
-                "\"type\":\"artist\"}," +
-                "\"album\":{\"id\":54321,\"title\":\"Sample Album Title\",\"cover\":\"https://api.deezer.com/album/54321/image\"," +
-                "\"cover_small\":\"https://e-cdns-images.dzcdn.net/images/cover/samplealbum_small.jpg\"," +
-                "\"cover_medium\":\"https://e-cdns-images.dzcdn.net/images/cover/samplealbum_medium.jpg\"," +
-                "\"cover_big\":\"https://e-cdns-images.dzcdn.net/images/cover/samplealbum_big.jpg\"," +
-                "\"cover_xl\":\"https://e-cdns-images.dzcdn.net/images/cover/samplealbum_xl.jpg\"," +
-                "\"md5_image\":\"samplealbumhash123456\",\"tracklist\":\"https://api.deezer.com/album/54321/tracks\",\"type\":\"album\"}," +
-                "\"type\":\"track\"}]}");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are null!");
 
-        /*
-         * Should parse the data and return it as a list of songs, in this case
-         * there should only be one song.
-         */
-        final Set<Song> songs = songService.searchForSongs(VALID_QUERY);
-
-        assertNotNull(songs, "SearchForSongs should return at least one song with a valid query!");
-        assertEquals(1, songs.size(), "Sample JSON should cause searchForSongs to create 1 song, but it created" + songs.size());
-
-        verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+        //SearchService should never get called, bc 2 null strings will cause the searchForSongs method to return early
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsEmptyQuery() {
-        //won't return any songs because query is empty
-        final Set<Song> songs = songService.searchForSongs(EMPTY_QUERY);
+    public void testSearchForSongsBothQueriesTooShort() {
+        final String songName = "12";
+        final String artistName = "12";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        assertNotNull(songs, "SearchForSongs should return a not not set with a empty query!");
-        assertTrue(songs.isEmpty(), "SearchForSongs should return a empty set with a empty query!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are too short!");
+
+        //SearchService should never get called, bc 2 strings that are too short will cause the searchForSongs method to return early
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsNullQuery() {
-        //won't return any songs because query is empty
-        final Set<Song> songs = songService.searchForSongs(null);
+    public void testSearchForSongsBothQueriesTooLong() {
+        final String songName = "a".repeat(51);
+        final String artistName = "a".repeat(51);
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(new HashSet<>());
 
-        assertNotNull(songs, "SearchForSongs should return a not not set with a null query!");
-        assertTrue(songs.isEmpty(), "SearchForSongs should return a empty set with a null query!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertTrue(result.isEmpty(), "Search for songs should return a empty set when both queries are too long!");
+
+        //SearchService should never get called, bc 2 strings that are too long will cause the searchForSongs method to return early
+        verify(searchService, never()).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsShortQuery() {
-        //won't return any songs because query is too short
-        final Set<Song> songs = songService.searchForSongs(INVALID_QUERY);
+    public void testSearchForSongsBothValidReturnsSetCreatesCache() {
+        final String songName = "songName";
+        final String artistName = "artist";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
 
-        assertNotNull(songs,"SearchForSongs should return a not not set with a short query!");
-        assertTrue(songs.isEmpty(),"SearchForSongs should return a empty set with a short query!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertFalse(result.isEmpty(), "Search for songs should return a set of songs when both queries are valid!");
+        //Since there is no cache, external search should be called once
+        verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
+
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
-    public void testSearchForSongsErrorResponse() throws Exception {
-        //mock a error response
-        when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        when(mockResponse.statusCode()).thenReturn(404); // Simulate not found
+    public void testSearchForSongsBothValidReturnsSetCacheFound() {
+        final String songName = "songNameCool";
+        final String artistName = "artistName";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
 
-        //error response should cause the method to return 0 songs
-        final Set<Song> songs = songService.searchForSongs(VALID_QUERY);
+        Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertEquals(result, songs, "Songs should match those mocked in externalSearchForSongs!");
 
-        assertNotNull(songs,"SearchForSongs should return a not not set when a Error Response Occurs!");
-        assertTrue(songs.isEmpty(),"SearchForSongs should return a empty set when a Error Response Occurs!");
-        verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+        //Now if we call searchForSongs again, externalSearch should never be called bc there is now a cache
+        result = songService.searchForSongs(songName, artistName);
+        assertEquals(result, songs, "Songs should match those saved in cache!");
+
+        //We called searchForSongs twice, but externalSearchForSongs should only be called once
+        verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
     }
 
     @Test
-    public void testSearchForSongsNetworkError() throws Exception {
-        //mock a network error
-        when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenThrow(new IOException("Network error"));
+    public void testSearchForSongsOnlySongValidReturnsSetCreatesCache() {
+        final String songName = "newSongName";
+        final String artistName = "";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
 
-        //network error should cause the method to return 0 songs
-        final Set<Song> songs = songService.searchForSongs(VALID_QUERY);
-
-        assertNotNull(songs,"SearchForSongs should return a not not set when a Network Error Occurs!");
-        assertTrue(songs.isEmpty(),"SearchForSongs should return a empty set when a Network Error Occurs!");
-        verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
-    }
-
-    //Test a basic but valid json structure
-    @Test
-    public void testSearchForSongsSuccessfulJsonParsing() throws Exception {
-        //mock a valid JSON response
-        when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        when(mockResponse.statusCode()).thenReturn(200);
-        when(mockResponse.body()).thenReturn("{\"data\":[{\"id\":123,\"title\":\"Test Song\",\"duration\":210," +
-                "\"artist\":{\"name\":\"Test Artist\",\"id\":456}," +
-                "\"album\":{\"title\":\"Test Album\",\"id\":789,\"cover\":\"cover_url\"}," +
-                "\"preview\":\"preview_url\"}]}"); // Valid JSON
-
-        //call searchForSongs
-        final Set<Song> songs = songService.searchForSongs(VALID_QUERY);
-
-        //check that the parsing is correct and the result is not null
-        assertNotNull(songs, "SearchForSongs should return at least one song with a valid query, even with a basic JSON structure!");
-        assertEquals(1, songs.size(), "Simple JSON Structure should cause searchForSongs to create 1 song, but it created" + songs.size());
-        verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertFalse(result.isEmpty(), "Search for songs should return a set of songs when only song name is valid!");
+        verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
-    public void testSearchForSongsJsonParsingError() throws Exception {
-        //mock a valid HTTP response but simulate a JSON parsing error
-        when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        when(mockResponse.statusCode()).thenReturn(200);
-        //simulate that the response body causes a JSON parsing error inside the service method
-        when(mockResponse.body()).thenReturn("Invalid JSON String");
+    public void testSearchForSongsOnlyArtistValidReturnsSetCreatesCache() {
+        final String songName = "";
+        final String artistName = "newArtistName";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
 
-        //since there was a json error, the method shouldn't return any songs
-        final Set<Song> songs = songService.searchForSongs(VALID_QUERY);
-
-        assertEquals(0, songs.size(), "SearchForSongs should return a empty set when a JSON Parsing Error occurs!");
-
-        //verify that the send method was called once
-        verify(mockHttpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
-    }
-
-    /*
-     * Testing getLocalCache
-     */
-    @Test
-    public void checkGetLocalCacheReturnsNullWhenNoCacheInDBWithQuery(){
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache("query");
-        assertNull(songsFound, "songsFound should be null when no cache is found after trying to get cache!");
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertFalse(result.isEmpty(), "Search for songs should return a set of songs when only artist name is valid!");
+        verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
     }
 
     @Test
-    public void checkGetLocalCacheReturnsNullWhenNullQueryPassed(){
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache(null);
-        assertNull(songsFound, "songsFound should be null when a null query passed!");
+    public void testSearchForSongsSearchTwiceUniqueCaches() {
+        final String songName = "favSong";
+        final String artistName = "favArtist";
+        when(searchService.externalSearchForSongs(songName, artistName)).thenReturn(songs);
+
+        final Set<Song> result = songService.searchForSongs(songName, artistName);
+        assertFalse(result.isEmpty(), "Search for songs should return a set of songs when both queries are valid!");
+        //Since there is no cache, external search should be called once
+        verify(searchService, times(1)).externalSearchForSongs(songName, artistName);
+
+        assertTrue(result.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
+
+        //Generate new values for songs set
+        setUp();
+        final String songNameTwo = "2ndfavSong";
+        final String artistNameTwo = "2ndfavArtist";
+        when(searchService.externalSearchForSongs(songNameTwo, artistNameTwo)).thenReturn(songs);
+
+        final Set<Song> resultTwo = songService.searchForSongs(songNameTwo, artistNameTwo);
+        assertFalse(resultTwo.isEmpty(), "Search for songs should return a set of songs when both queries are valid!");
+        //Since there is no cache, external search should be called once
+        verify(searchService, times(1)).externalSearchForSongs(songNameTwo, artistNameTwo);
+
+        assertTrue(resultTwo.containsAll(songs), "Songs found should match those mocked in externalSearchForSongs!");
+    }
+
+
+    //Testing isValidQuery
+
+    @Test
+    public void testIsValidQueryNullQuery() {
+        assertFalse(songService.isValidQuery(null), "Null query should be invalid");
     }
 
     @Test
-    public void checkGetLocalCacheReturnsNullWhenEmptyQueryPassed(){
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache("");
-        assertNull(songsFound, "songsFound should be null when a empty query passed!");
+    public void testIsValidQueryEmptyQuery() {
+        assertFalse(songService.isValidQuery(""), "Empty query should be invalid");
     }
 
     @Test
-    @Transactional
-    public void checkGetLocalCacheReturnsCacheWithValidQueryPassed(){
-        final String query = "query";
-        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
-        final Set<Song> songs = new HashSet<>();
-        songs.add(song);
-        songServiceDeezer.createCache(query,songs);
-
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
-        final Song firstSong = (Song)songsFound.toArray()[0];
-        assertNotNull(songsFound, "songsFound should not be null when a valid query is passed and there is a local cache in DB!");
-        assertEquals(songsFound.size(), 1, "songsFound should have a size of 1 when a valid query is passed and there is a local cache with one song in DB!");
-        assertEquals(firstSong.getDeezerID(),song.getDeezerID(),"Cache song set should contain given song after getting Cache!");
+    public void testIsValidQueryShortQuery() {
+        assertFalse(songService.isValidQuery("ab"), "Query with less than 3 characters should be invalid");
     }
 
     @Test
-    @Transactional
-    public void checkGetLocalCacheReturnsNoCacheWithValidQueryPassedButNoCacheWithPassedQueryInDB(){
-        final String query = "query2";
-        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
-        final Set<Song> songs = new HashSet<>();
-        songs.add(song);
-        songServiceDeezer.createCache(query,songs);
-
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query + 1);
-        assertNull(songsFound, "songsFound should be null when a valid query is passed and but no cache with that query in DB!");
-    }
-
-    /*
-     * Testing CreateCache
-     */
-
-    @Test
-    public void checkCreateCacheNullQuery(){
-        final Set<Song> songs = new HashSet<>();
-
-        assertFalse(songServiceDeezer.createCache(null,songs),"No Cache should be created when query is null!");
+    public void testIsValidQueryLongQuery() {
+        final String longQuery = "a".repeat(41);
+        assertFalse(songService.isValidQuery(longQuery), "Query with more than 50 characters should be invalid");
     }
 
     @Test
-    public void checkCreateCacheEmptyQuery(){
-        final Set<Song> songs = new HashSet<>();
-
-        assertFalse(songServiceDeezer.createCache("",songs),"No Cache should be created when query is empty!");
+    public void testIsValidQueryValidQuery() {
+        assertTrue(songService.isValidQuery("abc"), "Query with 3 characters should be valid");
+        assertTrue(songService.isValidQuery("a valid query"), "Typical valid query should be valid");
+        final String maxLengthQuery = "a".repeat(40);
+        assertTrue(songService.isValidQuery(maxLengthQuery), "Query with exactly 49 characters should be valid");
     }
-
-    @Test
-    public void checkCreateCacheNullResults(){
-        assertFalse(songServiceDeezer.createCache("Query",null),"No Cache should be created when query is empty!");
-    }
-
-    @Test
-    @Transactional
-    public void checkCreateCacheSucceedsWhenQueryAndResultsValid(){
-        final String query = "query3";
-        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
-        final Set<Song> songs = new HashSet<>();
-        songs.add(song);
-        songServiceDeezer.createCache(query,songs);
-
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
-        assertNotNull(songsFound, "songsFound should not be null when a valid query and results set is passed!");
-        assertEquals(songsFound,songs,"Songs in cache should match those passed in createCache!");
-    }
-
-    @Test
-    @Transactional
-    public void checkCreateCacheSucceedsWhenOldCacheIsOverwritten(){
-        final String query = "query3";
-        final Song song = new Song(2323L,"Name",232,"Nick",2323L,"Album",45454L);
-        final Song song2 = new Song(2324L,"Name",232,"Nick",2323L,"Album",45454L);
-        final Set<Song> songs = new HashSet<>();
-        songs.add(song);
-
-        //Assume this worked this one time
-        songServiceDeezer.createCache(query,songs);
-        final Set<Song> songsFoundOldCache = songServiceDeezer.getLocalCache(query);
-
-        //Add a song to set songs so its different from first caches song set
-        final Set<Song> songs2 = new HashSet<>();
-        songs2.add(song2);
-        songs2.add(song);
-
-        songServiceDeezer.createCache(query,songs2);
-
-        final Set<Song> songsFound = songServiceDeezer.getLocalCache(query);
-        assertNotNull(songsFound, "songsFound should not be null when a valid query and results set is passed!");
-        assertEquals(songsFoundOldCache.size(),songsFound.size(),"Old cache with same query should have same size set as updated cache!");
-    }
-
-
 }

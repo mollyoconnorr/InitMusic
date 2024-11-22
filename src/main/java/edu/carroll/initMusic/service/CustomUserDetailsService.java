@@ -28,6 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Injects dependencies
+     *
      * @param userRepository User repository to inject
      */
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -36,13 +37,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Loads user using given username
+     *
      * @param username Username to search by
      * @return UserDetails object with user information
      * @throws UsernameNotFoundException Thrown if username is not found
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(username == null || username.isEmpty()){
+        if (username == null || username.isEmpty()) {
             throw new UsernameNotFoundException("Username cannot be empty");
         }
         username = username.strip();

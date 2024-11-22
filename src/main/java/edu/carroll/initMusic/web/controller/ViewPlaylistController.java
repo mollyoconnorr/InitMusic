@@ -33,11 +33,12 @@ public class ViewPlaylistController {
     /** User service for operations involving user objects */
     final UserService userService;
 
-    /** playlist service for operations involving playlist objects*/
+    /** playlist service for operations involving playlist objects */
     final PlaylistService playlistService;
 
     /**
      * Constructor, injects dependencies
+     *
      * @param userService Injected UserService
      */
     public ViewPlaylistController(UserService userService, PlaylistService playlistService) {
@@ -48,8 +49,9 @@ public class ViewPlaylistController {
     /**
      * Gets the view playlist page, loads the selected playlist,
      * which is passed through the path to the page.
-     * @param playlistID ID of playlist to load
-     * @param model Model to add attributes to
+     *
+     * @param playlistID     ID of playlist to load
+     * @param model          Model to add attributes to
      * @param authentication Current authentication token, if any
      * @return ViewPlaylist page
      */
@@ -62,7 +64,7 @@ public class ViewPlaylistController {
 
         final Playlist playlist = playlistService.getPlaylist(playlistID);
 
-        if(playlist == null) {
+        if (playlist == null) {
             model.addAttribute("error", "Playlist not found");
             log.warn("getViewPlaylistPage: Playlist not found when user id#{} tried to view playlist id#{}", user.getuserID(), playlistID);
             return "viewPlaylist";
@@ -78,17 +80,18 @@ public class ViewPlaylistController {
 
     /**
      * Handles deleting the selected song from the playlist
+     *
      * @param deleteSongFromPlaylistForm Form which contains information of song and playlist to delete song from
-     * @param bindingResult Binding result
-     * @param authentication Current authentication token, if any
-     * @param redirectAttributes Redirection Attributes, if any
+     * @param bindingResult              Binding result
+     * @param authentication             Current authentication token, if any
+     * @param redirectAttributes         Redirection Attributes, if any
      * @return Redirect to viewPlaylist page regardless if song was deleted or not.
      */
     @PostMapping("/deleteSongFromPlaylist")
     public String deleteSongFromPlaylist(@Valid @ModelAttribute DeleteSongFromPlaylistForm deleteSongFromPlaylistForm,
                                          BindingResult bindingResult,
                                          Authentication authentication,
-                                         RedirectAttributes redirectAttributes){
+                                         RedirectAttributes redirectAttributes) {
 
         //Retrieve the current user
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -98,29 +101,29 @@ public class ViewPlaylistController {
         final Long songID = deleteSongFromPlaylistForm.getSongID();
         final String songName = deleteSongFromPlaylistForm.getSongName();
         final String playlistName = deleteSongFromPlaylistForm.getPlaylistName();
-        log.info("User id#{} wants to delete song from playlist id#{}", user.getuserID(),playlistID);
+        log.info("User id#{} wants to delete song from playlist id#{}", user.getuserID(), playlistID);
 
         //If there are any binding errors, log errors and return back to viewPlaylist page
         if (bindingResult.hasErrors()) {
             log.warn("deleteSongFromPlaylist: Binding errors found when attempting to delete a song from a playlist: {}", bindingResult.getAllErrors());
             //This error would not be caused by any user input
-            redirectAttributes.addFlashAttribute("error", "Error deleting "+ songName +" from " +playlistName);
-            return "redirect:/viewPlaylist/"+playlistID;
+            redirectAttributes.addFlashAttribute("error", "Error deleting " + songName + " from " + playlistName);
+            return "redirect:/viewPlaylist/" + playlistID;
         }
 
         final MethodOutcome songRemoved = playlistService.removeSongFromPlaylist(playlistID, songID);
 
         //If song wasn't removed for some reason
-        if(songRemoved.failed()){
+        if (songRemoved.failed()) {
             redirectAttributes.addFlashAttribute("error", songRemoved.getMessage());
             log.error("deleteSongFromPlaylist: Song wasn't removed from playlist because '{}'", songRemoved.getMessage());
-            return "redirect:/viewPlaylist/"+playlistID;
+            return "redirect:/viewPlaylist/" + playlistID;
         }
 
         //Success message since song was removed
         redirectAttributes.addFlashAttribute("successMsg", "Removed " +
                 songName + " from " + playlistName);
 
-        return "redirect:/viewPlaylist/"+playlistID;
+        return "redirect:/viewPlaylist/" + playlistID;
     }
 }

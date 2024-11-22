@@ -4,6 +4,7 @@ import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
 import edu.carroll.initMusic.web.form.RegistrationForm;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller for handling user registration.
@@ -86,9 +86,9 @@ public class RegisterController {
         if (usernameUnique.failed()) {
             log.warn("registerUser: Error checking for unique username {}, {}", username,usernameUnique.getMessage());
             // Set an error message
-            if(usernameUnique.equals(MethodOutcome.USER_ALREADY_EXISTS)){
+            if (usernameUnique.equals(MethodOutcome.USER_ALREADY_EXISTS)) {
                 model.addAttribute("errorMessage", "Username is taken. Please try a new one.");
-            } else{
+            } else {
                 model.addAttribute("errorMessage", usernameUnique.getMessage());
             }
             // Return to the registration form with the error message
@@ -103,7 +103,7 @@ public class RegisterController {
         final String password = registrationForm.getPassword();
 
         // Save the user
-        final User currentUser = userService.saveUser(username,password,email,firstName,lastName);
+        final User currentUser = userService.saveUser(username, password, email, firstName, lastName);
         session.setAttribute("currentUser", currentUser);
         return "redirect:/securityQuestions"; // Redirect to security questions page
     }

@@ -27,6 +27,7 @@ public class SecurityConfig {
 
     /**
      * Injects dependencies
+     *
      * @param userDetailsService UserDetailsService to inject
      */
     public SecurityConfig(final CustomUserDetailsService userDetailsService) {
@@ -67,13 +68,12 @@ public class SecurityConfig {
                         "/passSecurity",
                         "/images/**").permitAll()
                 .requestMatchers("/submitSecurityQuestions").authenticated()
-                .anyRequest().authenticated())
-        .csrf().and();
+                .anyRequest().authenticated());
         //Set login page to our own
         http.formLogin(formLogin ->
                 formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/playlists",true)
+                        .defaultSuccessUrl("/playlists", true)
                         .failureUrl("/login?error")
                         .permitAll()
         );
@@ -91,10 +91,10 @@ public class SecurityConfig {
 
     /**
      * Configures a AuthenticationManager with our own userDetailsService and password encoder
+     *
      * @param http HttpSecurity object to get AuthenticationManagerBuilder class from
      * @return New AuthenticationManager object with our custom compnonents
      * @throws Exception Any Exception that might occur
-     *
      * @see AuthenticationManager
      * @see HttpSecurity
      * @see CustomUserDetailsService

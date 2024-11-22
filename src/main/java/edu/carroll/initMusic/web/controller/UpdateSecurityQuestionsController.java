@@ -17,13 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
  * Handles mappings for updating a users security questions
  *
  * @author Molly O'Connor
- *
  * @since October 29, 2024
  */
 @Controller
 public class UpdateSecurityQuestionsController {
 
-    /** Logger object used for logging actions within this controller.*/
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(UpdateSecurityQuestionsController.class);
 
     /** Service for user-related operations such as updating passwords. */
@@ -45,7 +44,7 @@ public class UpdateSecurityQuestionsController {
     }
 
     @PostMapping("/updateSecurityQuestions")
-    public String processUpdateSecurityQuestionsForm (@ModelAttribute SecurityQuestionsForm securityForm, Authentication authentication, Model model) {
+    public String processUpdateSecurityQuestionsForm(@ModelAttribute SecurityQuestionsForm securityForm, Authentication authentication, Model model) {
         if (authentication.getPrincipal() != null) {
             //Retrieve the current user
             final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

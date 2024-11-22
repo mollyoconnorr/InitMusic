@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <property name="LOGS" value="./logs" />
+    <property name="LOGS" value="./logs"/>
 
     <appender name="Logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOGS}/spring-boot-logger.log</file>
@@ -17,7 +17,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily and when the file reaches 10 MegaBytes -->
             <fileNamePattern>${LOGS}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i
-                .log</fileNamePattern>
+                .log
+            </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -33,16 +34,16 @@
     -->
 
     <!-- Suppress Spring Data JPA info logs -->
-    <logger name="org.springframework.data.repository.config" level="WARN" />
+    <logger name="org.springframework.data.repository.config" level="WARN"/>
 
     <!-- Suppress HikariCP info logs -->
-    <logger name="com.zaxxer.hikari" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="WARN"/>
 
     <!-- Suppress Hibernate info logs -->
-    <logger name="org.hibernate" level="WARN" />
+    <logger name="org.hibernate" level="WARN"/>
 
     <!-- Suppress Spring ORM info logs -->
-    <logger name="org.springframework.orm.jpa" level="WARN" />
+    <logger name="org.springframework.orm.jpa" level="WARN"/>
 
     <!-- Default level is INFO -->
     <root level="INFO">

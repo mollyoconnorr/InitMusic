@@ -18,7 +18,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Implementation of the SongSearchService Interface that uses the Deezer API
@@ -27,7 +30,7 @@ import java.util.*;
  * @see <a href="https://developers.deezer.com/api">Deezer API</a>
  */
 @Service
-public class SongSearchDeezerImpl implements SongSearchService{
+public class SongSearchDeezerImpl implements SongSearchService {
     /** Maximum length a query can be */
     private static final int MAX_QUERY_LENGTH = 40;
 
@@ -37,8 +40,10 @@ public class SongSearchDeezerImpl implements SongSearchService{
     /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongSearchDeezerImpl.class);
 
-    /** JaroWinklerDistance object for calculating differences between strings. Used
-     * when sorting songs so the songs are sorted by closest match to given parameters. */
+    /**
+     * JaroWinklerDistance object for calculating differences between strings. Used
+     * when sorting songs so the songs are sorted by closest match to given parameters.
+     */
     private final JaroWinklerDistance jaroWinkler = new JaroWinklerDistance();
 
     /**
@@ -50,22 +55,22 @@ public class SongSearchDeezerImpl implements SongSearchService{
      * search to be executed.
      *
      * <p>
-     *     If songs are found related to the given params, they are put into a tree set, which is a sorted
-     *     set. The set is sorted by the JaroWinklerDistance the song name or artist name is from the target song name or artist name.
-     *     If the distance is the same, it compares the Deezer ID of each song, which is always unique.
+     * If songs are found related to the given params, they are put into a tree set, which is a sorted
+     * set. The set is sorted by the JaroWinklerDistance the song name or artist name is from the target song name or artist name.
+     * If the distance is the same, it compares the Deezer ID of each song, which is always unique.
      * </p>
-     * @param songSearch Name of song to search for (Target song name)
+     *
+     * @param songSearch   Name of song to search for (Target song name)
      * @param artistSearch Name of artist to search for (Target artist name)
      * @return Set of songs related to query, sorted either by song name or artist name. If a song name
      * was passed, sorted by song name. If just an artist name was passed, sorted by artist
-     *
      * @see TreeSet
      * @see JaroWinklerDistance
      */
     @Transactional
-    public Set<Song> externalSearchForSongs(String songSearch,String artistSearch) {
+    public Set<Song> externalSearchForSongs(String songSearch, String artistSearch) {
         //Make sure there is text in query
-        if((!isValidQuery(songSearch) && !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
+        if ((!isValidQuery(songSearch) && !isValidQuery(artistSearch)) && (!StringUtils.isAlphanumeric(songSearch) || !StringUtils.isAlphanumeric(artistSearch))) {
             log.warn("externalSearchForSongs: Invalid query: Song:{} | Artist:{}", songSearch, artistSearch);
             return new HashSet<>();
         }
@@ -95,7 +100,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
          This is the api call that will be used in the http request.
          */
         final String url = "https://api.deezer.com/search?q=" +
-                URLEncoder.encode(urlBuilder.toString().trim()+"&strict=on", StandardCharsets.UTF_8).replace("+", "%20");
+                URLEncoder.encode(urlBuilder.toString().trim() + "&strict=on", StandardCharsets.UTF_8).replace("+", "%20");
 
         /*
         Since the first url has 'strict=on', it doesn't return any matches if the given strings
@@ -127,7 +132,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
         final SortedSet<Song> songsFound;
 
         //If at least a song name was given, sort by song name
-        if(!songSearch.isEmpty()) {
+        if (!songSearch.isEmpty()) {
             /*
             Creates a new tree set, which is a sorted set, and make a custom comparator that
             compares the song names and how different they are from the target name (songSearch)
@@ -141,9 +146,9 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 // If distances are the same, compare by deezer id (always unique)
                 return s1.getDeezerID().compareTo(s2.getDeezerID());
             });
-            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Song name",songSearch,artistSearch);
+            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Song name", songSearch, artistSearch);
             //If just an artist name was given, sort by artist name
-        }else if(!artistSearch.isEmpty()) {
+        } else if (!artistSearch.isEmpty()) {
             /*
             Creates a new tree set, which is a sorted set, and make a custom comparator that
             compares the artist names and how different they are from the target name (artistSearch)
@@ -157,10 +162,10 @@ public class SongSearchDeezerImpl implements SongSearchService{
                 // If distances are the same, compare by deezer id (always unique)
                 return s1.getDeezerID().compareTo(s2.getDeezerID());
             });
-            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Artist name",songSearch,artistSearch);
+            log.info("externalSearchForSongs: Sorting songs for query Song: {} | Artist: {} by Artist name", songSearch, artistSearch);
             //If somehow no names were given (Should never happen here, but just in case) return
             //an empty set
-        }else{
+        } else {
             log.error("externalSearchForSongs: No query was given to me and somehow that got passed the initial checks :( I don't work without a query...");
             return new HashSet<>();
         }
@@ -197,7 +202,7 @@ public class SongSearchDeezerImpl implements SongSearchService{
                     final String songImg = track.getJSONObject("album").getString("cover");
                     final String songPreview = track.getString("preview");
 
-                    final Song newSong = new Song(id,title,duration,artistName,artistID,albumName,albumID);
+                    final Song newSong = new Song(id, title, duration, artistName, artistID, albumName, albumID);
                     newSong.setSongImg(songImg);
                     newSong.setSongPreview(songPreview);
                     songsFound.add(newSong);
@@ -212,15 +217,60 @@ public class SongSearchDeezerImpl implements SongSearchService{
             log.error("externalSearchForSongs: JSON parsing error occurred with query {}", query, e);
         }
 
-        log.info("externalSearchForSongs: Found {} songs for query '{}'",songsFound.size(),query);
+        log.info("externalSearchForSongs: Found {} songs for query '{}'", songsFound.size(), query);
 
         return songsFound;
     }
 
     /**
+     * Gets the link to the preview of the song with the given id. Deezer makes some links secure, and makes
+     * them expire after a day, so we always have to reload the link to preview the song. We couldn't done a better implementation
+     * with more time, but this was a last minute fix.
+     *
+     * @param deezerID ID to get link for
+     * @return String of url
+     */
+    public String getSongPreview(Long deezerID) {
+        if (deezerID == null || deezerID < 0) {
+            return "";
+        }
+        final String url = "https://api.deezer.com/track/" + deezerID;
+        URLEncoder.encode(url, StandardCharsets.UTF_8);
+
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .build();
+        final HttpResponse<String> response;
+
+        try {
+            // Send the HTTP request and get the response
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check if the response status code is 200 (OK)
+            if (response.statusCode() == 200) {
+                final JSONObject track = new JSONObject(response.body());
+
+                //Get the preview link
+                final String preview = track.getString("preview");
+                log.info("getSongPreview: Got link for song with id#{}", deezerID);
+                return preview;
+            } else {
+                log.error("getSongPreview: Error response from Deezer API: Status Code {}", response.statusCode());
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("getSongPreview: Network error occurred during search with id# {}", deezerID, e);
+        } catch (JSONException e) {
+            log.error("getSongPreview: JSON parsing error occurred with id# {}", deezerID, e);
+        }
+
+        return "";
+    }
+
+    /**
      * Checks if the given query is valid.
      * <p>
-     *     A query is valid if:
+     * A query is valid if:
      *     <ul>
      *         <li>It's not null</li>
      *         <li>It's not empty</li>
@@ -228,9 +278,9 @@ public class SongSearchDeezerImpl implements SongSearchService{
      *         <li>It's length is less than MAX_QUERY_LENGTH</li>
      *     </ul>
      * </p>
-     * @param query Query to check if valid
-     * @return  {@code true} if query is valid, {@code false} otherwise.
      *
+     * @param query Query to check if valid
+     * @return {@code true} if query is valid, {@code false} otherwise.
      * @see #MAX_QUERY_LENGTH
      * @see #MIN_QUERY_LENGTH
      */

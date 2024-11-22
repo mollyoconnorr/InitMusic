@@ -19,10 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -45,7 +42,7 @@ public class SearchController {
     /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
-    /** Song service for operations with songs and caches*/
+    /** Song service for operations with songs and caches */
     private final SongService songService;
 
     /** User service for operations with user objects */
@@ -56,6 +53,7 @@ public class SearchController {
 
     /**
      * Constructor
+     *
      * @param songService Injected song service
      * @param userService Injected user service
      */
@@ -66,13 +64,40 @@ public class SearchController {
     }
 
     /**
+     * Gets the song attributes from a NewSongForm object and creates a new song
+     *
+     * @param addSongForm Form to get attributes from
+     * @return The new song object
+     * @see NewSongForm
+     */
+    private static Song getSong(NewSongForm addSongForm) {
+        final Long songID = addSongForm.getSongID();
+        final String songName = addSongForm.getSongName();
+        final int songLength = addSongForm.getSongLength();
+        final String artistName = addSongForm.getArtistName();
+        final Long artistID = addSongForm.getArtistID();
+        final String albumName = addSongForm.getAlbumName();
+        final Long albumID = addSongForm.getAlbumID();
+        final String songImg = addSongForm.getSongImg();
+        final String songPreview = addSongForm.getSongPreview();
+
+
+        // Create a new Song object
+        final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);
+        song.setSongImg(songImg);
+        song.setSongPreview(songPreview);
+        return song;
+    }
+
+    /**
      * This shows the search page and adds several important attributes to the model for the page
-     * @param model Model to use
+     *
+     * @param model          Model to use
      * @param authentication Current authenticated user token, if any
      * @return Search page
      */
     @GetMapping("/search")
-    public String showSearchPage(Model model, Authentication authentication,HttpSession session) {
+    public String showSearchPage(Model model, Authentication authentication, HttpSession session) {
         //Retrieve the current user from the session
         final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         final User user = userDetails.getUser();
@@ -90,9 +115,9 @@ public class SearchController {
           Result is stored in the httpSession so its available after adding song to a playlist.
           When a user first goes to search page, there is no results yet, so set it to a empty hashset
          */
-        if(session.getAttribute("results") instanceof Set<?> && session.getAttribute("results") != null) {
+        if (session.getAttribute("results") instanceof Set<?> && session.getAttribute("results") != null) {
             model.addAttribute("results", session.getAttribute("results"));
-        }else{
+        } else {
             model.addAttribute("results", new HashSet<>());
         }
 
@@ -100,9 +125,9 @@ public class SearchController {
           query is stored in the httpSession so its available after adding song to a playlist.
           When a user first goes to search page, there is no results yet, so set it to a new song form
          */
-        if(session.getAttribute("query") != null) {
+        if (session.getAttribute("query") != null) {
             model.addAttribute("query", session.getAttribute("query"));
-        }else{
+        } else {
             model.addAttribute("query", null);
         }
 
@@ -115,9 +140,10 @@ public class SearchController {
     /**
      * Performs the search for all songs related to the query param, and displays them
      * on the page. Sets up the model so the user can add songs to a playlist if they wish
-     * @param songSearch Song name to search for
-     * @param artistSearch Artist name to search for
-     * @param model Model to use
+     *
+     * @param songSearch     Song name to search for
+     * @param artistSearch   Artist name to search for
+     * @param model          Model to use
      * @param authentication Current authenticated user token, if any
      * @return Updated search page
      */
@@ -131,11 +157,11 @@ public class SearchController {
 
         //Put the query into a format suitable for logging and displaying back to user
         String query = "";
-        if(!songSearch.isEmpty() && !artistSearch.isEmpty()) {
+        if (!songSearch.isEmpty() && !artistSearch.isEmpty()) {
             query = songSearch + " by " + artistSearch;
-        }else if(!songSearch.isEmpty()) {
+        } else if (!songSearch.isEmpty()) {
             query = songSearch;
-        }else if(!artistSearch.isEmpty()) {
+        } else if (!artistSearch.isEmpty()) {
             query = artistSearch;
         }
 
@@ -152,10 +178,10 @@ public class SearchController {
             return "search"; // Return to the search page with error message
         }
 
-        final Set<Song> results = songService.searchForSongs(songSearch,artistSearch);
+        final Set<Song> results = songService.searchForSongs(songSearch, artistSearch);
 
         //If no songs found
-        if(results == null || results.isEmpty()) {
+        if (results == null || results.isEmpty()) {
             //For whatever reason, when this if statement is triggered, the model is missing the
             //new playlist form, so we have to add it again here
             model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
@@ -168,7 +194,7 @@ public class SearchController {
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         model.addAttribute("currentUser", user);
-        model.addAttribute("playlists",user.getPlaylists());
+        model.addAttribute("playlists", user.getPlaylists());
         model.addAttribute("newSongForm", new NewSongForm());
         model.addAttribute("NewPlaylistForm", new NewPlaylistForm());
 
@@ -181,9 +207,9 @@ public class SearchController {
      * all the params needed for a song and create a new object.
      *
      * @param newSongForm Form that contains data needed to add song to playlist
-     * @param result Result of binding
-     * @param attrs RedirectAttributes
-     * @param session Current httpSession
+     * @param result      Result of binding
+     * @param attrs       RedirectAttributes
+     * @param session     Current httpSession
      * @return Redirect to search page
      */
     @SuppressWarnings("unchecked")
@@ -206,23 +232,23 @@ public class SearchController {
         for (Playlist playlist : selectedPlaylists) {
             log.info("addSongToPlaylist: Calling songService to add song {} to playlist {}", song.getDeezerID(), playlist.getPlaylistID());
             final MethodOutcome outcome = playlistService.addSongToPlaylist(playlist, song);
-            if(outcome.failed()){
-                errorMessages.add(String.format("Error adding %s to %s: %s", song.getSongName(),playlist.getPlaylistName(),outcome.getMessage()));
-            }else{
+            if (outcome.failed()) {
+                errorMessages.add(String.format("Error adding %s to %s: %s", song.getSongName(), playlist.getPlaylistName(), outcome.getMessage()));
+            } else {
                 successMessages.add(String.format("Added %s to %s", song.getSongName(), playlist.getPlaylistName()));
             }
         }
 
-        if(!errorMessages.isEmpty()){
+        if (!errorMessages.isEmpty()) {
             attrs.addFlashAttribute("addingErrors", errorMessages);
         }
 
-        if(!successMessages.isEmpty()){
+        if (!successMessages.isEmpty()) {
             attrs.addFlashAttribute("addingSuccesses", successMessages);
         }
 
         //If there are results in the httpsession, add them back to search page so they get displayed again
-        if(session.getAttribute("results") instanceof Set<?>){
+        if (session.getAttribute("results") instanceof Set<?>) {
             //Add results and query to flash attributes so they can be redisplayed again
             final Set<Song> results = (Set<Song>) session.getAttribute("results");
             final String query = (String) session.getAttribute("query");
@@ -234,27 +260,33 @@ public class SearchController {
     }
 
     /**
-     * Gets the song attributes from a NewSongForm object and creates a new song
-     * @param addSongForm Form to get attributes from
-     * @return The new song object
-     * @see NewSongForm
+     * Handles the mapping for opening a popup window with the preview for a song
+     *
+     * @param deezerId ID of song to preview
+     * @param model    Model to add preview url to
+     * @return popupRedirect page
      */
-    private static Song getSong(NewSongForm addSongForm) {
-        final Long songID = addSongForm.getSongID();
-        final String songName = addSongForm.getSongName();
-        final int songLength = addSongForm.getSongLength();
-        final String artistName = addSongForm.getArtistName();
-        final Long artistID = addSongForm.getArtistID();
-        final String albumName = addSongForm.getAlbumName();
-        final Long albumID = addSongForm.getAlbumID();
-        final String songImg = addSongForm.getSongImg();
-        final String songPreview = addSongForm.getSongPreview();
+    @GetMapping("/preview/{deezerId}")
+    public String previewSong(@PathVariable String deezerId, Model model) {
+        //Get the deezer preview url
+        String previewURL = "";
+        try {
+            previewURL = songService.getSongPreview(Long.parseLong(deezerId));
+        } catch (NumberFormatException e) {
+            log.error("Non-long value passed to previewSong");
+        }
 
-        // Create a new Song object
-        final Song song = new Song(songID, songName, songLength, artistName, artistID, albumName, albumID);
-        song.setSongImg(songImg);
-        song.setSongPreview(songPreview);
-        return song;
+        if (previewURL == null || previewURL.isEmpty()) {
+            log.error("previewSong: Invalid Deezer id#{}, Showing error page", deezerId);
+            model.addAttribute("status", "999");
+            return "redirect:/error"; // Redirect to an internal error page
+        }
+
+
+        log.info("previewSong: Creating popup window for link {}", previewURL);
+
+        model.addAttribute("deezerUrl", previewURL);  // Add URL to the model
+        return "popupRedirect";  // View that opens the URL in a popup window
     }
 }
 

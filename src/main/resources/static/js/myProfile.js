@@ -18,6 +18,7 @@ function confirmLogout() {
         window.location.href = '/logout';
     }
 }
+
 //add an event listener to the button
 document.getElementById('logoutButton').addEventListener('click', logout);
 

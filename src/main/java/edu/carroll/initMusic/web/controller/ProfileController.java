@@ -3,19 +3,15 @@ package edu.carroll.initMusic.web.controller;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
 import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.NewPasswordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
-import edu.carroll.initMusic.service.UserService;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -72,7 +68,7 @@ public class ProfileController {
     /**
      * Handles the deletion of a user account. Deletes the user based on the logged-in user's email.
      *
-     * @param authentication The current authentication object to get the logged-in user's details
+     * @param authentication     The current authentication object to get the logged-in user's details
      * @param redirectAttributes Used to pass success or error messages to the view
      * @return A redirect to the appropriate page after the operation
      */

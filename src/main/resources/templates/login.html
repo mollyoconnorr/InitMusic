@@ -1,27 +1,26 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Login page</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+  <title>Login</title>
+  <link href="/css/styles.css" rel="stylesheet">
 </head>
 <body class="body2">
 <div class="centered-box">
   <h2>Login</h2>
-  <div th:if="${errorMessage}" style="color: red;">
+  <div style="color: red;" th:if="${errorMessage}">
     <p th:text="${errorMessage}"></p>
   </div>
   <!-- Display error message if present -->
-  <div th:if="${errorMsg}" style="color: red;">
+  <div style="color: red;" th:if="${errorMsg}">
     <p th:text="${errorMsg}"></p>
   </div>
 
-  <form th:action="@{/login}" th:object="${loginForm}" method="post">
+  <form method="post" th:action="@{/login}" th:object="${loginForm}">
     <label for="username">Username:</label><br>
-    <input type="text" id="username" th:field="*{username}" placeholder="Username" required><br><br>
+    <input id="username" placeholder="Username" required th:field="*{username}" type="text"><br><br>
 
     <label for="password">Password:</label><br>
-    <input type="password" id="password" th:field="*{password}" placeholder="Password" required><br><br>
+    <input id="password" placeholder="Password" required th:field="*{password}" type="password"><br><br>
 
     <button type="submit">Login</button>
   </form>
@@ -29,4 +28,3 @@
   <p><a href="/changePasswordEmail">Forgot Password?</a></p>
 </div>
 </body>
-</html>

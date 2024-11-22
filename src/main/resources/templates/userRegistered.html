@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Registered</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" th:if="${username == null || username.isEmpty()}" content="0; URL=/login" />
+  <title>User Registered</title>
+  <link href="/css/styles.css" rel="stylesheet">
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+  <meta content="0; URL=/login" http-equiv="refresh" th:if="${username == null || username.isEmpty()}"/>
 </head>
 <body class="body1">
 <div class="centered-box" th:if="${username != null && !username.isEmpty()}">
-    <p class="p1" th:text="'Welcome ' + ${username} + '!'"></p>
-    <p class="p2">We're happy to have you.</p>
-    <br/>
-    <p class="p2">Return to <a href="/login">login</a> to get started!</p>
+  <p class="p1" th:text="'Welcome ' + ${username} + '!'"></p>
+  <p class="p2">We're happy to have you.</p>
+  <br/>
+  <p class="p2">Return to <a href="/login">login</a> to get started!</p>
 </div>
 </body>
 </html>

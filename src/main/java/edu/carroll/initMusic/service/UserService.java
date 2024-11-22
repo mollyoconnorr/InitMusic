@@ -20,6 +20,7 @@ public interface UserService {
 
     /**
      * Checks if given email is unique
+     *
      * @param email Email to check
      * @return MethodOutcome Enum that tells outcome of method.
      */
@@ -27,29 +28,32 @@ public interface UserService {
 
     /**
      * Saves a user and their information to the database
-     * @param username Username of user
-     * @param password Password of user
-     * @param email Email of user
+     *
+     * @param username  Username of user
+     * @param password  Password of user
+     * @param email     Email of user
      * @param firstName First name of user
-     * @param lastName Last name of user
+     * @param lastName  Last name of user
      * @return User object, which contains all the users information
      */
-    User saveUser(String username,String password,String email,String firstName,String lastName);
+    User saveUser(String username, String password, String email, String firstName, String lastName);
 
     /**
      * Updates the security questions and answers for the specified user.
-     * @param user User object to update
+     *
+     * @param user      User object to update
      * @param question1 First security question
-     * @param answer1 First answer
+     * @param answer1   First answer
      * @param question2 Second security question
-     * @param answer2 Second answer
+     * @param answer2   Second answer
      * @return {@code true} if security questions were updated, {@code false} otherwise
      */
-    boolean updateUserSecurityQuestions(User user, String question1,String answer1, String question2, String answer2);
+    boolean updateUserSecurityQuestions(User user, String question1, String answer1, String question2, String answer2);
 
     /**
      * Updates the users password
-     * @param user User to update
+     *
+     * @param user        User to update
      * @param newPassword New password to use
      * @return {@code true} if password was updated, {@code false} otherwise
      */
@@ -57,6 +61,7 @@ public interface UserService {
 
     /**
      * Finds user by email address
+     *
      * @param email Email to search by
      * @return The user object found, if any
      */
@@ -66,6 +71,7 @@ public interface UserService {
      * Finds user by id, should also eagerly fetch
      * the users playlists in case operations are needed
      * to be done on them.
+     *
      * @param userId User id to search by
      * @return The user object found, null if not found
      */
@@ -73,6 +79,7 @@ public interface UserService {
 
     /**
      * Gets user by username
+     *
      * @param username Username to search by
      * @return The user object found, null if not found
      */

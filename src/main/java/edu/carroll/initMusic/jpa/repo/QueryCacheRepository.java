@@ -11,6 +11,7 @@ import java.util.List;
 public interface QueryCacheRepository extends JpaRepository<QueryCache, Long> {
     /**
      * Finds QueryCaches by query string, which is unique among all query caches
+     *
      * @param query Query String to search with
      * @return List of QueryCaches found
      */

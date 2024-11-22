@@ -10,11 +10,12 @@ public class NewPlaylistForm {
     /**
      * Name of new playlist
      */
-    @NotBlank(message="Playlist name can not be blank!")
+    @NotBlank(message = "Playlist name can not be blank!")
     private String playlistName;
 
     /**
      * Gets the name of the new playlist
+     *
      * @return Name of playlist
      */
     public String getPlaylistName() {
@@ -23,6 +24,7 @@ public class NewPlaylistForm {
 
     /**
      * Sets the name of the playlist
+     *
      * @param playlistName Name to set
      */
     public void setPlaylistName(String playlistName) {

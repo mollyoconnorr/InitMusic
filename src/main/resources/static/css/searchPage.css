@@ -240,54 +240,55 @@ button.btn-primary:hover {
     color: green;
 }
 
-.addToPlaylistModal{
+.addToPlaylistModal {
     max-width: 500px;
 }
 
-#addSongToPlaylistForm{
+#addSongToPlaylistForm {
     flex-direction: column;
     margin-top: 0;
     display: flow;
     align-items: center;
 }
-.addPlaylistModelBody{
+
+.addPlaylistModelBody {
     min-height: 300px;
     overflow-y: auto;
 }
 
-.createPlaylistBtn{
+.createPlaylistBtn {
     background-color: #007bff;
     max-height: 40px;
     max-width: 75px;
 }
 
-.createPlaylistBtn:hover{
+.createPlaylistBtn:hover {
     background-color: #0056b3;
 }
 
-#CreatePlaylistModalFooter{
+#CreatePlaylistModalFooter {
     justify-content: center;
 }
 
-#saveChangesBtn{
+#saveChangesBtn {
     margin-left: 0;
     margin-right: 0;
 }
 
-.addPlaylistModelBody p{
+.addPlaylistModelBody p {
     text-align: center;
     font-weight: bold;
 }
 
-#createPlaylistForm{
+#createPlaylistForm {
     margin-top: 20px;
 }
 
-#createPlaylistLbl{
+#createPlaylistLbl {
     max-width: 60px;
 }
 
-#noResultsFoundP{
+#noResultsFoundP {
     text-align: center;
     color: red;
 }
@@ -296,10 +297,10 @@ button#searchBtn {
     margin-top: 20px;
 }
 
-h1{
+h1 {
     font-weight: bold;
 }
 
-.align-items-start{
+.align-items-start {
     flex-wrap: nowrap;
 }
