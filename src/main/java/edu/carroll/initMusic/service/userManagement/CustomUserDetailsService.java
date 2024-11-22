@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     /** Logger for logging */
-    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     /** User repository for looking up user */
     private final UserRepository userRepository;

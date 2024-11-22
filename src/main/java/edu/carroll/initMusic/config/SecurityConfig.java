@@ -1,6 +1,6 @@
 package edu.carroll.initMusic.config;
 
-import edu.carroll.initMusic.service.CustomUserDetailsService;
+import edu.carroll.initMusic.service.userManagement.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
