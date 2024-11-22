@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.service;
+package edu.carroll.initMusic.service.userManagement;
 
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
@@ -19,9 +19,9 @@ import java.util.List;
  * @see UserDetailsService
  */
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsServiceImpl implements UserDetailsService {
     /** Logger for logging */
-    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsServiceImpl.class);
 
     /** User repository for looking up user */
     private final UserRepository userRepository;
@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      *
      * @param userRepository User repository to inject
      */
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

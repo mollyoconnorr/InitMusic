@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -52,6 +53,7 @@
       <button class="btn btn-primary addSongBtn" onclick="window.location.href='/search';"
               type="button">Add song
       </button>
+      <button class="btn btn-secondary addSongBtn" onclick="window.location.href='/playlists';" type="button">Playlists</button>
     </div>
   </div>
 </div>

@@ -63,6 +63,10 @@ public class PlaylistServiceImpl implements PlaylistService {
      * @return MethodOutcome Enum which corresponds to outcome of function
      */
     public MethodOutcome createPlaylist(String name, User user) {
+        if (name == null) {
+            log.warn("createPlaylist: Attempted to create a new playlist, but playlist was null.", user.getuserID());
+            return MethodOutcome.PLAYLIST_NAME_INVALID;
+        }
         //If user doesn't exist
         if (!userRepository.existsById(user.getuserID())) {
             log.warn("createPlaylist: Attempted to create a new playlist, but User id#{} doesn't exist", user.getuserID());
@@ -71,7 +75,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         name = name.strip();
 
-        if (name == null || name.trim().isEmpty()) {
+        if (name.trim().isEmpty()) {
             log.warn("createPlaylist: Attempted to create a new playlist, but playlist name is null or empty.", user.getuserID());
             return MethodOutcome.PLAYLIST_NAME_INVALID;
         }
