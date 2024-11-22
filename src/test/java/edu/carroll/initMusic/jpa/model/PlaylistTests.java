@@ -1,105 +1,123 @@
 package edu.carroll.initMusic.jpa.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * <p>
- * This class is used to test the Playlist class
- * </p>
+ * Tests the basic functions related to playlist model
  */
 @SpringBootTest
 public class PlaylistTests {
-    /**
-     * Name of playlist
-     */
-    private static final String playlistName = "AwesomePlaylist";
 
-    /**
-     * Author of playlist
-     */
-    private static final User author = new User();
+    /** Test playlist object */
+    private Playlist playlist;
 
-    /**
-     * Fake playlist for testing
-     */
-    private final Playlist fakePlaylist = new Playlist(author, playlistName);
+    /** Test user object */
+    private User user;
 
-    /**
-     * Testing user creation and getters
-     */
-    @Test
-    public void verifyCreationOfPlaylistAndGetters() {
-        final String setName = fakePlaylist.getPlaylistName();
-        final User setAuthor = fakePlaylist.getAuthor();
-        final Set<Song> songs = fakePlaylist.getSongs();
-        final int setNumSongs = fakePlaylist.getNumberOfSongs();
-        final int setSongsLength = fakePlaylist.getTotalSongLength();
+    /** Test song object */
+    private Song song;
 
-        assertTrue("Playlist name should match name from getter", playlistName.equals(setName));
-        assertTrue("Author should match author from getter", setAuthor.equals(fakePlaylist.getAuthor()));
-        assertTrue("There should be no songs in playlist", songs.size() == setNumSongs && setNumSongs == 0);
-        assertTrue("There should be a total song length of 0", setSongsLength == 0);
+    @BeforeEach
+    public void setUp() {
+        //Initialize the User and Song objects for testing
+        user = new User("username", "password", "first", "last", "email", "q1", "q1", "a1", "a2");
+        song = new Song(1L, "song", 23, "artist", 2L, "album name", 3L);
+
+        //Initialize the Playlist object with a User and a playlist name
+        playlist = new Playlist(user, "My Playlist");
     }
 
-    /**
-     * Testing playlist manipulation, like adding and removing songs.
-     */
     @Test
-    public void verifyPlaylistEditing() {
-        //Populating playlist with songs
-        final Set<Song> songs = new HashSet<>();
-        for (int i = 0; i < 3; i++) {
-            //String songName, String genre, String releaseDate, int length, int numberOfStreams
-            final Song tempSong = new Song(1L, "Random" + i, 60, "Name", 1, "Album", 1);
-            fakePlaylist.addSong(tempSong);
-            songs.add(tempSong);
-        }
+    public void testAddSong() {
+        playlist.addSong(song);
 
-        //Making sure there are songs in playlist and the totalSongLength is correct
-        assertTrue("Three songs should be in playlist", fakePlaylist.getSongs().size() == 3);
-        assertTrue("Playlist total length should be 3*60=180", fakePlaylist.getTotalSongLength() == 3 * 60);
-        //Now making sure there are actually three songs
-        for (Song s : songs) {
-            assertTrue("Song should be in playlist", fakePlaylist.getSongs().contains(s));
-        }
-        //Now lets remove a song and see if that works
-        final Object songToRemove = songs.toArray()[0];
-        fakePlaylist.removeSong((Song) songToRemove);
-        songs.remove((Song) songToRemove);
-        for (Song s : songs) {
-            assertTrue("Should only be two songs in playlist", fakePlaylist.getSongs().contains(s));
-        }
-        assertTrue("Two songs should be in playlist", fakePlaylist.getSongs().size() == 2);
-        assertTrue("Playlist total length should be 2*60=120", fakePlaylist.getTotalSongLength() == 2 * 60);
+        //Check that the song was added to the playlist
+        assertTrue(playlist.getSongs().contains(song), "The song should be added to the playlist.");
+        assertEquals(1, playlist.getNumberOfSongs(), "The number of songs should be 1 after adding the song.");
+        assertEquals(song.getLength(), playlist.getTotalSongLength(), "The total length should be 3 minutes (180 seconds).");
     }
 
-    /**
-     * Testing equals, hashCode, and two setters.
-     */
     @Test
-    public void verifyMiscFunctions() {
-        //Testing equals
-        final Playlist fakePlaylistTwo = new Playlist(author, playlistName);
-        assertTrue("Fake playlists should be equal", fakePlaylist.equals(fakePlaylistTwo));
-        fakePlaylistTwo.setPlaylistName("Random");
+    public void testRemoveSong() {
+        playlist.addSong(song);
 
-        final LocalDateTime now = LocalDateTime.now();
-        fakePlaylistTwo.setDateCreated(now);
+        //Remove the song from the playlist
+        final boolean removed = playlist.removeSong(song);
 
-        //Test equals function and setDateCreated work
-        assertFalse("Fake playlists should not be equal", fakePlaylist.equals(fakePlaylistTwo));
+        //Check that the song was removed
+        assertTrue(removed, "The song should be removed from the playlist.");
+        assertFalse(playlist.getSongs().contains(song), "The song should no longer be in the playlist.");
+        assertEquals(0, playlist.getNumberOfSongs(), "The number of songs should be 0 after removal.");
+        assertEquals(0, playlist.getTotalSongLength(), "The total length should be 0 after removal.");
+    }
 
-        //Testing hashCode
-        final int playlistHash = fakePlaylist.hashCode();
-        final int playlistTwoHash = fakePlaylistTwo.hashCode();
-        assertFalse("Fake playlist hash should not be equal", playlistTwoHash == playlistHash);
+    @Test
+    public void testRemoveSongById() {
+        playlist.addSong(song);
+
+        //Remove the song from the playlist by its ID
+        final boolean removed = playlist.removeSong(song.getDeezerID());
+
+        //Check that the song was removed
+        assertTrue(removed, "The song should be removed by its ID.");
+        assertFalse(playlist.getSongs().contains(song), "The song should no longer be in the playlist.");
+        assertEquals(0, playlist.getNumberOfSongs(), "The number of songs should be 0 after removal.");
+        assertEquals(0, playlist.getTotalSongLength(), "The total length should be 0 after removal.");
+    }
+
+    @Test
+    public void testContainsSong() {
+        playlist.addSong(song);
+
+        //Check if the song is in the playlist
+        assertTrue(playlist.containsSong(song), "The playlist should contain the song.");
+    }
+
+    @Test
+    public void testEquals() {
+        final Playlist anotherPlaylist = new Playlist(user, "My Playlist");
+
+        //Check that playlists with the same user and name are equal
+        assertEquals(playlist, anotherPlaylist, "Playlists with the same user and name should be equal.");
+    }
+
+    @Test
+    public void testEqualsWithDifferentData() {
+        final Playlist anotherPlaylist = new Playlist(user, "Another Playlist");
+
+        //Check that playlists with different names are not equal
+        assertNotEquals(playlist, anotherPlaylist, "Playlists with different names should not be equal.");
+    }
+
+    @Test
+    public void testGetPlaylistID() {
+        //Check that the playlist ID is initially null (before persistence)
+        assertNull(playlist.getPlaylistID(), "The playlist ID should be null before it is saved to the database.");
+    }
+
+    @Test
+    public void testGetDateCreated() {
+        //Ensure that the dateCreated field is null (not set by AuditingEntityListener yet)
+        assertNull(playlist.getDateCreated(), "The dateCreated field should not be null.");
+    }
+
+    @Test
+    public void testToString() {
+        String expectedString = "Playlist{" +
+                "playlistID=null, " +
+                "author=" + user +
+                ", playlistName='My Playlist', " +
+                "dateCreated='" + playlist.getDateCreated() + "', " +
+                "numberOfSongs=0, " +
+                "totalSongLength=0" +
+                "}";
+
+        //Check that the toString method returns the expected string representation
+        assertEquals(expectedString, playlist.toString(), "The toString() method should return the correct string representation.");
     }
 }
