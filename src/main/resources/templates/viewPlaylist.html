@@ -91,7 +91,7 @@
 
               <!-- Song preview as a link -->
               <a class="preview-link" href="#" th:data-url="${song.getDeezerID()}"
-                 th:onclick="'window.open( \'/preview/' + ${song.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
+                 th:onclick="'let width=300,height=200;let left=(window.innerWidth-width)/2,top=(window.innerHeight-height)/2 + 50;window.open( \'/preview/' + ${song.getDeezerID()} + '\', \'popupWindow\', \'width=300,height=200,left=\'+left+\',top=\'+top); return false;'"
                  title="Preview">
                 Preview
               </a>

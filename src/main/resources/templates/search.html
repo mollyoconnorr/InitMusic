@@ -105,8 +105,9 @@
 
 
                 <!-- Song preview as a link -->
-                <a class="preview-link" href="#" th:data-url="${item.getDeezerID()}"
-                   th:onclick="'window.open( \'/preview/' + ${item.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
+                <a class="preview-link" href="#"
+                   th:data-url="${item.getDeezerID()}"
+                   th:onclick="'let width=300,height=200;let left=(window.innerWidth-width)/2,top=(window.innerHeight-height)/2 + 50;window.open( \'/preview/' + ${item.getDeezerID()} + '\', \'popupWindow\', \'width=300,height=200,left=\'+left+\',top=\'+top); return false;'"
                    title="Preview">
                   Preview
                 </a>
