@@ -47,7 +47,8 @@
       <form action="/logout" method="post" th:method="post" class="mt-3" onsubmit="return confirmLogout();">
         <button type="submit" class="btn btn-warning">Log Out</button>
       </form>
-      <form action="/deleteAccount" method="post" th:method="post" class="mt-3" onsubmit="return confirmDelete();">
+      <form th:action="@{/deleteAccount}" method="post" onsubmit="return confirmDelete();" class="mt-3">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit" class="btn btn-danger">Delete Account</button>
       </form>
     </div>
