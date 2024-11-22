@@ -7,11 +7,16 @@ function logout() {
 
     // log out only if the user confirms
     if (userConfirmed) {
+        // Get CSRF token from the HTML meta tag
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+
+        // Perform the fetch request to logout
         fetch('/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest' // CSRF protection
+                'X-Requested-With': 'XMLHttpRequest', // CSRF protection
+                'X-CSRF-TOKEN': csrfToken // Add CSRF token to headers
             },
             credentials: 'include' // include cookies in the request
         })
@@ -28,6 +33,7 @@ function logout() {
             });
     }
 }
+
 
 //add an event listener to the button
 document.getElementById('logoutButton').addEventListener('click', logout);
