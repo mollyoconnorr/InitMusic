@@ -20,7 +20,7 @@ body {
 .list-group {
     width: 100%; /* Ensure they both take full width of their container */
     max-width: 900px; /* Optional: set a maximum width if needed */
-    min-width: 800px; /* Optional: set a minimum width if needed */
+    min-width: 80%; /* Optional: set a minimum width if needed */
     box-sizing: border-box;
 }
 

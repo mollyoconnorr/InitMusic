@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -42,22 +43,23 @@
       </div>
     </nav>
 
-    <h1 th:text="${playlistName}"></h1>
-    <div class="container text-center">
-      <div class="row align-items-start">
-        <div class="col">
-          <!--Empty column makes it easier to position other 2 columns-->
-        </div>
-        <div class="col">
-          <h3 th:text="'Created by: '+${playlistAuthor}"></h3>
-        </div>
-        <div class="col btnCol">
-          <button class="btn btn-primary addSongBtn" onclick="window.location.href='/search';"
-                  type="button">Add song
-          </button>
-        </div>
-      </div>
+<h1 th:text="${playlistName}"></h1>
+<div class="container text-center">
+  <div class="row align-items-start">
+    <div class="col">
+      <!--Empty column makes it easier to position other 2 columns-->
     </div>
+    <div class="col">
+      <h3 th:text="'Created by: '+${playlistAuthor}"></h3>
+    </div>
+    <div class="col btnCol">
+      <button class="btn btn-primary addSongBtn" onclick="window.location.href='/search';"
+              type="button">Add song
+      </button>
+      <button class="btn btn-secondary addSongBtn" onclick="window.location.href='/playlists';" type="button">Playlists</button>
+    </div>
+  </div>
+</div>
 
     <div th:if="${error}">
       <p class="errorMsg" th:text="${error}"></p>
