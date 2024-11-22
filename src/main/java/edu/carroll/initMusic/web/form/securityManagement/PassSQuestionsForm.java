@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.web.form;
+package edu.carroll.initMusic.web.form.securityManagement;
 
 /**
  * This form is used when a user is setting their security questions

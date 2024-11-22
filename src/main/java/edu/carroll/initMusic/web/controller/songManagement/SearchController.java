@@ -1,15 +1,15 @@
-package edu.carroll.initMusic.web.controller;
+package edu.carroll.initMusic.web.controller.songManagement;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.Playlist;
 import edu.carroll.initMusic.jpa.model.Song;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.PlaylistService;
-import edu.carroll.initMusic.service.SongService;
-import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.NewPlaylistForm;
-import edu.carroll.initMusic.web.form.NewSongForm;
+import edu.carroll.initMusic.service.songManagement.PlaylistService;
+import edu.carroll.initMusic.service.songManagement.SongService;
+import edu.carroll.initMusic.service.userManagement.UserService;
+import edu.carroll.initMusic.web.form.songManagement.NewPlaylistForm;
+import edu.carroll.initMusic.web.form.songManagement.NewSongForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

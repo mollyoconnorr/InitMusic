@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.web.form;
+package edu.carroll.initMusic.web.form.songManagement;
 
 import edu.carroll.initMusic.jpa.model.Playlist;
 import jakarta.validation.constraints.NotBlank;

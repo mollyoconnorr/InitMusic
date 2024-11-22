@@ -1,8 +1,8 @@
-package edu.carroll.initMusic.web.controller;
+package edu.carroll.initMusic.web.controller.userManagement;
 
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.UserService;
+import edu.carroll.initMusic.service.userManagement.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

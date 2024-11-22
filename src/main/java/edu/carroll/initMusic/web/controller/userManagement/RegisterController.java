@@ -1,9 +1,9 @@
-package edu.carroll.initMusic.web.controller;
+package edu.carroll.initMusic.web.controller.userManagement;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.service.UserService;
-import edu.carroll.initMusic.web.form.RegistrationForm;
+import edu.carroll.initMusic.service.userManagement.UserService;
+import edu.carroll.initMusic.web.form.userManagement.RegistrationForm;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

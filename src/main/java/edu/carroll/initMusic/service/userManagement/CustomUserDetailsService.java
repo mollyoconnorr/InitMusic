@@ -19,7 +19,7 @@ import java.util.List;
  * @see UserDetailsService
  */
 @Service
-public class CustomUserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
     /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsServiceImpl.class);
 
@@ -31,7 +31,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
      *
      * @param userRepository User repository to inject
      */
-    public CustomUserDetailsServiceImpl(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.service;
+package edu.carroll.initMusic.service.userManagement;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;

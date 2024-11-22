@@ -1,7 +1,7 @@
-package edu.carroll.initMusic.web.controller;
+package edu.carroll.initMusic.web.controller.securityManagement;
 
 import edu.carroll.initMusic.jpa.model.User;
-import edu.carroll.initMusic.web.form.PassSQuestionsForm;
+import edu.carroll.initMusic.web.form.securityManagement.PassSQuestionsForm;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;

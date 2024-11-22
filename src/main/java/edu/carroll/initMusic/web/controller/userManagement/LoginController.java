@@ -1,6 +1,6 @@
-package edu.carroll.initMusic.web.controller;
+package edu.carroll.initMusic.web.controller.userManagement;
 
-import edu.carroll.initMusic.web.form.LoginForm;
+import edu.carroll.initMusic.web.form.userManagement.LoginForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

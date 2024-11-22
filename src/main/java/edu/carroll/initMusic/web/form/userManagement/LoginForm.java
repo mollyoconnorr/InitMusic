@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.web.form;
+package edu.carroll.initMusic.web.form.userManagement;
 
 /**
  * A form object for handling user login data.

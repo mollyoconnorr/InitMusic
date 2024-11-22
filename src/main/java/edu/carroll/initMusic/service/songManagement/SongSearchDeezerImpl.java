@@ -1,4 +1,4 @@
-package edu.carroll.initMusic.service;
+package edu.carroll.initMusic.service.songManagement;
 
 import edu.carroll.initMusic.jpa.model.Song;
 import org.apache.commons.lang3.StringUtils;

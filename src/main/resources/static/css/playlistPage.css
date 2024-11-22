@@ -21,7 +21,7 @@ p {
 
 /* Style the playlist items */
 .list-group {
-    max-width: 800px;
+    max-width: 90%;
     margin-top: 20px;
     margin-left: auto; /* Center it horizontally */
     margin-right: auto;
@@ -160,4 +160,37 @@ h1 {
 
 .successMsg {
     color: green;
+}
+
+@media (max-width: 768px) {
+    .song-info {
+        display: flex;
+        flex-direction: column; /* Stack image and details vertically */
+        width: 100%; /* Ensure it fits within the container */
+        gap: 10px;
+    }
+
+    .songImg {
+        width: 100%; /* Make the image responsive */
+        max-width: 150px;
+        height: auto; /* Maintain aspect ratio */
+        margin: 0 auto;
+    }
+
+    .song-details {
+        display: flex;
+        flex-direction: column; /* Stack text vertically */
+        gap: 5px;
+        width: 100%;
+    }
+
+    .preview-link {
+        margin-top: 5px;
+        align-self: flex-start;
+    }
+
+    .btn-primary {
+        margin-top: 10px;
+        width: 100%; /* Make the button full-width */
+    }
 }

@@ -2,6 +2,8 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.config.CustomUserDetails;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.service.userManagement.CustomUserDetailsServiceImpl;
+import edu.carroll.initMusic.service.userManagement.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +21,7 @@ public class UserDetailsServiceTests {
      * Class we are tested
      */
     @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private CustomUserDetailsServiceImpl userDetailsService;
 
     /**
      * Used to add/edit/delete user objects in database when needed

@@ -1,6 +1,8 @@
 package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.jpa.model.Song;
+import edu.carroll.initMusic.service.songManagement.SongSearchService;
+import edu.carroll.initMusic.service.songManagement.SongService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

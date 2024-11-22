@@ -2,6 +2,7 @@ package edu.carroll.initMusic.service;
 
 import edu.carroll.initMusic.MethodOutcome;
 import edu.carroll.initMusic.jpa.model.User;
+import edu.carroll.initMusic.service.userManagement.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
