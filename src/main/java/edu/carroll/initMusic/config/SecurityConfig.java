@@ -67,7 +67,8 @@ public class SecurityConfig {
                         "/passSecurity",
                         "/images/**").permitAll()
                 .requestMatchers("/submitSecurityQuestions").authenticated()
-                .anyRequest().authenticated());
+                .anyRequest().authenticated())
+        .csrf().and();
         //Set login page to our own
         http.formLogin(formLogin ->
                 formLogin
