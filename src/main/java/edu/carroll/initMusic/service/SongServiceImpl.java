@@ -21,31 +21,19 @@ import java.util.TreeSet;
  */
 @Service
 public class SongServiceImpl implements SongService {
-    /**
-     * Maximum length a query can be
-     */
+    /** Maximum length a query can be */
     private static final int MAX_QUERY_LENGTH = 40;
 
-    /**
-     * Minimum length a query can be
-     */
+    /** Minimum length a query can be */
     private static final int MIN_QUERY_LENGTH = 3;
 
-    /**
-     * Logger object used for logging
-     */
+    /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongServiceImpl.class);
-    /**
-     * QueryCache repository
-     */
+    /** QueryCache repository */
     private final QueryCacheRepository queryCacheRepository;
-    /**
-     * Song repository
-     */
+    /** Song repository */
     private final SongRepository songRepository;
-    /**
-     * Service used to search externally for songs
-     */
+    /** Service used to search externally for songs */
     private final SongSearchService songSearchService;
     /**
      * JaroWinklerDistance object for calculating differences between strings. Used

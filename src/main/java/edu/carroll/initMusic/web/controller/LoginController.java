@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @EnableWebSecurity
 public class LoginController {
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     /**

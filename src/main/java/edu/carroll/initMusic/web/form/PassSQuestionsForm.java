@@ -7,14 +7,10 @@ package edu.carroll.initMusic.web.form;
  * @since September 26, 2024
  */
 public class PassSQuestionsForm {
-    /**
-     * Answer of first question
-     */
+    /** Answer of first question */
     private String answer1;
 
-    /**
-     * Answer of second question
-     */
+    /** Answer of second question */
     private String answer2;
 
     /**

@@ -7,14 +7,10 @@ package edu.carroll.initMusic.web.form;
  * @since September 26, 2024
  */
 public class NewPasswordForm {
-    /**
-     * User's new password
-     */
+    /** User's new password */
     String newPassword;
 
-    /**
-     * User's old password
-     */
+    /** User's old password */
     String oldPassword;
 
     /**

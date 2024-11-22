@@ -20,13 +20,9 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "playlist")
 public class Playlist {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 2L;
-    /**
-     * Set of songs each playlist contains, many-to-many relationship
-     */
+    /** Set of songs each playlist contains, many-to-many relationship */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "playlist_song",
@@ -34,27 +30,19 @@ public class Playlist {
             inverseJoinColumns = {@JoinColumn(name = "songID")}
     )
     private final Set<Song> songs = new HashSet<>();
-    /**
-     * Playlist's id number, used as primary key
-     */
+    /** Playlist's id number, used as primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long playlistID;
-    /**
-     * ID of author who made playlist. A Many-to-one relationship.
-     */
+    /** ID of author who made playlist. A Many-to-one relationship. */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
-    /**
-     * Name of playlist
-     */
+    /** Name of playlist */
     @Column(name = "playlist_name", nullable = false)
     private String playlistName;
 
-    /**
-     * Date playlist was created
-     */
+    /** Date playlist was created */
     @CreatedDate
     @Column(name = "date_playlist_created", nullable = false)
     private LocalDateTime dateCreated;

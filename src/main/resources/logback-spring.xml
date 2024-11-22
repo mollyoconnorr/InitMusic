@@ -25,6 +25,14 @@
         </rollingPolicy>
     </appender>
 
+    <!--
+      The logger name is typically the Java/Scala package name.
+      This configures the log level to log at for a package and its children packages.
+    -->
+    <!-- Overwrite level for a internal code - Commented out for now
+    <logger name="edu.carroll.cs341" level="DEBUG"/>
+    -->
+
     <!-- Suppress Spring Data JPA info logs -->
     <logger name="org.springframework.data.repository.config" level="WARN"/>
 

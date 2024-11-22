@@ -31,19 +31,13 @@ import java.util.TreeSet;
  */
 @Service
 public class SongSearchDeezerImpl implements SongSearchService {
-    /**
-     * Maximum length a query can be
-     */
+    /** Maximum length a query can be */
     private static final int MAX_QUERY_LENGTH = 40;
 
-    /**
-     * Minimum length a query can be
-     */
+    /** Minimum length a query can be */
     private static final int MIN_QUERY_LENGTH = 3;
 
-    /**
-     * Logger object used for logging
-     */
+    /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(SongSearchDeezerImpl.class);
 
     /**

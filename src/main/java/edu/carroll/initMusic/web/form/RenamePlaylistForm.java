@@ -10,15 +10,11 @@ import jakarta.validation.constraints.NotNull;
  * @since October 13, 2024
  */
 public class RenamePlaylistForm {
-    /**
-     * New name for playlist
-     */
+    /** New name for playlist */
     @NotBlank(message = "Name of playlist can not be blank!")
     private String newPlaylistName;
 
-    /**
-     * ID of playlist
-     */
+    /** ID of playlist */
     @NotNull
     private Long playlistID;
 

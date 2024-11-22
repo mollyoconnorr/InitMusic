@@ -17,9 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Controller
 public class ProfileController {
 
-    /**
-     * User service for operations with user objects
-     */
+    /** User service for operations with user objects */
     private final UserService userService;
 
     public ProfileController(UserService userService) {

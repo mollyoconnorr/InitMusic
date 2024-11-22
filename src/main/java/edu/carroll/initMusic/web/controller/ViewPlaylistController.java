@@ -30,19 +30,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ViewPlaylistController {
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(ViewPlaylistController.class);
 
-    /**
-     * User service for operations involving user objects
-     */
+    /** User service for operations involving user objects */
     final UserService userService;
 
-    /**
-     * playlist service for operations involving playlist objects
-     */
+    /** playlist service for operations involving playlist objects */
     final PlaylistService playlistService;
 
     /**

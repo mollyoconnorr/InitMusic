@@ -27,24 +27,16 @@ import java.util.Optional;
 @Service
 public class PlaylistServiceImpl implements PlaylistService {
 
-    /**
-     * Logger object used for logging
-     */
+    /** Logger object used for logging */
     private static final Logger log = LoggerFactory.getLogger(PlaylistServiceImpl.class);
 
-    /**
-     * Song repository
-     */
+    /** Song repository */
     private final SongRepository songRepository;
 
-    /**
-     * Playlist repository
-     */
+    /** Playlist repository */
     private final PlaylistRepository playlistRepository;
 
-    /**
-     * User repository
-     */
+    /** User repository */
     private final UserRepository userRepository;
 
     /**

@@ -36,34 +36,22 @@ import java.util.Set;
  */
 @Controller
 public class SearchController {
-    /**
-     * Maximum length a query can be
-     */
+    /** Maximum length a query can be */
     private static final int MAX_QUERY_LENGTH = 40;
 
-    /**
-     * Minimum length a query can be
-     */
+    /** Minimum length a query can be */
     private static final int MIN_QUERY_LENGTH = 3;
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
-    /**
-     * Song service for operations with songs and caches
-     */
+    /** Song service for operations with songs and caches */
     private final SongService songService;
 
-    /**
-     * User service for operations with user objects
-     */
+    /** User service for operations with user objects */
     private final UserService userService;
 
-    /**
-     * Playlist service for operations with playlist objects
-     */
+    /** Playlist service for operations with playlist objects */
     private final PlaylistService playlistService;
 
     /**

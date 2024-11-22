@@ -8,24 +8,16 @@ package edu.carroll.initMusic.web.form;
  * @since September 26, 2024
  */
 public class SecurityQuestionsForm {
-    /**
-     * Security Question 1
-     */
+    /** Security Question 1 */
     private String question1;
 
-    /**
-     * Security answer 1
-     */
+    /** Security answer 1 */
     private String answer1;
 
-    /**
-     * Security Question 2
-     */
+    /** Security Question 2 */
     private String question2;
 
-    /**
-     * Security answer 2
-     */
+    /** Security answer 2 */
     private String answer2;
 
     /**

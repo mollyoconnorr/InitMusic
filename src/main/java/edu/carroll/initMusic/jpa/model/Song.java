@@ -16,9 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "song")
 public class Song {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 1L;
 
     /**
@@ -46,52 +44,36 @@ public class Song {
     @ManyToMany(mappedBy = "results", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<QueryCache> queryCaches = new HashSet<>();
 
-    /**
-     * Name of song
-     */
+    /** Name of song */
     @Column(name = "name", nullable = false)
     private String songName;
 
-    /**
-     * Length of song in seconds
-     */
+    /** Length of song in seconds */
     @Column(name = "length", nullable = false)
     private int length;
 
-    /**
-     * Name of artist who produced the song
-     */
+    /** Name of artist who produced the song */
     @Column(name = "artist_name", nullable = false)
     private String artistName;
 
-    /**
-     * Deezer ID of artist
-     */
+    /** Deezer ID of artist */
     @Column(name = "artist_deezer_id", nullable = false)
     private Long artistDeezerID;
 
-    /**
-     * Name of album this song is in
-     */
+    /** Name of album this song is in */
     @Column(name = "album_name", nullable = false)
     private String albumName;
 
-    /**
-     * Deezer ID of album
-     */
+    /** Deezer ID of album */
     @Column(name = "album_deezer_id", nullable = false)
     private Long albumDeezerID;
 
-    /**
-     * Link to songs cover art
-     */
+    /** Link to songs cover art */
     @Column(name = "song_img")
     private String songImg;
 
 
-    /**
-     * Link to a preview of song, approx 30 sec long
-     */
+    /** Link to a preview of song, approx 30 sec long */
     @Column(name = "song_preview", columnDefinition = "TEXT") // Change to TEXT
     private String songPreview;
 

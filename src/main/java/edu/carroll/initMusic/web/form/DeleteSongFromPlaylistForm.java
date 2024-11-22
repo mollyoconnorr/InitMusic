@@ -11,29 +11,21 @@ import jakarta.validation.constraints.Positive;
  * @since October 17, 2024
  */
 public class DeleteSongFromPlaylistForm {
-    /**
-     * ID of playlist
-     */
+    /** ID of playlist */
     @NotNull
     @Positive
     private Long playlistID;
 
-    /**
-     * ID of song
-     */
+    /** ID of song */
     @NotNull
     @Positive
     private Long songID;
 
-    /**
-     * Name of playlist
-     */
+    /** Name of playlist */
     @NotBlank
     private String playlistName;
 
-    /**
-     * Name of song
-     */
+    /** Name of song */
     @NotBlank
     private String songName;
 

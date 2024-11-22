@@ -26,9 +26,7 @@ import java.util.Set;
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-    /**
-     * Serial version ID
-     */
+    /** Serial version ID */
     private static final long serialVersionID = 3L;
     /**
      * User's playlists, has a one-to-many relationship
@@ -36,39 +34,27 @@ public class User {
      */
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final Set<Playlist> playlists = new HashSet<>();
-    /**
-     * User's id number, used as primary key
-     */
+    /** User's id number, used as primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userID;
-    /**
-     * User's username
-     */
+    /** User's username */
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    /**
-     * User's password
-     */
+    /** User's password */
     @Column(name = "password", nullable = false)
     private String hashedPassword;
 
-    /**
-     * User's first name
-     */
+    /** User's first name */
     @Column(name = "user_first_name", nullable = false)
     private String firstName;
 
-    /**
-     * User's last name
-     */
+    /** User's last name */
     @Column(name = "user_last_name", nullable = false)
     private String lastName;
 
-    /**
-     * User's email
-     */
+    /** User's email */
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -76,27 +62,19 @@ public class User {
     @Column(name = "question1")
     private String question1;
 
-    /**
-     * User's Security Question2
-     */
+    /** User's Security Question2 */
     @Column(name = "question2")
     private String question2;
 
-    /**
-     * User's Security Answer1
-     */
+    /** User's Security Answer1 */
     @Column(name = "answer1")
     private String answer1;
 
-    /**
-     * User's Security Answer2
-     */
+    /** User's Security Answer2 */
     @Column(name = "answer2")
     private String answer2;
 
-    /**
-     * Date user account was created
-     */
+    /** Date user account was created */
     @CreatedDate
     @Column(name = "account_creation_date", nullable = false)
     private LocalDateTime accountCreationDate;

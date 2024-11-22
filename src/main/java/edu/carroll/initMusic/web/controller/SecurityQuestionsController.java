@@ -30,14 +30,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class SecurityQuestionsController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(SecurityQuestionsController.class);
 
-    /**
-     * Service for handling user-related operations.
-     */
+    /** Service for handling user-related operations. */
     private final UserService userService;
 
     /**

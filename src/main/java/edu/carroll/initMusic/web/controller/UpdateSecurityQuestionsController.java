@@ -22,14 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UpdateSecurityQuestionsController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(UpdateSecurityQuestionsController.class);
 
-    /**
-     * Service for user-related operations such as updating passwords.
-     */
+    /** Service for user-related operations such as updating passwords. */
     private final UserService userService;
 
     /**

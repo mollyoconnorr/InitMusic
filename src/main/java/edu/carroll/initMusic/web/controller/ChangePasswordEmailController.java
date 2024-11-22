@@ -23,14 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ChangePasswordEmailController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordEmailController.class);
 
-    /**
-     * Service for user-related operations such as finding users by email.
-     */
+    /** Service for user-related operations such as finding users by email. */
     private final UserService userService;
 
     /**

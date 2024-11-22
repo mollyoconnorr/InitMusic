@@ -34,19 +34,13 @@ import java.net.URISyntaxException;
 @Controller
 public class PlaylistController {
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(PlaylistController.class);
 
-    /**
-     * User service for operations involving user objects
-     */
+    /** User service for operations involving user objects */
     private final UserService userService;
 
-    /**
-     * Playlist service for operations involving playlist objects
-     */
+    /** Playlist service for operations involving playlist objects */
     private final PlaylistService playlistService;
 
     /**

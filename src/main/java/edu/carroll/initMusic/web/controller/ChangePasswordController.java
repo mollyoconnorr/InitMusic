@@ -24,14 +24,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ChangePasswordController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordController.class);
 
-    /**
-     * Service for user-related operations such as updating user passwords.
-     */
+    /** Service for user-related operations such as updating user passwords. */
     private final UserService userService;
 
     /**

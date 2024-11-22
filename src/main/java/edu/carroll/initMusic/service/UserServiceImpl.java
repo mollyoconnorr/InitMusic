@@ -22,24 +22,16 @@ import java.util.regex.Pattern;
 @Service
 public class UserServiceImpl implements UserService {
 
-    /**
-     * Logger for logging
-     */
+    /** Logger for logging */
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    /**
-     * User repository for interacting with the user database.
-     */
+    /** User repository for interacting with the user database. */
     private final UserRepository userRepository;
 
-    /**
-     * BCrypt password encoder used for hashing passwords.
-     */
+    /** BCrypt password encoder used for hashing passwords. */
     private final BCryptPasswordEncoder passwordEncoder;
 
-    /**
-     * Define a regular expression for a valid email format
-     */
+    /** Define a regular expression for a valid email format */
     private final String emailRegex = "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     //Compile the regex pattern

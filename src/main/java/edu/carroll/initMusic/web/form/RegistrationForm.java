@@ -12,34 +12,22 @@ package edu.carroll.initMusic.web.form;
  * @since September 12, 2024
  */
 public class RegistrationForm {
-    /**
-     * User's username
-     */
+    /** User's username */
     private String username;
 
-    /**
-     * User's email
-     */
+    /** User's email */
     private String email;
 
-    /**
-     * User's password
-     */
+    /** User's password */
     private String password;
 
-    /**
-     * User's first Name
-     */
+    /** User's first Name */
     private String firstName;
 
-    /**
-     * User's last Name
-     */
+    /** User's last Name */
     private String lastName;
 
-    /**
-     * User's confirm Password, should match password
-     */
+    /** User's confirm Password, should match password */
     private String confirmPassword;
 
     /**

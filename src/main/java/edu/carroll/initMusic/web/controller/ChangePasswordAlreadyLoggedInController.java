@@ -27,17 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ChangePasswordAlreadyLoggedInController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordAlreadyLoggedInController.class);
-    /**
-     * BCrypt password encoder used for hashing passwords.
-     */
+    /** BCrypt password encoder used for hashing passwords. */
     private final BCryptPasswordEncoder passwordEncoder;
-    /**
-     * Service for user-related operations such as updating passwords.
-     */
+    /** Service for user-related operations such as updating passwords. */
     private final UserService userService;
 
     /**

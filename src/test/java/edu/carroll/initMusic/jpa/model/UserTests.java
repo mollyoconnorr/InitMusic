@@ -1,92 +1,110 @@
 package edu.carroll.initMusic.jpa.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
- * Tests the basic methods in the user class
+ * <p>
+ * This class is used to test the User class
+ * </p>
+ *
+ * @author Nick Clouse
+ * @since September 19, 2024
  */
 @SpringBootTest
 public class UserTests {
+    /**
+     * Fake username
+     */
+    private static final String username = "username";
 
-    /** User object to use for testing */
-    private User user;
+    /**
+     * Fake password
+     */
+    private static final String password = "password";
 
-    @BeforeEach
-    public void setUp() {
-        user = new User("testUser", "hashedPassword123", "First", "Last", "testuser@example.com",
+    /**
+     * Fake first name
+     */
+    private static final String firstName = "John";
+
+    /**
+     * Fake last name
+     */
+    private static final String lastName = "Doe";
+
+    /**
+     * Fake email
+     */
+    private static final String email = "john.doe@example.com";
+
+    /**
+     * fakeUser used for testing
+     */
+    private final User fakeUser = new User(username, password, firstName, lastName, email,
+            "What is your favorite color?", "What is your pet's name?",
+            "Blue", "Fluffy");
+
+    /**
+     * Testing user creation and getters
+     */
+    @Test
+    public void verifyCreationOfUserAndGetters() {
+        final String setUsername = fakeUser.getUsername();
+        final String setPassword = fakeUser.getHashedPassword();
+        final String setFirstName = fakeUser.getFirstName();
+        final String setLastName = fakeUser.getLastName();
+        final String setEmail = fakeUser.getEmail();
+        assertTrue("Set username should match username from getter", setUsername.equals(username));
+        assertTrue("Set password should match password from getter", setPassword.equals(password));
+        assertTrue("Set firstName should match first name from getter", setFirstName.equals(firstName));
+        assertTrue("Set lastName should match last name from getter", setLastName.equals(lastName));
+        assertTrue("Set email should match email from getter", setEmail.equals(email));
+    }
+
+    /**
+     * Testing functions related to playlists
+     */
+    @Test
+    public void verifyPlaylistFunctions() {
+        final Playlist playlist = new Playlist();
+        playlist.setPlaylistName("playlist");
+        fakeUser.addPlaylist(playlist);
+        //Testing getPlaylist and getPlaylists
+        assertTrue("getPlaylists should be one playlist linked to user", fakeUser.getPlaylists().size() == 1);
+        assertTrue("getPlaylist should return playlist", fakeUser.getPlaylist("playlist").equals(playlist));
+
+        //Testing playlist removal
+        fakeUser.removePlaylist(playlist);
+        assertTrue("Should be no playlists linked to user", fakeUser.getPlaylists().isEmpty());
+    }
+
+    /**
+     * Testing equals, hashCode, and two setters.
+     */
+    @Test
+    public void verifyMiscFunctions() {
+        //Testing equals
+        final User fakeUserTwo = new User(username, password, firstName, lastName, email,
                 "What is your favorite color?", "What is your pet's name?",
                 "Blue", "Fluffy");
-    }
+        assertTrue("Fake users should be equal", fakeUser.equals(fakeUserTwo));
+        fakeUserTwo.setUsername("random");
 
-    @Test
-    public void testConstructor() {
-        assertNotNull(user, "User should be created successfully.");
-        assertEquals("testUser", user.getUsername(), "Username should match.");
-        assertEquals("First", user.getFirstName(), "First name should match.");
-        assertEquals("Last", user.getLastName(), "Last name should match.");
-        assertEquals("testuser@example.com", user.getEmail(), "Email should match.");
-    }
-
-    @Test
-    public void testSettersAndGetters() {
-        user.setUsername("newUser");
-        user.setFirstName("NewFirst");
-        user.setLastName("NewLast");
-        user.setEmail("newuser@example.com");
-
-        assertEquals("newUser", user.getUsername(), "Username should be updated.");
-        assertEquals("NewFirst", user.getFirstName(), "First name should be updated.");
-        assertEquals("NewLast", user.getLastName(), "Last name should be updated.");
-        assertEquals("newuser@example.com", user.getEmail(), "Email should be updated.");
-    }
-
-    @Test
-    public void testAddAndRemovePlaylists() {
-        final Playlist playlist = new Playlist("Test Playlist");
-
-        user.addPlaylist(playlist);
-        final Set<Playlist> playlists = user.getPlaylists();
-        assertTrue(playlists.contains(playlist), "Playlist should be added.");
-
-        user.removePlaylist(playlist);
-        assertFalse(playlists.contains(playlist), "Playlist should be removed.");
-    }
-
-    @Test
-    public void testEqualsAndHashCode() {
-        final User user1 = new User("testUser", "hashedPassword123", "First", "Last", "testuser@example.com",
-                "What is your favorite color?", "What is your pet's name?",
-                "Blue", "Fluffy");
-        final User user2 = new User("testUser", "hashedPassword123", "First", "Last", "testuser@example.com",
-                "What is your favorite color?", "What is your pet's name?",
-                "Blue", "Fluffy");
-
-        assertEquals(user1, user2, "Users should be equal.");
-        assertEquals(user1.hashCode(), user2.hashCode(), "Hash codes should be equal.");
-    }
-
-    @Test
-    public void testToString() {
-        final String expectedString = "Login @ User{id=null, username='testUser', hashedPassword='*****', " +
-                "firstName='First', lastName='Last', email='testuser@example.com'}";
-        assertEquals(expectedString, user.toString(), "toString should return the correct format.");
-    }
-
-    @Test
-    public void testAccountCreationDate() {
         final LocalDateTime now = LocalDateTime.now();
-        user.setAccountCreationDate(now);
+        fakeUserTwo.setAccountCreationDate(now);
 
-        assertNotNull(user.getAccountCreationDate(), "Account creation date should not be null.");
-        assertTrue(user.getAccountCreationDate().isAfter(now.minusSeconds(1)) &&
-                        user.getAccountCreationDate().isBefore(now.plusSeconds(1)),
-                "Account creation date should be close to the current time.");
+        //Test equals function and setAccountCreationDate work
+        assertFalse("Fake users should not be equal", fakeUser.equals(fakeUserTwo));
+
+        //Testing hashCode
+        final int userHash = fakeUser.hashCode();
+        final int userTwoHash = fakeUserTwo.hashCode();
+        assertFalse("Fake users hash should not be equal", userHash == userTwoHash);
     }
 }

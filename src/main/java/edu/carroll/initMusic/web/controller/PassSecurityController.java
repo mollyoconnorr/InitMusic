@@ -35,9 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class PassSecurityController {
 
-    /**
-     * Logger object used for logging actions within this controller.
-     */
+    /** Logger object used for logging actions within this controller. */
     private static final Logger log = LoggerFactory.getLogger(PassSecurityController.class);
 
     /**

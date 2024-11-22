@@ -7,9 +7,7 @@ package edu.carroll.initMusic.web.form;
  * @since September 26, 2024
  */
 public class CheckUserEmailForm {
-    /**
-     * User's email
-     */
+    /** User's email */
     private String email;
 
     /**
