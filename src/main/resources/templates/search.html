@@ -10,193 +10,203 @@
   <link href="/css/searchPage.css" rel="stylesheet">
 </head>
 <body>
-<!--NAV BAR-->
-<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">initMusic</a>
-    <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-            data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/search">Search</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/playlists">Playlists</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/myProfile">Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="logoutButton" href="#">Logout</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<h1>Search for a Song</h1>
-
-<form action="#" method="post" th:action="@{/search}">
-
-  <div class="container text-center">
-    <div class="row align-items-start">
-      <div class="col">
-        <label for="songSearch">Song Name:</label>
-        <input id="songSearch" name="songSearch" placeholder="Song name..." type="text">
+<div class="min-vh-100 d-flex flex-column
+                justify-content-between">
+  <div>
+    <!--NAV BAR-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">initMusic</a>
+        <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/search">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/playlists">Playlists</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/myProfile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="logoutButton" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="col">
-        <label for="artistSearch">Artist Name:</label>
-        <input id="artistSearch" name="artistSearch" placeholder="Artist name..." type="text">
-      </div>
-      <div class="col" id="searchBtnContainer">
-        <button id="searchBtn" type="submit">Search</button>
-      </div>
-    </div>
-  </div>
-</form>
+    </nav>
 
-<!--  Success messages after adding song to playlist(s)-->
-<div class="successMsg" th:each="suc : ${addingSuccesses}"
-     th:if="${addingSuccesses != null and !addingSuccesses.isEmpty()}">
-  <div th:text="${suc}"></div>
-</div>
+    <h1>Search for a Song</h1>
 
-<!-- Error from searchController-->
-<div class="errorMsg" th:if="${searchError}">
-  <p th:text="${searchError}"></p>
-</div>
+    <form action="#" method="post" th:action="@{/search}">
 
-<!--  Error messages after adding song to playlist(s)-->
-<div class="errorMsg" th:each="error : ${addingErrors}" th:if="${addingErrors != null and !addingErrors.isEmpty()}">
-  <div th:text="${error}"></div>
-</div>
-
-
-<!-- Display Results if Search is Performed -->
-<div th:if="${results != null and #lists.size(results) > 0}">
-  <h2>Results for "<span th:text="${query}"></span>"</h2>
-
-  <div class="list-group">
-    <div th:each="item : ${results}">
-      <div class="list-group-item list-group-item-action">
-
-        <!-- Container holding the song image and text -->
-        <div class="song-info">
-          <!-- Image for the song -->
-          <img alt="Image for ${item.getSongName()}" class="songImg" th:src="${item.getSongImg()}"/>
-
-          <!-- Song details container -->
-          <div class="song-details">
-            <!-- Song title -->
-            <span class="songText" th:text="${item.getSongName()}"></span>
-
-            <!-- Artist name -->
-            <span class="artistText" th:text="${item.getArtistName()}"></span>
-
-            <span class="songTime"
-                  th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60 < 10 ? '0' + (item.getLength() % 60) : item.getLength() % 60)}"></span>
-
-
-            <!-- Song preview as a link -->
-            <a class="preview-link" href="#" th:data-url="${item.getDeezerID()}"
-               th:onclick="'window.open( \'/preview/' + ${item.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
-               title="Preview">
-              Preview
-            </a>
+      <div class="container text-center">
+        <div class="row align-items-start">
+          <div class="col">
+            <label for="songSearch">Song Name:</label>
+            <input id="songSearch" name="songSearch" placeholder="Song name..." type="text">
+          </div>
+          <div class="col">
+            <label for="artistSearch">Artist Name:</label>
+            <input id="artistSearch" name="artistSearch" placeholder="Artist name..." type="text">
+          </div>
+          <div class="col" id="searchBtnContainer">
+            <button id="searchBtn" type="submit">Search</button>
           </div>
         </div>
-        <button class="btn btn-primary" data-bs-target="#addToPlaylistModal"
-                data-bs-toggle="modal"
-                onclick="populateModal(this)"
-                th:data-album-id="${item.getAlbumDeezerID()}"
-                th:data-album-name="${item.getAlbumName()}"
-                th:data-artist-id="${item.getArtistDeezerID()}"
-                th:data-artist-name="${item.getArtistName()}"
-                th:data-song-id="${item.getDeezerID()}"
-                th:data-song-img="${item.getSongImg()}"
-                th:data-song-length="${item.getLength()}"
-                th:data-song-name="${item.getSongName()}"
-                th:data-song-pre="${item.getSongPreview()}"
-                type="button">
-          Add to Playlist
-        </button>
+      </div>
+    </form>
+
+    <!--  Success messages after adding song to playlist(s)-->
+    <div class="successMsg" th:each="suc : ${addingSuccesses}"
+         th:if="${addingSuccesses != null and !addingSuccesses.isEmpty()}">
+      <div th:text="${suc}"></div>
+    </div>
+
+    <!-- Error from searchController-->
+    <div class="errorMsg" th:if="${searchError}">
+      <p th:text="${searchError}"></p>
+    </div>
+
+    <!--  Error messages after adding song to playlist(s)-->
+    <div class="errorMsg" th:each="error : ${addingErrors}" th:if="${addingErrors != null and !addingErrors.isEmpty()}">
+      <div th:text="${error}"></div>
+    </div>
+
+
+    <!-- Display Results if Search is Performed -->
+    <div th:if="${results != null and #lists.size(results) > 0}">
+      <h2>Results for "<span th:text="${query}"></span>"</h2>
+
+      <div class="list-group">
+        <div th:each="item : ${results}">
+          <div class="list-group-item list-group-item-action">
+
+            <!-- Container holding the song image and text -->
+            <div class="song-info">
+              <!-- Image for the song -->
+              <img alt="Image for ${item.getSongName()}" class="songImg" th:src="${item.getSongImg()}"/>
+
+              <!-- Song details container -->
+              <div class="song-details">
+                <!-- Song title -->
+                <span class="songText" th:text="${item.getSongName()}"></span>
+
+                <!-- Artist name -->
+                <span class="artistText" th:text="${item.getArtistName()}"></span>
+
+                <span class="songTime"
+                      th:text="${(item.getLength() / 60) + ':' + (item.getLength() % 60 < 10 ? '0' + (item.getLength() % 60) : item.getLength() % 60)}"></span>
+
+
+                <!-- Song preview as a link -->
+                <a class="preview-link" href="#" th:data-url="${item.getDeezerID()}"
+                   th:onclick="'window.open( \'/preview/' + ${item.getDeezerID()} + '\', \'popupWindow\', \'width=600,height=400\'); return false;'"
+                   title="Preview">
+                  Preview
+                </a>
+              </div>
+            </div>
+            <button class="btn btn-primary" data-bs-target="#addToPlaylistModal"
+                    data-bs-toggle="modal"
+                    onclick="populateModal(this)"
+                    th:data-album-id="${item.getAlbumDeezerID()}"
+                    th:data-album-name="${item.getAlbumName()}"
+                    th:data-artist-id="${item.getArtistDeezerID()}"
+                    th:data-artist-name="${item.getArtistName()}"
+                    th:data-song-id="${item.getDeezerID()}"
+                    th:data-song-img="${item.getSongImg()}"
+                    th:data-song-length="${item.getLength()}"
+                    th:data-song-name="${item.getSongName()}"
+                    th:data-song-pre="${item.getSongPreview()}"
+                    type="button">
+              Add to Playlist
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Display message if no results found -->
+    <div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
+      <p id="noResultsFoundP"><span th:text="${'No results found for &quot;' + query + '&quot;'}"></span>.</p>
+    </div>
+
+    <!-- Modal for adding song to playlist -->
+    <div aria-hidden="true" aria-labelledby="addToPlaylistModalLabel" class="modal fade" id="addToPlaylistModal"
+         tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fs-5" id="addToPlaylistModalLabel"></h5>
+            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+          </div>
+          <div class="modal-body addPlaylistModelBody">
+            <form id="createPlaylistForm" method="post" th:action="@{/createPlaylist}" th:object="${NewPlaylistForm}">
+              <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
+              <input id="playlistName" placeholder="New playlist name" th:field="*{playlistName}" type="text">
+              <button class="btn btn-secondary createPlaylistBtn" form="createPlaylistForm" type="submit">Save</button>
+            </form>
+            <!-- errorMessage after creating playlist, would come from playlistController createPlaylist mapping -->
+            <div th:if="${error}">
+              <p class="errorMsg" th:text="${error}"></p>
+            </div>
+
+            <!-- successMessage after creating playlist, would come from playlistController createPlaylist mapping -->
+            <div th:if="${successMsg}">
+              <p class="successMsg" th:text="${successMsg}"></p>
+            </div>
+
+            <p>Select the playlists you want to add to:</p>
+
+            <div th:if="${results != null and #lists.size(results) > 0}">
+              <form id="addSongToPlaylistForm" method="post" th:action="@{/addSongToPlaylist}" th:object="${newSongForm}">
+                <input id="songID" th:field="*{songID}" type="hidden"/>
+                <input id="songName" th:field="*{songName}" type="hidden"/>
+                <input id="artistName" th:field="*{artistName}" type="hidden"/>
+                <input id="artistID" th:field="*{artistID}" type="hidden"/>
+                <input id="albumName" th:field="*{albumName}" type="hidden"/>
+                <input id="songImg" th:field="*{songImg}" type="hidden"/>
+                <input id="songPreview" th:field="*{songPreview}" type="hidden"/>
+                <input id="albumID" th:field="*{albumID}" type="hidden"/>
+                <input id="songLength" th:field="*{songLength}" type="hidden"/>
+
+                <ul class="list-group">
+                  <th:block th:each="playlist : ${currentUser.getPlaylists()}">
+                    <li class="list-group-item">
+                      <input class="form-check-input me-1"
+                             name="selectedPlaylists"
+                             th:field="*{selectedPlaylists}"
+                             th:id="'checkbox-' + ${playlist.getPlaylistID()}"
+                             th:value="${playlist.getPlaylistID()}"
+                             type="checkbox"/>
+                      <label class="form-check-label stretched-link"
+                             th:for="'checkbox-' + ${playlist.getPlaylistID()}"
+                             th:text="${playlist.getPlaylistName()}"></label>
+                    </li>
+                  </th:block>
+                </ul>
+              </form>
+            </div>
+          </div>
+          <div class="modal-footer" id="CreatePlaylistModalFooter">
+            <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            <button class="btn btn-primary" form="addSongToPlaylistForm" id="saveChangesBtn" type="submit">Save changes
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Display message if no results found -->
-<div th:if="${results == null or #lists.isEmpty(results)}" th:unless="${query == null}">
-  <p id="noResultsFoundP"><span th:text="${'No results found for &quot;' + query + '&quot;'}"></span>.</p>
-</div>
-
-<!-- Modal for adding song to playlist -->
-<div aria-hidden="true" aria-labelledby="addToPlaylistModalLabel" class="modal fade" id="addToPlaylistModal"
-     tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title fs-5" id="addToPlaylistModalLabel"></h5>
-        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-      </div>
-      <div class="modal-body addPlaylistModelBody">
-        <form id="createPlaylistForm" method="post" th:action="@{/createPlaylist}" th:object="${NewPlaylistForm}">
-          <label for="playlistName" id="createPlaylistLbl">Create playlist</label>
-          <input id="playlistName" placeholder="New playlist name" th:field="*{playlistName}" type="text">
-          <button class="btn btn-secondary createPlaylistBtn" form="createPlaylistForm" type="submit">Save</button>
-        </form>
-        <!-- errorMessage after creating playlist, would come from playlistController createPlaylist mapping -->
-        <div th:if="${error}">
-          <p class="errorMsg" th:text="${error}"></p>
-        </div>
-
-        <!-- successMessage after creating playlist, would come from playlistController createPlaylist mapping -->
-        <div th:if="${successMsg}">
-          <p class="successMsg" th:text="${successMsg}"></p>
-        </div>
-
-        <p>Select the playlists you want to add to:</p>
-
-        <div th:if="${results != null and #lists.size(results) > 0}">
-          <form id="addSongToPlaylistForm" method="post" th:action="@{/addSongToPlaylist}" th:object="${newSongForm}">
-            <input id="songID" th:field="*{songID}" type="hidden"/>
-            <input id="songName" th:field="*{songName}" type="hidden"/>
-            <input id="artistName" th:field="*{artistName}" type="hidden"/>
-            <input id="artistID" th:field="*{artistID}" type="hidden"/>
-            <input id="albumName" th:field="*{albumName}" type="hidden"/>
-            <input id="songImg" th:field="*{songImg}" type="hidden"/>
-            <input id="songPreview" th:field="*{songPreview}" type="hidden"/>
-            <input id="albumID" th:field="*{albumID}" type="hidden"/>
-            <input id="songLength" th:field="*{songLength}" type="hidden"/>
-
-            <ul class="list-group">
-              <th:block th:each="playlist : ${currentUser.getPlaylists()}">
-                <li class="list-group-item">
-                  <input class="form-check-input me-1"
-                         name="selectedPlaylists"
-                         th:field="*{selectedPlaylists}"
-                         th:id="'checkbox-' + ${playlist.getPlaylistID()}"
-                         th:value="${playlist.getPlaylistID()}"
-                         type="checkbox"/>
-                  <label class="form-check-label stretched-link"
-                         th:for="'checkbox-' + ${playlist.getPlaylistID()}"
-                         th:text="${playlist.getPlaylistName()}"></label>
-                </li>
-              </th:block>
-            </ul>
-          </form>
-        </div>
-      </div>
-      <div class="modal-footer" id="CreatePlaylistModalFooter">
-        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
-        <button class="btn btn-primary" form="addSongToPlaylistForm" id="saveChangesBtn" type="submit">Save changes
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- Footer -->
+  <footer>
+    <p class="footerTitle">Copyright &copy; 2024 initMusic - Nick Clouse, Molly O'Connor</p>
+  </footer>
 </div>
 
 <script src="/js/searchPage.js"></script>

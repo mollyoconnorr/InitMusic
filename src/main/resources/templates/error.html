@@ -9,42 +9,52 @@
   <link href="/css/errorPage.css" rel="stylesheet">
 </head>
 <body>
-<!--NAV BAR-->
-<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">initMusic</a>
-    <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-            data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/search">Search</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/playlists">Playlists</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/myProfile">Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="logoutButton" href="#">Logout</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<h1>Something went wrong :(</h1>
-<p>We apologize for the inconvenience</p>
-<div class="errorContainer">
+<div class="min-vh-100 d-flex flex-column
+                justify-content-between">
   <div>
-    <span><strong>Status:</strong></span>
-    <span th:text="${status}"></span>
+    <!--NAV BAR-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">initMusic</a>
+        <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/search">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/playlists">Playlists</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/myProfile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="logoutButton" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <h1>Something went wrong :(</h1>
+    <p>We apologize for the inconvenience</p>
+    <div class="errorContainer">
+      <div>
+        <span><strong>Status:</strong></span>
+        <span th:text="${status}"></span>
+      </div>
+    </div>
+    <p>This was probably your fault (initDevs never make mistakes ;) ), but if you want to report a problem, click <a
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a></p>
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footerTitle">Copyright &copy; 2024 initMusic - Nick Clouse, Molly O'Connor</p>
+  </footer>
 </div>
-<p>This was probably your fault (initDevs never make mistakes ;) ), but if you want to report a problem, click <a
-        href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a></p>
 
 <script src="/js/logoutFunc.js"></script>
 <script crossorigin="anonymous"

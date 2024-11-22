@@ -13,3 +13,14 @@ p {
     color: black;
 }
 
+footer {
+    box-shadow: 0px 5px 5px 10px #555;
+    background-color: #555;
+}
+
+.footerTitle {
+    font-size: 1.2vw;
+    text-align: center;
+    margin-top: 5px;
+    color: white;
+}
