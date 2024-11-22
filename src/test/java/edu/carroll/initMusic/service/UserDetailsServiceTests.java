@@ -15,11 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class UserDetailsServiceTests {
 
-    /** Class we are tested */
+    /**
+     * Class we are tested
+     */
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    /** Used to add/edit/delete user objects in database when needed */
+    /**
+     * Used to add/edit/delete user objects in database when needed
+     */
     @Autowired
     private UserService userService;
 

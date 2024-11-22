@@ -30,12 +30,18 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @Transactional
 class SongServiceTests {
-    /** Set of songs to return when needed */
+    /**
+     * Set of songs to return when needed
+     */
     private static final Set<Song> songs = new HashSet<>();
-    /** Service we are testing */
+    /**
+     * Service we are testing
+     */
     @Autowired
     private SongService songService;
-    /** Mock the searchService since we can't control what it returns from the api */
+    /**
+     * Mock the searchService since we can't control what it returns from the api
+     */
     @MockBean
     private SongSearchService searchService;
 
